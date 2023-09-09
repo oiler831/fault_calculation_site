@@ -14,6 +14,9 @@ class BusData(models.Model):
     q_min = models.FloatField()
     bus_type = models.SmallIntegerField()
 
+    def __str__(self):
+        return self.bus_num
+
 
 class LineData(models.Model):
     to_bus =models.SmallIntegerField()
@@ -29,6 +32,8 @@ class LineData(models.Model):
     zero_half_B = models.FloatField()
     line_type = models.SmallIntegerField()
 
+    def  __str__(self):
+        return f'{self.to_bus}'"-"f'{self.from_bus}'
 
 class FaultCondition(models.Model):
     basemva = models.SmallIntegerField()
