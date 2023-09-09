@@ -1,0 +1,119 @@
+{% extends './base.html'%}
+{% load static %}
+
+
+{% block content %}
+<div class ="container">
+  <form method="POST" class ="condition">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="id_basemva" class="form-label">basemva</label>
+      <input type="number" name="basemva" class="form-control" id="id_basemva" min="1">
+    </div>
+    <div>
+      <label>초기 전압 설정 방식</label>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="is_flow" id="id_is_flow1" value="True" checked>
+        <label class="form-check-label" for="id_is_flow1">
+          조류 계산
+        </label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="is_flow" id="id_is_flow2" value="False">
+        <label class="form-check-label" for="id_is_flow2">
+          사용자 입력
+        </label>
+      </div>
+    </div>
+    <div>
+    <label>고장 종류 선택</label>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_0" value="0" checked>
+      <label class="form-check-label" for="id_fault_type_0">
+        3상 고장(balanced fault)
+      </label>
+    </div>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_1" value="1">
+      <label class="form-check-label" for="id_fault_type_1">
+        1선 지락(single line to ground fault)
+      </label>
+    </div>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_2" value="2">
+      <label class="form-check-label" for="id_fault_type_2">
+        선간 단락(line to line fault)
+      </label>
+    </div>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_3" value="3">
+      <label class="form-check-label" for="id_fault_type_3">
+        2선 지락(double line to ground fault)
+      </label>
+    </div>
+    <div>
+      <label>고장 위치 선택</label>
+      <div class="form-check">
+        <input class="form-check-input" value="True" type="radio" name="is_bus_fault" id="id_is_bus_fault_0" checked  onclick="linefieldsetDisable(), busActive()">
+        <label class="form-check-label" for="id_is_bus_fault_0">
+          Bus에서 고장
+        </label>
+      </div>
+      <select class="form-select" aria-label="Default select example" name="fault_bus" id='id_fault_bus'>
+        <option selected>고장 BUS 선택</option>
+        <option value="1">One</option>
+        <option value="2">Two</option>
+        <option value="3">Three</option>
+      </select>
+      <div class="form-check">
+        <input class="form-check-input" value="False" type="radio" name="is_bus_fault" id="id_is_bus_fault_1" onclick="linefieldsetActive() ,busDisable()">
+        <label class="form-check-label" for="id_is_bus_fault_1">
+          Line에서 고장
+        </label>
+      </div>
+      <fieldset id = 'line_fieldset' disabled="disabled">
+        <select class="form-select" aria-label="Default select example" name="fault_line_1" id="id_fault_line_1">
+          <option selected>고장난 라인의 한 쪽 BUS 입력</option>
+          <option value="1">One</option>
+          <option value="2">Two</option>
+          <option value="3">Three</option>
+        </select>
+        <select class="form-select" aria-label="Default select example" name="fault_line_2" id="id_fault_line_2">
+          <option selected>다른 한쪽 BUS 입력</option>
+          <option value="1">One</option>
+          <option value="2">Two</option>
+          <option value="3">Three</option>
+        </select>
+        <input type="range" name ="line_percentage" required id="id_line_percentage" value="50" min="1" max="99" oninput="this.nextElementSibling.value = this.value">
+        <output>50</output>
+      </fieldset>
+    </div>
+    <div class="mb-3">
+      <label for="id_impedence_R" class="form-label">고장임피던스 R</label>
+      <input type="number" class="form-control" id="id_impedence_R" name="impedence_R">
+    </div>
+    <div class="mb-3">
+      <label for="id_impedence_X" class="form-label">고장임피던스 X</label>
+      <input type="number" class="form-control" id="id_impedence_X" name="impedence_X">
+    </div>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" name="is_shunt" type="checkbox" value="True" id="id_is_shunt">
+      <label class="form-check-label" for="id_is_shunt">
+        선로 Shunt 임피던스 고려
+      </label>
+    </div>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" name="is_load_effect" type="checkbox" value="True" id="id_is_load_effect">
+      <label class="form-check-label" for="id_is_load_effect">
+        부하 효과 고려
+      </label>
+    </div>
+    <br>
+    <button type="submit" class="btn btn-primary">입력</button>
+  </form>
+</div>
+{% endblock content %}
+
+{% block script %}
+  <script src={%static 'cal/js/style.js'%}></script>
+{% endblock script %}

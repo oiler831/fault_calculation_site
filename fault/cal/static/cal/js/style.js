@@ -9,11 +9,11 @@ function linefieldsetActive() {
 }
 
 function busActive()  {
-  const target = document.getElementById('bus1');
+  const target = document.getElementById('id_fault_bus');
   target.disabled = false;
 }
 
 function busDisable()  {
-  const target = document.getElementById('bus1');
+  const target = document.getElementById('id_fault_bus');
   target.disabled = true;
 }
