@@ -1,0 +1,27 @@
+html {
+  font-family: "Noto Sans KR", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.img{
+  height:600px;
+  width:100%;
+  background-color:yellow;
+  margin: 30px 0;
+}
+.condition{
+  background-color:#ffffff;
+  padding: 50px;
+  border: 1px solid #000000;
+  border-radius:30px;
+  margin-bottom:30px;
+  box-shadow: 10px 5px 5px #aaaaaa;
+}
+label{
+  display:block;
+}

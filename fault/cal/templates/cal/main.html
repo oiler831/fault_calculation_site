@@ -1,0 +1,133 @@
+{% extends './base.html'%}
+{% load static %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="condition">
+          <div class="mb-3">
+            <label for="formFile" class="form-label">BUS DATA</label>
+            <input class="form-control" type="file" id="formFile">
+          </div>
+          <div class="mb-3">
+            <label for="formFile" class="form-label">LINE DATA</label>
+            <input class="form-control" type="file" id="formFile">
+          </div>
+          <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">basemva</label>
+            <input type="number" class="form-control" id="exampleFormControlInput1" min="1">
+          </div>
+          <div>
+            <label>초기 전압 설정 방식</label>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+              <label class="form-check-label" for="exampleRadios1">
+                조류 계산
+              </label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option2">
+              <label class="form-check-label" for="exampleRadios2">
+                사용자 입력
+              </label>
+            </div>
+          </div>
+          <div>
+            <label>고장 종류 선택</label>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="fault-type" id="faultRadios1" value="option1" checked>
+              <label class="form-check-label" for="faultRadios1">
+                3상 고장(balanced fault)
+              </label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="fault-type" id="faultRadios2" value="option1">
+              <label class="form-check-label" for="faultRadios2">
+                1선 지락(single line to ground fault)
+              </label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="fault-type" id="faultRadios3" value="option1">
+              <label class="form-check-label" for="faultRadios3">
+                선간 단락(line to line fault)
+              </label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="fault-type" id="faultRadios4" value="option1">
+              <label class="form-check-label" for="faultRadios4">
+                2선 지락(double line to ground fault)
+              </label>
+            </div>
+            <div>
+              <label>고장 위치 선택</label>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="busfault" checked  onclick="linefieldsetDisable(), busActive()">
+                <label class="form-check-label" for="busfault">
+                  Bus에서 고장
+                </label>
+              </div>
+              <select class="form-select" aria-label="Default select example" id="bus1">
+                <option selected>고장 BUS 선택</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+              </select>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="linefault" onclick="linefieldsetActive(), busDisable()">
+                <label class="form-check-label" for="linefault">
+                  Line에서 고장
+                </label>
+              </div>
+              <fieldset id = 'line_fieldset' disabled="disabled">
+                <select class="form-select" aria-label="Default select example" id="bus2">
+                  <option selected>고장난 라인의 한 쪽 BUS 입력</option>
+                  <option value="1">One</option>
+                  <option value="2">Two</option>
+                  <option value="3">Three</option>
+                </select>
+                <select class="form-select" aria-label="Default select example" id="bus3">
+                  <option selected>다른 한쪽 BUS 입력</option>
+                  <option value="1">One</option>
+                  <option value="2">Two</option>
+                  <option value="3">Three</option>
+                </select>
+                <input type="range"  value="50" min="1" max="99" oninput="this.nextElementSibling.value = this.value">
+                <output>50</output>
+              </fieldset>
+            </div>
+            <div class="mb-3">
+              <label for="faultimpedenceR" class="form-label">고장임피던스 R</label>
+              <input type="number" class="form-control" id="faultimpedenceR">
+            </div>
+            <div class="mb-3">
+              <label for="faultimpedenceZ" class="form-label">고장임피던스 Z</label>
+              <input type="number" class="form-control" id="faultimpedenceZ">
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+              <label class="form-check-label" for="flexCheckDefault">
+                선로 Shunt 임피던스 고려
+              </label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+              <label class="form-check-label" for="flexCheckDefault">
+                부하 효과 고려
+              </label>
+            </div>
+            <br>
+            <button type="button" class="btn btn-primary">입력</button>
+            <div class="img">
+            </div>
+            <button type="button" class="btn btn-success">엑셀 저장</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block script %}
+  <script src={%static 'cal/js/style.js'%}></script>
+{% endblock script %}
