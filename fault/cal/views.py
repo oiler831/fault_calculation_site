@@ -21,9 +21,15 @@ def fault_con(request):
             line_percentage = request.POST['line_percentage'],
             impedence_R = request.POST['impedence_R'],
             impedence_X = request.POST['impedence_X'],
-            is_shunt = request.POST['is_shunt'],
-            is_load_effect = request.POST['is_load_effect'],
         )
+        if len(request.POST.getlist('is_shunt')):
+            FaultCondition.is_shunt = True
+        else:
+            FaultCondition.is_shunt = False
+        if len(request.POST.getlist('is_load_effect')):
+            FaultCondition.is_load_effect = True
+        else:
+            FaultCondition.is_load_effect = False    
         new_con.save()
         return redirect('main')
     return render(request, 'cal/fault_con.html')
