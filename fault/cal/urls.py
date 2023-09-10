@@ -2,6 +2,6 @@ from django.urls import path
 from . import views
 #git test
 urlpatterns = [
-    path('', views.index, name='main'),
-    path('test/',views.fault_con, name='test'),
+    path('', views.upload_excel_to_db, name='main'),
+    path('fault_condition/',views.fault_con, name='condition'),
 ]

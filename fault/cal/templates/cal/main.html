@@ -6,16 +6,15 @@
     <div class="row">
       <div class="col-12">
         <div class="condition">
-          <div class="mb-3">
-            <label for="formFile" class="form-label">BUS DATA</label>
-            <input class="form-control" type="file" id="formFile">
-          </div>
-          <div class="mb-3">
-            <label for="formFile" class="form-label">LINE DATA</label>
-            <input class="form-control" type="file" id="formFile">
-          </div>
-          <a href ="{% url 'test' %}">다음</a>
-          <button type="submit" class="btn btn-primary">입력</button>
+          <form  method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="formFile" class="form-label">BUS DATA</label>
+              <input class="form-control" type="file" name="excelFile" id="formFile">
+            </div>
+            <button type="submit" class="btn btn-primary">입력</button>
+          </form>
+          <a href ="{% url 'condition' %}">다음</a>
         </div>
       </div>
     </div>
