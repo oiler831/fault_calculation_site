@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import FaultCondition, BusData, LineData, ExcelFile
 import pandas as pd
-import os
 
 # Create your views here.
 def index(request):
@@ -45,6 +44,12 @@ def fault_con(request):
 
 def upload_excel_to_db(request):
     if request.method == 'POST':
+        bus_df = BusData.objects.all()
+        bus_df.delete()
+        line_df = LineData.objects.all()
+        line_df.delete()
+        file_df = ExcelFile.objects.all()
+        file_df.delete()
         excel_file = request.FILES['excelFile']
         new_file = ExcelFile(file = excel_file)
         new_file.save()
