@@ -9,12 +9,11 @@
           <form  method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="mb-3">
-              <label for="formFile" class="form-label">BUS DATA</label>
+              <label for="formFile" class="form-label">CIRCUIT DATA</label>
               <input class="form-control" type="file" name="excelFile" id="formFile">
             </div>
             <button type="submit" class="btn btn-primary">입력</button>
           </form>
-          <a href ="{% url 'condition' %}">다음</a>
         </div>
       </div>
     </div>

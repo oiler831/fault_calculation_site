@@ -6,9 +6,9 @@
 <div class ="container">
   <form method="POST" class ="condition">
     {% csrf_token %}
-    <div class="mb-3">
-      <label for="id_basemva" class="form-label">basemva</label>
-      <input type="number" name="basemva" class="form-control" id="id_basemva" min="1">
+    <div class="form-floating">
+      <input type="number" name="basemva" class="form-control" id="id_basemva" placeholder="100" value="100">
+      <label for="id_basemva" class="form-label">Basemva</label>
     </div>
     <div>
       <label>초기 전압 설정 방식</label>
@@ -61,9 +61,9 @@
       </div>
       <select class="form-select" aria-label="Default select example" name="fault_bus" id='bus1'>
         <option selected>고장 BUS 선택</option>
-        <option value="1">One</option>
-        <option value="2">Two</option>
-        <option value="3">Three</option>
+        {% for bus in busdata %}
+        <option value={{bus.bus_num}}>{{bus.bus_num}}</option>
+        {% endfor %}
       </select>
       <div class="form-check">
         <input class="form-check-input" value="False" type="radio" name="is_bus_fault" id="id_is_bus_fault_1" onclick="linefieldsetActive() ,busDisable()">
@@ -72,29 +72,23 @@
         </label>
       </div>
       <fieldset id = 'linefieldset' disabled="disabled">
-        <select class="form-select" aria-label="Default select example" name="fault_line_1" id="id_fault_line_1">
+        <select class="form-select" aria-label="Default select example" name="fault_line" id="id_fault_line_1">
           <option selected>고장난 라인의 한 쪽 BUS 입력</option>
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
-        </select>
-        <select class="form-select" aria-label="Default select example" name="fault_line_2" id="id_fault_line_2">
-          <option selected>다른 한쪽 BUS 입력</option>
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
+          {% for line in linedata %}
+          <option value={{line.id}}>{{line.from_bus}}--{{line.to_bus}}</option>
+          {% endfor %}
         </select>
         <input type="range" name ="line_percentage" required id="id_line_percentage" value="50" min="1" max="99" oninput="this.nextElementSibling.value = this.value">
         <output>50</output>
       </fieldset>
     </div>
-    <div class="mb-3">
+    <div class="mb-3 form-floating">
+      <input type="number" class="form-control" id="id_impedence_R" name="impedence_R" placeholder="0" value="0">
       <label for="id_impedence_R" class="form-label">고장임피던스 R</label>
-      <input type="number" class="form-control" id="id_impedence_R" name="impedence_R">
     </div>
-    <div class="mb-3">
+    <div class="mb-3 form-floating">
+      <input type="number" class="form-control" id="id_impedence_X" name="impedence_X" placeholder="0" value="0">
       <label for="id_impedence_X" class="form-label">고장임피던스 X</label>
-      <input type="number" class="form-control" id="id_impedence_X" name="impedence_X">
     </div>
     <div class="form-check form-check-inline">
       <input class="form-check-input" name="is_shunt" type="checkbox" value="True" id="id_is_shunt">

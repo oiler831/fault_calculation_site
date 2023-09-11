@@ -15,12 +15,12 @@ def manual(request):
 
 def upload_excel_to_db(request):
     if request.method == 'POST':
-        bus_df = BusData.objects.all()
-        bus_df.delete()
-        line_df = LineData.objects.all()
-        line_df.delete()
-        file_df = ExcelFile.objects.all()
-        file_df.delete()
+        clear = BusData.objects.all()
+        clear.delete()
+        clear = LineData.objects.all()
+        clear.delete()
+        clear = ExcelFile.objects.all()
+        clear.delete()
         excel_file = request.FILES['excelFile']
         find_file = True
         new_file = ExcelFile(file = excel_file, find_file = find_file)
@@ -37,19 +37,34 @@ def upload_excel_to_db(request):
 
 def fault_con(request):
     if request.method == 'POST':
-        con = FaultCondition.objects.all()
-        con.delete()
-        con = FaultBusData.objects.all()
-        con.delete()
-        con = FaultLineData.objects.all()
-        con.delete()
+        clear = FaultCondition.objects.all()
+        clear.delete()
+        clear = FaultBusData.objects.all()
+        clear.delete()
+        clear = FaultLineData.objects.all()
+        clear.delete()
+        clear = ThreeFaultI.objects.all()
+        clear.delete()
+        clear = ThreeFaultV.objects.all()
+        clear.delete()
+        clear = OtherFaultI.objects.all()
+        clear.delete()
+        clear = OtherFaultV.objects.all()
+        clear.delete()
+        
         basemva = request.POST['basemva']
         is_flow = request.POST['is_flow']
         fault_type = request.POST['fault_type']
         is_bus_fault = request.POST['is_bus_fault']
         fault_bus = request.POST.get('fault_bus',0)
-        fault_line_1 = request.POST.get('fault_line_1',0)
-        fault_line_2 = request.POST.get('fault_line_2',0)
+        fault_line_id = request.POST.get('fault_line',0)
+        if fault_line_id != 0:
+            fault_line = LineData.objects.get(id=fault_line_id)
+            fault_line_1 = fault_line.from_bus
+            fault_line_2 = fault_line.to_bus
+        else:
+            fault_line_1 = 0
+            fault_line_2 = 0
         line_percentage = request.POST.get('line_percentage',0)
         impedence_R = request.POST['impedence_R']
         impedence_X = request.POST['impedence_X']
@@ -81,10 +96,6 @@ def fault_con(request):
         bus_df = bus_scaling(bus_df, fault_con.basemva)
         if fault_con.is_flow:
             bus_df, repeat_count = gauss_flow_test(line_df, bus_df)
-        
-        for i in range(len(bus_df)):
-            FaultBusData.objects.create(Bus_No=bus_df[0][i], Bus_Code=bus_df[9][i], Voltage_Mag=bus_df[1][i], Voltage_Deg=bus_df[2][i],
-                                        Generator_MW=bus_df[3][i],Generator_Mvar=bus_df[4][i],Load_MW=bus_df[5][i],Load_Mvar=bus_df[6][i])
 
         initial_bus_voltage = bus_df.iloc[:, 1] * np.exp(j * np.deg2rad(bus_df.iloc[:, 2])) 
         line_df = fault_line_data_scaling(line_df, fault_con.fault_type) 
@@ -123,8 +134,24 @@ def fault_con(request):
             for i in range(len(result_cur)):
                 OtherFaultI.objects.create(From_Bus=result_cur[0][i], To_Bus=result_cur[1][i], Phase_A_Mag=result_cur[2][i], Phase_A_Deg=result_cur[3][i],
                                             Phase_B_Mag=result_cur[4][i], Phase_B_Deg=result_cur[5][i],Phase_C_Mag=result_cur[6][i], Phase_C_Deg=result_cur[7][i])
-        return redirect('main')
-    return render(request, 'cal/fault_con.html')
+        return redirect('result')
+    busdata = BusData.objects.all()
+    linedata = LineData.objects.all().exclude(from_bus=0).exclude(to_bus=0)
+    context ={'busdata':busdata,'linedata':linedata}
+    return render(request, 'cal/fault_con.html', context=context)
+
+def result(request):
+    faultcon = FaultCondition.objects.get(to_find=True)
+    faultbusdata=FaultBusData.objects.all()
+    faultlinedata=FaultLineData.objects.all()
+    threefaultv=ThreeFaultV.objects.all()
+    threefaulti=ThreeFaultI.objects.all()
+    otherfaultv=OtherFaultV.objects.all()
+    otherfaulti=OtherFaultI.objects.all()
+    context = {'faultbusdata':faultbusdata,'faultlinedata':faultlinedata,'threefaultv':threefaultv,'threefaulti':threefaulti,
+                'otherfaultv':otherfaultv,'otherfaulti':otherfaulti, 'faultcon':faultcon}
+    return render(request, 'cal/fault_result.html',context=context)
+
 
 
 def bus_scaling(bus_df, basemva):
@@ -523,8 +550,6 @@ def after_fault_scaling(line_df, bus_df, voltage_d, current_d, fault_loc, fault_
         frame_voltage_d = pd.concat([bus_num, frame_voltage_mag, frame_voltage_ang], axis=1)
         frame_current_d.columns = [0, 1, 2, 3]
         frame_voltage_d.columns = [0, 1, 2]
-        frame_current_d.iloc[con_num, 0] = fault_loc
-        frame_current_d.iloc[con_num, 1] = -1
     else:
         frame_current_mag_a = pd.DataFrame(np.abs(current_d[:, 0]))
         frame_current_ang_a = pd.DataFrame(np.angle(current_d[:, 0], deg=True))
@@ -544,6 +569,9 @@ def after_fault_scaling(line_df, bus_df, voltage_d, current_d, fault_loc, fault_
                                     frame_voltage_ang_b, frame_voltage_mag_c, frame_voltage_ang_c], axis=1)
         frame_current_d.columns = [0, 1, 2, 3, 4, 5, 6, 7]
         frame_voltage_d.columns = [0, 1, 2, 3, 4, 5, 6]
-        frame_current_d.iloc[con_num, 0] = fault_loc
-        frame_current_d.iloc[con_num, 1] = -1
+    bus_num = frame_voltage_d.iloc[:, 0]
+    b_n = len(bus_num)
+    frame_voltage_d.iloc[b_n - 1,0] = b_n
+    frame_current_d.iloc[con_num, 0] = fault_loc
+    frame_current_d.iloc[con_num, 1] = -1
     return frame_voltage_d, frame_current_d
