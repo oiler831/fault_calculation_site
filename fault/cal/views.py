@@ -4,6 +4,7 @@ from .models import (FaultCondition, BusData, LineData, ExcelFile,FaultLineData,
 import pandas as pd
 import numpy as np
 import math
+import sqlite3
 
 # Create your views here.
 def index(request):
@@ -72,6 +73,9 @@ def fault_con(request):
         is_load_effect = request.POST.get('is_load_effect', False)
         file = ExcelFile.objects.get(find_file=True)
         line_df = pd.read_excel(file.file.path, header=None) 
+        # con = sqlite3.connect("/home/jin/graduation/fault/db.sqlite3")
+        # line_df.to_sql('test',con,dtype=float)
+        # df = pd.read_sql("SELECT * FROM test", con, index_col='index')
         new_con = FaultCondition(
             basemva = basemva,
             is_flow = is_flow,

@@ -15,177 +15,189 @@
   </div>
   <div class="content">
     <div class="content-dis">
-      <div class="container">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <td>Bus No</td>
-              <td>Bus Code</td>
-              <td>Voltage Mag</td>
-              <td>Voltage Deg</td>
-              <td>Generator MW</td>
-              <td>Generator Mvar</td>
-              <td>Load MW</td>
-              <td>Load Mvar</td>
-            </tr>
-          </thead>
-          <tbody>
-            {% for busdata in faultbusdata %}
-            <tr>
-              <td>{{busdata.Bus_No}}</td>
-              <td>{{busdata.Bus_Code}}</td>
-              <td>{{busdata.Voltage_Mag}}</td>
-              <td>{{busdata.Voltage_Deg}}</td>
-              <td>{{busdata.Generator_MW}}</td>
-              <td>{{busdata.Generator_Mvar}}</td>
-              <td>{{busdata.Load_MW}}</td>
-              <td>{{busdata.Load_Mvar}}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-    </div>
-    </div>
-    <div class="content-dis">
-      <div class="container">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <td>From Bus</td>
-              <td>To Bus</td>
-              <td>R</td>
-              <td>X</td>
-              <td>half B</td>
-              <td>negative R</td>
-              <td>negative X</td>
-              <td>zero R</td>
-              <td>zero X</td>
-              <td>zero half B</td>
-            </tr>
-          </thead>
-          <tbody>
-            {% for linedata in faultlinedata %}
-            <tr>
-              <td>{{linedata.From_Bus}}</td>
-              <td>{{linedata.To_Bus}}</td>
-              <td>{{linedata.R}}</td>
-              <td>{{linedata.X}}</td>
-              <td>{{linedata.half_B}}</td>
-              <td>{{linedata.negative_R}}</td>
-              <td>{{linedata.negative_X}}</td>
-              <td>{{linedata.zero_R}}</td>
-              <td>{{linedata.zero_X}}</td>
-              <td>{{linedata.zero_half_B}}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div class="content-dis">
-      <div class="container">
-        {% if faultcon.fault_type == 0 %}
+      <div class="border">
+        <div class="container fault">
           <table class="table table-striped">
             <thead>
               <tr>
                 <td>Bus No</td>
+                <td>Bus Code</td>
                 <td>Voltage Mag</td>
                 <td>Voltage Deg</td>
+                <td>Generator MW</td>
+                <td>Generator Mvar</td>
+                <td>Load MW</td>
+                <td>Load Mvar</td>
               </tr>
             </thead>
             <tbody>
-              {% for threefaultv in threefaultv %}
+              {% for busdata in faultbusdata %}
               <tr>
-                <td>{{threefaultv.Bus_No}}</td>
-                <td>{{threefaultv.Voltage_Mag}}</td>
-                <td>{{threefaultv.Voltage_Deg}}</td>
+                <td>{{busdata.Bus_No}}</td>
+                <td>{{busdata.Bus_Code}}</td>
+                <td>{{busdata.Voltage_Mag}}</td>
+                <td>{{busdata.Voltage_Deg}}</td>
+                <td>{{busdata.Generator_MW}}</td>
+                <td>{{busdata.Generator_Mvar}}</td>
+                <td>{{busdata.Load_MW}}</td>
+                <td>{{busdata.Load_Mvar}}</td>
               </tr>
               {% endfor %}
             </tbody>
           </table>
-        {% else %}
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <td>Bus No</td>
-                <td>Phase A Mag</td>
-                <td>Phase A Deg</td>
-                <td>Phase B Mag</td>
-                <td>Phase B Deg</td>
-                <td>Phase C Mag</td>
-                <td>Phase C Deg</td>
-              </tr>
-            </thead>
-            <tbody>
-              {% for otherfaultv in otherfaultv %}
-              <tr>
-                <td>{{otherfaultv.Bus_No}}</td>
-                <td>{{otherfaultv.Phase_A_Mag}}</td>
-                <td>{{otherfaultv.Phase_A_Deg}}</td>
-                <td>{{otherfaultv.Phase_B_Mag}}</td>
-                <td>{{otherfaultv.Phase_B_Deg}}</td>
-                <td>{{otherfaultv.Phase_C_Mag}}</td>
-                <td>{{otherfaultv.Phase_C_Deg}}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        {% endif %}
+        </div>
+        <button type="button" class="btn btn-success">엑셀 저장</button>
       </div>
     </div>
     <div class="content-dis">
-      <div class="container">
-        {% if faultcon.fault_type == 0 %}
+      <div class="border">
+        <div class="container  fault">
           <table class="table table-striped">
             <thead>
               <tr>
                 <td>From Bus</td>
                 <td>To Bus</td>
-                <td>Current Mag</td>
-                <td>Current Deg</td>
+                <td>R</td>
+                <td>X</td>
+                <td>half B</td>
+                <td>negative R</td>
+                <td>negative X</td>
+                <td>zero R</td>
+                <td>zero X</td>
+                <td>zero half B</td>
               </tr>
             </thead>
             <tbody>
-              {% for threefaulti in threefaulti %}
+              {% for linedata in faultlinedata %}
               <tr>
-                <td>{{threefaulti.From_Bus}}</td>
-                <td>{{threefaulti.To_Bus}}</td>
-                <td>{{threefaulti.Current_Mag}}</td>
-                <td>{{threefaulti.Current_Deg}}</td>
+                <td>{{linedata.From_Bus}}</td>
+                <td>{{linedata.To_Bus}}</td>
+                <td>{{linedata.R}}</td>
+                <td>{{linedata.X}}</td>
+                <td>{{linedata.half_B}}</td>
+                <td>{{linedata.negative_R}}</td>
+                <td>{{linedata.negative_X}}</td>
+                <td>{{linedata.zero_R}}</td>
+                <td>{{linedata.zero_X}}</td>
+                <td>{{linedata.zero_half_B}}</td>
               </tr>
               {% endfor %}
             </tbody>
           </table>
-        {% else %}
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <td>From Bus</td>
-                <td>To Bus</td>
-                <td>Phase A Mag</td>
-                <td>Phase A Deg</td>
-                <td>Phase B Mag</td>
-                <td>Phase B Deg</td>
-                <td>Phase C Mag</td>
-                <td>Phase C Deg</td>
-              </tr>
-            </thead>
-            <tbody>
-              {% for otherfaulti in otherfaulti %}
-              <tr>
-                <td>{{otherfaulti.From_Bus}}</td>
-                <td>{{otherfaulti.To_Bus}}</td>
-                <td>{{otherfaulti.Phase_A_Mag}}</td>
-                <td>{{otherfaulti.Phase_A_Deg}}</td>
-                <td>{{otherfaulti.Phase_B_Mag}}</td>
-                <td>{{otherfaulti.Phase_B_Deg}}</td>
-                <td>{{otherfaulti.Phase_C_Mag}}</td>
-                <td>{{otherfaulti.Phase_C_Deg}}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        {% endif %}
+        </div>
+        <button type="button" class="btn btn-success">엑셀 저장</button>
+      </div>
+    </div>
+    <div class="content-dis">
+      <div class="border">
+        <div class="container  fault">
+          {% if faultcon.fault_type == 0 %}
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <td>Bus No</td>
+                  <td>Voltage Mag</td>
+                  <td>Voltage Deg</td>
+                </tr>
+              </thead>
+              <tbody>
+                {% for threefaultv in threefaultv %}
+                <tr>
+                  <td>{{threefaultv.Bus_No}}</td>
+                  <td>{{threefaultv.Voltage_Mag}}</td>
+                  <td>{{threefaultv.Voltage_Deg}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <td>Bus No</td>
+                  <td>Phase A Mag</td>
+                  <td>Phase A Deg</td>
+                  <td>Phase B Mag</td>
+                  <td>Phase B Deg</td>
+                  <td>Phase C Mag</td>
+                  <td>Phase C Deg</td>
+                </tr>
+              </thead>
+              <tbody>
+                {% for otherfaultv in otherfaultv %}
+                <tr>
+                  <td>{{otherfaultv.Bus_No}}</td>
+                  <td>{{otherfaultv.Phase_A_Mag}}</td>
+                  <td>{{otherfaultv.Phase_A_Deg}}</td>
+                  <td>{{otherfaultv.Phase_B_Mag}}</td>
+                  <td>{{otherfaultv.Phase_B_Deg}}</td>
+                  <td>{{otherfaultv.Phase_C_Mag}}</td>
+                  <td>{{otherfaultv.Phase_C_Deg}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% endif %}
+        </div>
+        <button type="button" class="btn btn-success">엑셀 저장</button>
+      </div>
+    </div>
+    <div class="content-dis">
+      <div class="border">
+        <div class="container  fault">
+          {% if faultcon.fault_type == 0 %}
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <td>From Bus</td>
+                  <td>To Bus</td>
+                  <td>Current Mag</td>
+                  <td>Current Deg</td>
+                </tr>
+              </thead>
+              <tbody>
+                {% for threefaulti in threefaulti %}
+                <tr>
+                  <td>{{threefaulti.From_Bus}}</td>
+                  <td>{{threefaulti.To_Bus}}</td>
+                  <td>{{threefaulti.Current_Mag}}</td>
+                  <td>{{threefaulti.Current_Deg}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <td>From Bus</td>
+                  <td>To Bus</td>
+                  <td>Phase A Mag</td>
+                  <td>Phase A Deg</td>
+                  <td>Phase B Mag</td>
+                  <td>Phase B Deg</td>
+                  <td>Phase C Mag</td>
+                  <td>Phase C Deg</td>
+                </tr>
+              </thead>
+              <tbody>
+                {% for otherfaulti in otherfaulti %}
+                <tr>
+                  <td>{{otherfaulti.From_Bus}}</td>
+                  <td>{{otherfaulti.To_Bus}}</td>
+                  <td>{{otherfaulti.Phase_A_Mag}}</td>
+                  <td>{{otherfaulti.Phase_A_Deg}}</td>
+                  <td>{{otherfaulti.Phase_B_Mag}}</td>
+                  <td>{{otherfaulti.Phase_B_Deg}}</td>
+                  <td>{{otherfaulti.Phase_C_Mag}}</td>
+                  <td>{{otherfaulti.Phase_C_Deg}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% endif %}
+        </div>
+        <button type="button" class="btn btn-success">엑셀 저장</button>
       </div>
     </div>
   </div>
