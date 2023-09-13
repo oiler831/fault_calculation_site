@@ -1,0 +1,21 @@
+{% extends './base.html'%}
+{% load static %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <div class="condition">
+          <form  method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="formFile" class="form-label">CIRCUIT DATA</label>
+              <input class="form-control" type="file" name="excelFile" id="formFile">
+            </div>
+            <button type="submit" class="btn btn-primary">입력</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

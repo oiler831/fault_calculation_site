@@ -11,7 +11,10 @@ def index(request):
     return render(request,'cal/main.html')
 
 def manual(request):
-    return render(request,'cal/main.html')
+    return render(request,'cal/manual.html')
+
+def test(request):
+    return render(request,'cal/test.html')
 
 
 def upload_excel_to_db(request):
@@ -33,7 +36,7 @@ def upload_excel_to_db(request):
         for i in range(len(line_df)):
             LineData.objects.create(from_bus = line_df[0][i],to_bus = line_df[1][i])
         return redirect('condition')
-    return render(request,'cal/main.html')
+    return render(request,'cal/file.html')
 
 
 def fault_con(request):
