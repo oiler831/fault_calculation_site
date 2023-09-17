@@ -2,16 +2,19 @@
 {% load static %}
 
 {% block content %}
+{% if faultcon.fault_type == 0 %}
 <div class="main">
   <input type="radio" id="tab-1" name="show" checked/>
   <input type="radio" id="tab-2" name="show" />
   <input type="radio" id="tab-3" name="show" />
   <input type="radio" id="tab-4" name="show" />
+  <input type="radio" id="tab-5" name="show" />
   <div class="tab">
     <label for="tab-1">Bus Data</label>
     <label for="tab-2">Line Data</label>
     <label for="tab-3">Fault Voltage</label>
     <label for="tab-4">Fault Current</label>
+    <label for="tab-5">Zbus</label>
   </div>
   <div class="content">
     <div class="content-dis">
@@ -35,18 +38,17 @@
               <tr>
                 <td>{{busdata.Bus_No}}</td>
                 <td>{{busdata.Bus_Code}}</td>
-                <td>{{busdata.Voltage_Mag}}</td>
-                <td>{{busdata.Voltage_Deg}}</td>
-                <td>{{busdata.Generator_MW}}</td>
-                <td>{{busdata.Generator_Mvar}}</td>
-                <td>{{busdata.Load_MW}}</td>
-                <td>{{busdata.Load_Mvar}}</td>
+                <td>{{busdata.Voltage_Mag|floatformat:-4}}</td>
+                <td>{{busdata.Voltage_Deg|floatformat:-4}}</td>
+                <td>{{busdata.Generator_MW|floatformat:-4}}</td>
+                <td>{{busdata.Generator_Mvar|floatformat:-4}}</td>
+                <td>{{busdata.Load_MW|floatformat:-4}}</td>
+                <td>{{busdata.Load_Mvar|floatformat:-4}}</td>
               </tr>
               {% endfor %}
             </tbody>
           </table>
         </div>
-        <button type="button" class="btn btn-success">엑셀 저장</button>
       </div>
     </div>
     <div class="content-dis">
@@ -72,45 +74,195 @@
               <tr>
                 <td>{{linedata.From_Bus}}</td>
                 <td>{{linedata.To_Bus}}</td>
-                <td>{{linedata.R}}</td>
-                <td>{{linedata.X}}</td>
-                <td>{{linedata.half_B}}</td>
-                <td>{{linedata.negative_R}}</td>
-                <td>{{linedata.negative_X}}</td>
-                <td>{{linedata.zero_R}}</td>
-                <td>{{linedata.zero_X}}</td>
-                <td>{{linedata.zero_half_B}}</td>
+                <td>{{linedata.R|floatformat:-4}}</td>
+                <td>{{linedata.X|floatformat:-4}}</td>
+                <td>{{linedata.half_B|floatformat:-4}}</td>
+                <td>{{linedata.negative_R|floatformat:-4}}</td>
+                <td>{{linedata.negative_X|floatformat:-4}}</td>
+                <td>{{linedata.zero_R|floatformat:-4}}</td>
+                <td>{{linedata.zero_X|floatformat:-4}}</td>
+                <td>{{linedata.zero_half_B|floatformat:-4}}</td>
               </tr>
               {% endfor %}
             </tbody>
           </table>
         </div>
-        <button type="button" class="btn btn-success">엑셀 저장</button>
+        
       </div>
     </div>
     <div class="content-dis">
       <div class="border">
         <div class="container  fault">
-          {% if faultcon.fault_type == 0 %}
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <td>Bus No</td>
+                <td>Voltage Mag</td>
+                <td>Voltage Deg</td>
+              </tr>
+            </thead>
+            <tbody>
+              {% for threefaultv in threefaultv %}
+              <tr>
+                <td>{{threefaultv.Bus_No}}</td>
+                <td>{{threefaultv.Voltage_Mag|floatformat:-4}}</td>
+                <td>{{threefaultv.Voltage_Deg|floatformat:-4}}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="content-dis">
+      <div class="border">
+        <div class="container  fault">
             <table class="table table-striped">
               <thead>
                 <tr>
-                  <td>Bus No</td>
-                  <td>Voltage Mag</td>
-                  <td>Voltage Deg</td>
+                  <td>From Bus</td>
+                  <td>To Bus</td>
+                  <td>Current Mag</td>
+                  <td>Current Deg</td>
                 </tr>
               </thead>
               <tbody>
-                {% for threefaultv in threefaultv %}
+                {% for threefaulti in threefaulti %}
                 <tr>
-                  <td>{{threefaultv.Bus_No}}</td>
-                  <td>{{threefaultv.Voltage_Mag}}</td>
-                  <td>{{threefaultv.Voltage_Deg}}</td>
+                  <td>{{threefaulti.From_Bus}}</td>
+                  <td>{{threefaulti.To_Bus}}</td>
+                  <td>{{threefaulti.Current_Mag|floatformat:-4}}</td>
+                  <td>{{threefaulti.Current_Deg|floatformat:-4}}</td>
                 </tr>
                 {% endfor %}
               </tbody>
             </table>
-          {% else %}
+        </div>
+      </div>
+    </div>
+    <div class="content-dis">
+      <div class="border">
+        <div class="container fault">
+          <table class="table table-striped">
+            <tbody>
+              {% for i in threezbus %}
+                <tr>
+                {% for j in tsource %}
+                  {% if i.check == j.row.check %}
+                    {% if j.real_source == 0 %}
+                      {% if j.imag_source == 0 %}
+                        <td>0</td>
+                      {% else %}
+                        <td>j{{j.imag_source|floatformat:-4}}</td>
+                      {% endif %}
+                    {% else %}
+                    <td>{{j.real_source|floatformat:-4}}+j{{j.imag_source|floatformat:-4}}</td>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+                </tr>
+              {% endfor %} 
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="main">
+  <input type="radio" id="tab-1" name="show" checked/>
+    <input type="radio" id="tab-2" name="show" />
+    <input type="radio" id="tab-3" name="show" />
+    <input type="radio" id="tab-4" name="show" />
+    <input type="radio" id="tab-5" name="show" />
+    <input type="radio" id="tab-6" name="show" />
+    <input type="radio" id="tab-7" name="show" />
+    <div class="tab">
+      <label for="tab-1">Bus Data</label>
+      <label for="tab-2">Line Data</label>
+      <label for="tab-3">Fault Voltage</label>
+      <label for="tab-4">Fault Current</label>
+      <label for="tab-5">Zbus</label>
+      <label for="tab-6">Negative Zbus</label>
+      <label for="tab-7">Zero Zbus</label>
+    </div>
+    <div class="content">
+      <div class="content-dis">
+        <div class="border">
+          <div class="container fault">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <td>Bus No</td>
+                  <td>Bus Code</td>
+                  <td>Voltage Mag</td>
+                  <td>Voltage Deg</td>
+                  <td>Generator MW</td>
+                  <td>Generator Mvar</td>
+                  <td>Load MW</td>
+                  <td>Load Mvar</td>
+                </tr>
+              </thead>
+              <tbody>
+                {% for busdata in faultbusdata %}
+                <tr>
+                  <td>{{busdata.Bus_No}}</td>
+                  <td>{{busdata.Bus_Code}}</td>
+                  <td>{{busdata.Voltage_Mag|floatformat:-4}}</td>
+                  <td>{{busdata.Voltage_Deg|floatformat:-4}}</td>
+                  <td>{{busdata.Generator_MW|floatformat:-4}}</td>
+                  <td>{{busdata.Generator_Mvar|floatformat:-4}}</td>
+                  <td>{{busdata.Load_MW|floatformat:-4}}</td>
+                  <td>{{busdata.Load_Mvar|floatformat:-4}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="content-dis">
+        <div class="border">
+          <div class="container  fault">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <td>From Bus</td>
+                  <td>To Bus</td>
+                  <td>R</td>
+                  <td>X</td>
+                  <td>half B</td>
+                  <td>negative R</td>
+                  <td>negative X</td>
+                  <td>zero R</td>
+                  <td>zero X</td>
+                  <td>zero half B</td>
+                </tr>
+              </thead>
+              <tbody>
+                {% for linedata in faultlinedata %}
+                <tr>
+                  <td>{{linedata.From_Bus}}</td>
+                  <td>{{linedata.To_Bus}}</td>
+                  <td>{{linedata.R|floatformat:-4}}</td>
+                  <td>{{linedata.X|floatformat:-4}}</td>
+                  <td>{{linedata.half_B|floatformat:-4}}</td>
+                  <td>{{linedata.negative_R|floatformat:-4}}</td>
+                  <td>{{linedata.negative_X|floatformat:-4}}</td>
+                  <td>{{linedata.zero_R|floatformat:-4}}</td>
+                  <td>{{linedata.zero_X|floatformat:-4}}</td>
+                  <td>{{linedata.zero_half_B|floatformat:-4}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="content-dis">
+        <div class="border">
+          <div class="container  fault">
             <table class="table table-striped">
               <thead>
                 <tr>
@@ -127,46 +279,22 @@
                 {% for otherfaultv in otherfaultv %}
                 <tr>
                   <td>{{otherfaultv.Bus_No}}</td>
-                  <td>{{otherfaultv.Phase_A_Mag}}</td>
-                  <td>{{otherfaultv.Phase_A_Deg}}</td>
-                  <td>{{otherfaultv.Phase_B_Mag}}</td>
-                  <td>{{otherfaultv.Phase_B_Deg}}</td>
-                  <td>{{otherfaultv.Phase_C_Mag}}</td>
-                  <td>{{otherfaultv.Phase_C_Deg}}</td>
+                  <td>{{otherfaultv.Phase_A_Mag|floatformat:-4}}</td>
+                  <td>{{otherfaultv.Phase_A_Deg|floatformat:-4}}</td>
+                  <td>{{otherfaultv.Phase_B_Mag|floatformat:-4}}</td>
+                  <td>{{otherfaultv.Phase_B_Deg|floatformat:-4}}</td>
+                  <td>{{otherfaultv.Phase_C_Mag|floatformat:-4}}</td>
+                  <td>{{otherfaultv.Phase_C_Deg|floatformat:-4}}</td>
                 </tr>
                 {% endfor %}
               </tbody>
             </table>
-          {% endif %}
+          </div>
         </div>
-        <button type="button" class="btn btn-success">엑셀 저장</button>
       </div>
-    </div>
-    <div class="content-dis">
-      <div class="border">
-        <div class="container  fault">
-          {% if faultcon.fault_type == 0 %}
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <td>From Bus</td>
-                  <td>To Bus</td>
-                  <td>Current Mag</td>
-                  <td>Current Deg</td>
-                </tr>
-              </thead>
-              <tbody>
-                {% for threefaulti in threefaulti %}
-                <tr>
-                  <td>{{threefaulti.From_Bus}}</td>
-                  <td>{{threefaulti.To_Bus}}</td>
-                  <td>{{threefaulti.Current_Mag}}</td>
-                  <td>{{threefaulti.Current_Deg}}</td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          {% else %}
+      <div class="content-dis">
+        <div class="border">
+          <div class="container  fault">
             <table class="table table-striped">
               <thead>
                 <tr>
@@ -185,21 +313,102 @@
                 <tr>
                   <td>{{otherfaulti.From_Bus}}</td>
                   <td>{{otherfaulti.To_Bus}}</td>
-                  <td>{{otherfaulti.Phase_A_Mag}}</td>
-                  <td>{{otherfaulti.Phase_A_Deg}}</td>
-                  <td>{{otherfaulti.Phase_B_Mag}}</td>
-                  <td>{{otherfaulti.Phase_B_Deg}}</td>
-                  <td>{{otherfaulti.Phase_C_Mag}}</td>
-                  <td>{{otherfaulti.Phase_C_Deg}}</td>
+                  <td>{{otherfaulti.Phase_A_Mag|floatformat:-4}}</td>
+                  <td>{{otherfaulti.Phase_A_Deg|floatformat:-4}}</td>
+                  <td>{{otherfaulti.Phase_B_Mag|floatformat:-4}}</td>
+                  <td>{{otherfaulti.Phase_B_Deg|floatformat:-4}}</td>
+                  <td>{{otherfaulti.Phase_C_Mag|floatformat:-4}}</td>
+                  <td>{{otherfaulti.Phase_C_Deg|floatformat:-4}}</td>
                 </tr>
                 {% endfor %}
               </tbody>
             </table>
-          {% endif %}
+          </div>
         </div>
-        <button type="button" class="btn btn-success">엑셀 저장</button>
+      </div>
+      <div class="content-dis">
+        <div class="border">
+          <div class="container fault">
+            <table class="table table-striped">
+              <tbody>
+                {% for i in otherzbus %}
+                  <tr>
+                  {% for j in osource %}
+                    {% if i.check == j.row.check %}
+                      {% if j.real_source == 0 %}
+                        {% if j.imag_source == 0 %}
+                          <td>0</td>
+                        {% else %}
+                          <td>j{{j.imag_source|floatformat:-4}}</td>
+                        {% endif %}
+                      {% else %}
+                      <td>{{j.real_source|floatformat:-4}}+j{{j.imag_source|floatformat:-4}}</td>
+                      {% endif %}
+                    {% endif %}
+                  {% endfor %}
+                  </tr>
+                {% endfor %} 
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="content-dis">
+        <div class="border">
+          <div class="container fault">
+            <table class="table table-striped">
+              <tbody>
+                {% for i in otherzbus %}
+                  <tr>
+                  {% for j in nsource %}
+                    {% if i.check == j.row.check %}
+                      {% if j.real_source == 0 %}
+                        {% if j.imag_source == 0 %}
+                          <td>0</td>
+                        {% else %}
+                          <td>j{{j.imag_source|floatformat:-4}}</td>
+                        {% endif %}
+                      {% else %}
+                      <td>{{j.real_source|floatformat:-4}}+j{{j.imag_source|floatformat:-4}}</td>
+                      {% endif %}
+                    {% endif %}
+                  {% endfor %}
+                  </tr>
+                {% endfor %} 
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="content-dis">
+        <div class="border">
+          <div class="container fault">
+            <table class="table table-striped">
+              <tbody>
+                {% for i in otherzbus %}
+                  <tr>
+                  {% for j in zsource %}
+                    {% if i.check == j.row.check %}
+                      {% if j.real_source == 0 %}
+                        {% if j.imag_source == 0 %}
+                          <td>0</td>
+                        {% else %}
+                          <td>j{{j.imag_source|floatformat:-4}}</td>
+                        {% endif %}
+                      {% else %}
+                      <td>{{j.real_source|floatformat:-4}}+j{{j.imag_source|floatformat:-4}}</td>
+                      {% endif %}
+                    {% endif %}
+                  {% endfor %}
+                  </tr>
+                {% endfor %} 
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
+{% endif %}
 {% endblock content %}
+

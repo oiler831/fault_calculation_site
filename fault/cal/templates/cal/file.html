@@ -8,14 +8,53 @@
         <div class="condition">
           <form  method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-            <div class="mb-3">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="isexample" value="False" id="direct" onclick="selectDisable(),fileActive(),Hide()" checked>
+              <label class="form-check-label" for="direct">
+                직접입력
+              </label>
+            </div>
+              <div class="mb-3">
               <label for="formFile" class="form-label">CIRCUIT DATA</label>
               <input class="form-control" type="file" name="excelFile" id="formFile">
             </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="isexample" value="True" id="example" onclick="selectActive(),fileDisable(),Reveal()">
+              <label class="form-check-label" for="example">
+                예제
+              </label>
+            </div>
+            <select class="form-select" id="exampleselect" name=exampleselect onchange="Change()" disabled>
+              <option value="1">1번 예제</option>
+              <option value="2">2번 예제</option>
+              <option value="3">3번 예제</option>
+            </select>
+            <br>
             <button type="submit" class="btn btn-primary">입력</button>
           </form>
         </div>
       </div>
     </div>
+    <div id="d1" style="display:none">
+      <img src="{% static 'cal/images/lightning.svg'%}">
+    </div>
+    <div id="d2" style="display:none">
+    <table width="100%" height="100" border="0" cellpadding="0" cellspacing="0">
+      <tr>
+        <td>2번 선택시 나오는거 </td>
+      </tr>
+    </table>
+    </div>
+    <div id="d3" style="display:none">
+    <table width="100%" height="100" border="0" cellpadding="0" cellspacing="0">
+      <tr>
+      <td>3번 선택시 나오는거 </td>
+      </tr>
+    </table> 
+    </div>
   </div>
 {% endblock content %}
+
+{% block script %}
+<script src={%static 'cal/js/file.js'%}></script>
+{% endblock script %}

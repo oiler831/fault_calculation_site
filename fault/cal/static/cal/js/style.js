@@ -18,24 +18,3 @@ function busDisable()  {
   target.disabled = true;
 }
 
-function Change() {
-    var key = test.value;
-    var d1 = document.getElementById("d1");
-    var d2 = document.getElementById("d2");
-    var d3 = document.getElementById("d3");
-    if(key==1){
-      d1.style.display="block";
-      d2.style.display="none";
-      d3.style.display="none"; 
-    }
-    if(key==2){
-      d1.style.display="none";
-      d2.style.display="block";
-      d3.style.display="none";
-    }
-    if(key==3){
-        d1.style.display="none";
-        d2.style.display="none";
-        d3.style.display="block";
-    }
-}

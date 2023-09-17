@@ -35,7 +35,10 @@ label{
 #tab-1:checked ~ .tab label:nth-child(1),
 #tab-2:checked ~ .tab label:nth-child(2),
 #tab-3:checked ~ .tab label:nth-child(3),
-#tab-4:checked ~ .tab label:nth-child(4) {
+#tab-4:checked ~ .tab label:nth-child(4),
+#tab-5:checked ~ .tab label:nth-child(5),
+#tab-6:checked ~ .tab label:nth-child(6),
+#tab-7:checked ~ .tab label:nth-child(7){
   background-color: rgba(0, 0, 0, 0.2);
   box-shadow: none;
 }
@@ -45,12 +48,14 @@ label{
 #tab-1:checked ~ .content div:nth-child(1),
 #tab-2:checked ~ .content div:nth-child(2),
 #tab-3:checked ~ .content div:nth-child(3),
-#tab-4:checked ~ .content div:nth-child(4)  {
+#tab-4:checked ~ .content div:nth-child(4),
+#tab-5:checked ~ .content div:nth-child(5),
+#tab-6:checked ~ .content div:nth-child(6),
+#tab-7:checked ~ .content div:nth-child(7)  {
 	display:block;
 }
 .main {
   margin: 0 auto;
-  main-width:1380px;
   max-width: 100%;
 }
 .tab {

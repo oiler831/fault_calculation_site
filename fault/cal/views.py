@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import (FaultCondition, BusData, LineData, ExcelFile,FaultLineData,FaultBusData,
-                    ThreeFaultI,ThreeFaultV,OtherFaultI,OtherFaultV)
+                    ThreeFaultI,ThreeFaultV,OtherFaultI,OtherFaultV,conditionCheck,ThreeZbus,ThreeZbusSource,
+                    OtherZbusSource,OtherZbus,negativeZbusSource,zeroZbusSource)
 import pandas as pd
 import numpy as np
 import math
@@ -13,19 +14,21 @@ def index(request):
 def manual(request):
     return render(request,'cal/manual.html')
 
-def test(request):
-    return render(request,'cal/test.html')
-
 
 def upload_excel_to_db(request):
+    clear = BusData.objects.all()
+    clear.delete()
+    clear = LineData.objects.all()
+    clear.delete()
+    clear = conditionCheck.objects.all()
+    clear.delete()
+    clear = ExcelFile.objects.all()
+    clear.delete()
     if request.method == 'POST':
-        clear = BusData.objects.all()
-        clear.delete()
-        clear = LineData.objects.all()
-        clear.delete()
-        clear = ExcelFile.objects.all()
-        clear.delete()
-        excel_file = request.FILES['excelFile']
+        if request.FILES['excelFile']:
+            excel_file = request.FILES['excelFile']
+        else:
+            excel_file = '/home/jin/graduation/fault/media/example/bus_9.9-2.xlsx'
         find_file = True
         new_file = ExcelFile(file = excel_file, find_file = find_file)
         new_file.save()
@@ -35,27 +38,39 @@ def upload_excel_to_db(request):
             BusData.objects.create(bus_num = bus_df[0][i])
         for i in range(len(line_df)):
             LineData.objects.create(from_bus = line_df[0][i],to_bus = line_df[1][i])
+        if len(bus_df.columns) != 10:
+            is_flow = False
+        else:
+            is_flow = True
+        if len(line_df.columns) != 12:
+            is_not_symmetry = False
+        else:
+            is_not_symmetry = True
+        conditionCheck.objects.create(is_flow=is_flow,is_not_symmetry=is_not_symmetry,find_con=True)
         return redirect('condition')
     return render(request,'cal/file.html')
 
 
 def fault_con(request):
+    clear = FaultCondition.objects.all()
+    clear.delete()
+    clear = FaultBusData.objects.all()
+    clear.delete()
+    clear = FaultLineData.objects.all()
+    clear.delete()
+    clear = ThreeFaultI.objects.all()
+    clear.delete()
+    clear = ThreeFaultV.objects.all()
+    clear.delete()
+    clear = OtherFaultI.objects.all()
+    clear.delete()
+    clear = OtherFaultV.objects.all()
+    clear.delete()
+    clear = ThreeZbus.objects.all()
+    clear.delete()
+    clear = OtherZbus.objects.all()
+    clear.delete()
     if request.method == 'POST':
-        clear = FaultCondition.objects.all()
-        clear.delete()
-        clear = FaultBusData.objects.all()
-        clear.delete()
-        clear = FaultLineData.objects.all()
-        clear.delete()
-        clear = ThreeFaultI.objects.all()
-        clear.delete()
-        clear = ThreeFaultV.objects.all()
-        clear.delete()
-        clear = OtherFaultI.objects.all()
-        clear.delete()
-        clear = OtherFaultV.objects.all()
-        clear.delete()
-        
         basemva = request.POST['basemva']
         is_flow = request.POST['is_flow']
         fault_type = request.POST['fault_type']
@@ -74,11 +89,6 @@ def fault_con(request):
         impedence_X = request.POST['impedence_X']
         is_shunt = request.POST.get('is_shunt', False)
         is_load_effect = request.POST.get('is_load_effect', False)
-        file = ExcelFile.objects.get(find_file=True)
-        line_df = pd.read_excel(file.file.path, header=None) 
-        # con = sqlite3.connect("/home/jin/graduation/fault/db.sqlite3")
-        # line_df.to_sql('test',con,dtype=float)
-        # df = pd.read_sql("SELECT * FROM test", con, index_col='index')
         new_con = FaultCondition(
             basemva = basemva,
             is_flow = is_flow,
@@ -114,9 +124,12 @@ def fault_con(request):
             line_df, initial_bus_voltage, fault_loc = \
                 line_sliding_scaling(line_df, initial_bus_voltage, fault_con.fault_line_1, fault_con.fault_line_2, fault_con.line_percentage/100)
         
-        result_v, result_cur = fault_select(initial_bus_voltage, line_df, bus_df,
-                                                            fault_loc, fault_impedence, fault_con.fault_type,
-                                                            fault_con.is_shunt, fault_con.is_load_effect)
+        if fault_con.fault_type==0:
+            result_v, result_cur, threebus = three_phase_fault(initial_bus_voltage, line_df, bus_df, fault_loc, fault_impedence,
+                                                                fault_con.is_shunt, fault_con.is_load_effect)
+        else:
+            result_v, result_cur, bus, negativebus, zerobus = unbalanced_fault(initial_bus_voltage, line_df, bus_df, fault_loc, fault_impedence,
+                                                                fault_con.fault_type,fault_con.is_shunt, fault_con.is_load_effect)
         result_v, result_cur = after_fault_scaling(line_df, bus_df, result_v, result_cur, fault_loc, fault_con.fault_type)
         bus_df = after_flow_scaling(bus_df, fault_con.basemva)
         for i in range(len(bus_df)):
@@ -134,6 +147,11 @@ def fault_con(request):
             for i in range(len(result_cur)):
                 ThreeFaultI.objects.create(From_Bus=result_cur[0][i], To_Bus=result_cur[1][i],
                                             Current_Mag=result_cur[2][i], Current_Deg=result_cur[3][i])
+            for i in range(len(result_v)):
+                ThreeZbus.objects.create(check = i)
+                row = ThreeZbus.objects.get(check=i)
+                for j in range(len(result_v)):
+                    ThreeZbusSource.objects.create(row = row, real_source=threebus[i][j].real, imag_source=threebus[i][j].imag)
         else:
             for i in range(len(result_v)):
                 OtherFaultV.objects.create(Bus_No=result_v[0][i], Phase_A_Mag=result_v[1][i], Phase_A_Deg=result_v[2][i],
@@ -141,10 +159,18 @@ def fault_con(request):
             for i in range(len(result_cur)):
                 OtherFaultI.objects.create(From_Bus=result_cur[0][i], To_Bus=result_cur[1][i], Phase_A_Mag=result_cur[2][i], Phase_A_Deg=result_cur[3][i],
                                             Phase_B_Mag=result_cur[4][i], Phase_B_Deg=result_cur[5][i],Phase_C_Mag=result_cur[6][i], Phase_C_Deg=result_cur[7][i])
+            for i in range(len(result_v)):
+                OtherZbus.objects.create(check = i)
+                row = OtherZbus.objects.get(check=i)
+                for j in range(len(result_v)):
+                    OtherZbusSource.objects.create(row = row,real_source=bus[i][j].real, imag_source=bus[i][j].imag)
+                    negativeZbusSource.objects.create(row = row,real_source=negativebus[i][j].real, imag_source=negativebus[i][j].imag)
+                    zeroZbusSource.objects.create(row = row,real_source=zerobus[i][j].real, imag_source=zerobus[i][j].imag)
         return redirect('result')
     busdata = BusData.objects.all()
     linedata = LineData.objects.all().exclude(from_bus=0).exclude(to_bus=0)
-    context ={'busdata':busdata,'linedata':linedata}
+    condition = conditionCheck.objects.get(find_con=True)
+    context ={'busdata':busdata,'linedata':linedata,'condition':condition}
     return render(request, 'cal/fault_con.html', context=context)
 
 def result(request):
@@ -155,8 +181,16 @@ def result(request):
     threefaulti=ThreeFaultI.objects.all()
     otherfaultv=OtherFaultV.objects.all()
     otherfaulti=OtherFaultI.objects.all()
+    threezbus=ThreeZbus.objects.all()
+    threezbussource = ThreeZbusSource.objects.all()
+    otherzbus=OtherZbus.objects.all()
+    otherzbussource = OtherZbusSource.objects.all()
+    negativezbussource = negativeZbusSource.objects.all()
+    zerozbussource = zeroZbusSource.objects.all()
     context = {'faultbusdata':faultbusdata,'faultlinedata':faultlinedata,'threefaultv':threefaultv,'threefaulti':threefaulti,
-                'otherfaultv':otherfaultv,'otherfaulti':otherfaulti, 'faultcon':faultcon}
+                'otherfaultv':otherfaultv,'otherfaulti':otherfaulti, 'faultcon':faultcon,'threezbus':threezbus,
+                'tsource':threezbussource,'otherzbus':otherzbus,'osource':otherzbussource,'nsource':negativezbussource,
+                'zsource':zerozbussource}
     return render(request, 'cal/fault_result.html',context=context)
 
 
@@ -378,15 +412,6 @@ def load_zbus(line_d, bus_d):
     return np.linalg.inv(bus)
 
 
-def fault_select(bus_voltage, line_d, bus_d, fault_location, fault_impedance, fault_type,
-                half_b_consider, is_bus_load):
-    if fault_type == 0:
-        return three_phase_fault(bus_voltage, line_d, bus_d, fault_location, fault_impedance,
-                                half_b_consider, is_bus_load)
-    else:
-        return unbalanced_fault(bus_voltage, line_d, bus_d, fault_location, fault_impedance, fault_type,
-                                half_b_consider, is_bus_load)
-
 def three_phase_fault(bus_voltage, line_d, bus_d, fault_location, fault_impedance,
                         half_b_consider, is_bus_load):
     j = complex(0, 1)
@@ -422,7 +447,7 @@ def three_phase_fault(bus_voltage, line_d, bus_d, fault_location, fault_impedanc
         else:
             fault_line_current[i] = (fault_bus_voltage[fb[i] - 1] - fault_bus_voltage[tb[i] - 1]) / z[i]
     fault_line_current[con_num] = fault_current
-    return fault_bus_voltage, fault_line_current
+    return fault_bus_voltage, fault_line_current, fault_bus
 
 
 def unbalanced_fault(bus_voltage, line_d, bus_d, fault_location, fault_impedance, fault_type,
@@ -482,7 +507,7 @@ def unbalanced_fault(bus_voltage, line_d, bus_d, fault_location, fault_impedance
         fault_line_current[i, :] = np.transpose(a_matrix @ symmetrical_components)
     fault_line_current[con_num, :] = np.transpose(fault_phase_current)
 
-    return fault_bus_voltage, fault_line_current
+    return fault_bus_voltage, fault_line_current, positive_fault_bus, negative_fault_bus, zero_fault_bus
 
 def symmetrical_components_transformation_matrix():
     j = complex(0, 1)

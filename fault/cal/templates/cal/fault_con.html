@@ -18,12 +18,21 @@
           사용자 입력
         </label>
       </div>
-      <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="is_flow" id="id_is_flow1" value="True">
-        <label class="form-check-label" for="id_is_flow1">
-          조류 계산
-        </label>
-      </div>
+      {% if condition.is_flow %}
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="is_flow" id="id_is_flow1" value="True">
+          <label class="form-check-label" for="id_is_flow1">
+            조류 계산
+          </label>
+        </div>
+      {% else %}
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="is_flow" id="id_is_flow1" value="True" disabled>
+          <label class="form-check-label" for="id_is_flow1">
+            조류 계산
+          </label>
+        </div>
+      {% endif %}
     </div>
     <div>
     <label>고장 종류 선택</label>
@@ -33,6 +42,7 @@
         3상 고장(balanced fault)
       </label>
     </div>
+    {% if condition.is_not_symmetry %}
     <div class="form-check form-check-inline">
       <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_1" value="1">
       <label class="form-check-label" for="id_fault_type_1">
@@ -51,6 +61,26 @@
         2선 지락(double line to ground fault)
       </label>
     </div>
+    {% else %}
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_1" value="1" disabled>
+        <label class="form-check-label" for="id_fault_type_1">
+          1선 지락(single line to ground fault)
+        </label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_2" value="2" disabled>
+        <label class="form-check-label" for="id_fault_type_2">
+          선간 단락(line to line fault)
+        </label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_3" value="3" disabled>
+        <label class="form-check-label" for="id_fault_type_3">
+          2선 지락(double line to ground fault)
+        </label>
+      </div>
+    {% endif %}
     <div>
       <label>고장 위치 선택</label>
       <div class="form-check">

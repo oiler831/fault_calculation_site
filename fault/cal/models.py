@@ -9,6 +9,11 @@ class LineData(models.Model):
     to_bus =models.SmallIntegerField()
     from_bus = models.SmallIntegerField()
 
+class conditionCheck(models.Model):
+    is_not_symmetry = models.BooleanField()
+    is_flow = models.BooleanField()
+    find_con = models.BooleanField(default=False)
+
 class FaultCondition(models.Model):
     basemva = models.SmallIntegerField()
     is_flow = models.BooleanField()
@@ -25,8 +30,8 @@ class FaultCondition(models.Model):
     to_find = models.BooleanField(default=False)
 
 class ExcelFile(models.Model):
-    file = models.FileField(upload_to="input_excel")
-    find_file = models.BooleanField(default=False)
+    file = models.FileField(upload_to="input_excel",null=True,blank=True)
+    find_file = models.BooleanField(default=False,null=True,blank=True)
 
 
 class FaultBusData(models.Model):
@@ -85,3 +90,30 @@ class OtherFaultI(models.Model):
     Phase_B_Deg = models.FloatField()
     Phase_C_Mag = models.FloatField()
     Phase_C_Deg = models.FloatField()
+
+class ThreeZbus(models.Model): 
+    check = models.SmallIntegerField(default=0)
+
+
+class ThreeZbusSource(models.Model):
+    row = models.ForeignKey("ThreeZbus", on_delete=models.CASCADE)
+    real_source = models.FloatField(default=0)
+    imag_source = models.FloatField(default=0)
+
+class OtherZbus(models.Model): 
+    check = models.SmallIntegerField(default=0)
+
+class OtherZbusSource(models.Model):
+    row = models.ForeignKey("OtherZbus", on_delete=models.CASCADE)
+    real_source = models.FloatField(default=0)
+    imag_source = models.FloatField(default=0)
+
+class negativeZbusSource(models.Model):
+    row = models.ForeignKey("OtherZbus", on_delete=models.CASCADE)
+    real_source = models.FloatField(default=0)
+    imag_source = models.FloatField(default=0)
+
+class zeroZbusSource(models.Model):
+    row = models.ForeignKey("OtherZbus", on_delete=models.CASCADE)
+    real_source = models.FloatField(default=0)
+    imag_source = models.FloatField(default=0)

@@ -3,7 +3,7 @@
 
 
 {% block content %}
-<select id="test" onchange="Change()">
+{% comment %} <select id="test" onchange="Change()">
   <option value="1">1번메뉴</option>
   <option value="2">2번메뉴</option>
   <option value="3">3번메뉴</option>
@@ -24,8 +24,16 @@
  <tr>
   <td>3번 선택시 나오는거 </td>
  </tr>
-</table>
-</div>
+</table> 
+</div> {% endcomment %}
+{% for i in a %}
+  {% for j in b %}
+    {% if i.id == j.test_id.id %}
+      <div>{{j.contents}}</div>
+    {% endif %}
+  {% endfor %}
+  <br>
+{% endfor %}
 {% endblock content %}
 
 
