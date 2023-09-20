@@ -1,11 +1,10 @@
 from django.shortcuts import render, redirect
 from .models import (FaultCondition, BusData, LineData, ExcelFile,FaultLineData,FaultBusData,
                     ThreeFaultI,ThreeFaultV,OtherFaultI,OtherFaultV,conditionCheck,ThreeZbus,ThreeZbusSource,
-                    OtherZbusSource,OtherZbus,negativeZbusSource,zeroZbusSource)
+                    OtherZbusSource,OtherZbus,negativeZbusSource,zeroZbusSource,isExample)
 import pandas as pd
 import numpy as np
 import math
-import sqlite3
 
 # Create your views here.
 def index(request):
@@ -24,14 +23,22 @@ def upload_excel_to_db(request):
     clear.delete()
     clear = ExcelFile.objects.all()
     clear.delete()
+    clear = isExample.objects.all()
+    clear.delete()
     if request.method == 'POST':
-        if request.FILES['excelFile']:
-            excel_file = request.FILES['excelFile']
+        if request.POST['isexample'] == "True":
+            if request.POST['exampleselect']=='1':
+                excel_file="/home/jin/graduation/fault/media/example/bus_9.9-2.xlsx"
+            elif request.POST['exampleselect']=='2':
+                excel_file="/home/jin/graduation/fault/media/example/bus_10.8.xlsx"
+            elif request.POST['exampleselect']=='3':
+                excel_file="/home/jin/graduation/fault/media/example/bus_9.9-2 - 복사본.xlsx"
         else:
-            excel_file = '/home/jin/graduation/fault/media/example/bus_9.9-2.xlsx'
-        find_file = True
-        new_file = ExcelFile(file = excel_file, find_file = find_file)
-        new_file.save()
+            excel_file = request.FILES['excelFile']
+            find_file = True
+            new_file = ExcelFile(file = excel_file, find_file = find_file)
+            new_file.save()
+        isExample.objects.create(isex=request.POST['isexample'],exampleNumber=request.POST.get('exampleselect'),find_ex=True)
         bus_df = pd.read_excel(excel_file,header=None,sheet_name=0)
         line_df = pd.read_excel(excel_file,header=None,sheet_name=1)
         for i in range(len(bus_df)):
@@ -105,41 +112,67 @@ def fault_con(request):
             to_find = True,
         )
         new_con.save()
+        #condition
         j = complex(0, 1)
-        file = ExcelFile.objects.get(find_file=True)
+        isexample = isExample.objects.get(find_ex=True)
+        if isexample.isex:
+            if isexample.exampleNumber==1:
+                file = "/home/jin/graduation/fault/media/example/bus_9.9-2.xlsx"
+            elif isexample.exampleNumber==2:
+                file = "/home/jin/graduation/fault/media/example/bus_10.8.xlsx"
+            elif isexample.exampleNumber==3:
+                file = "/home/jin/graduation/fault/media/example/bus_9.9-2 - 복사본.xlsx"
+            bus_df = pd.read_excel(file,sheet_name=0, header=None) 
+            line_df = pd.read_excel(file,sheet_name=1, header=None) 
+        else:
+            file = ExcelFile.objects.get(find_file=True)
+            bus_df = pd.read_excel(file.file.path,sheet_name=0, header=None) 
+            line_df = pd.read_excel(file.file.path,sheet_name=1, header=None) 
+        #file load
+        condition = conditionCheck.objects.get(find_con = True)
         fault_con = FaultCondition.objects.get(to_find=True)
-        bus_df = pd.read_excel(file.file.path,sheet_name=0, header=None) 
-        line_df = pd.read_excel(file.file.path,sheet_name=1, header=None) 
-        bus_df = bus_scaling(bus_df, fault_con.basemva)
-        if fault_con.is_flow:
-            bus_df, repeat_count = gauss_flow_test(line_df, bus_df)
+        if condition.is_flow:
+            bus_df = bus_scaling(bus_df, fault_con.basemva)
+            if fault_con.is_flow:
+                bus_df, repeat_count = gauss_flow(line_df, bus_df)
 
-        initial_bus_voltage = bus_df.iloc[:, 1] * np.exp(j * np.deg2rad(bus_df.iloc[:, 2])) 
-        line_df = fault_line_data_scaling(line_df, fault_con.fault_type) 
+        initial_bus_voltage = bus_df.iloc[:, 1] * np.exp(j * np.deg2rad(bus_df.iloc[:, 2]))
+
+        if condition.is_not_symmetry: 
+            line_df = fault_line_data_scaling(line_df) 
         
         fault_impedence = fault_con.impedence_R + j * fault_con.impedence_X
+
         if fault_con.is_bus_fault:
             fault_loc = fault_con.fault_bus
         else:
-            line_df, initial_bus_voltage, fault_loc = \
-                line_sliding_scaling(line_df, initial_bus_voltage, fault_con.fault_line_1, fault_con.fault_line_2, fault_con.line_percentage/100)
+            line_df, bus_df, initial_bus_voltage, fault_loc = \
+                line_sliding_scaling(line_df,bus_df, initial_bus_voltage, fault_con.fault_line_1, fault_con.fault_line_2,
+                                    fault_con.line_percentage/100, condition.is_flow, condition.is_not_symmetry)
         
-        if fault_con.fault_type==0:
+        if fault_con.fault_type == 0:
             result_v, result_cur, threebus = three_phase_fault(initial_bus_voltage, line_df, bus_df, fault_loc, fault_impedence,
                                                                 fault_con.is_shunt, fault_con.is_load_effect)
         else:
             result_v, result_cur, bus, negativebus, zerobus = unbalanced_fault(initial_bus_voltage, line_df, bus_df, fault_loc, fault_impedence,
                                                                 fault_con.fault_type,fault_con.is_shunt, fault_con.is_load_effect)
         result_v, result_cur = after_fault_scaling(line_df, bus_df, result_v, result_cur, fault_loc, fault_con.fault_type)
-        bus_df = after_flow_scaling(bus_df, fault_con.basemva)
+        if condition.is_flow:
+            bus_df = after_flow_scaling(bus_df, fault_con.basemva)
         for i in range(len(bus_df)):
-            FaultBusData.objects.create(Bus_No=bus_df[0][i], Bus_Code=bus_df[9][i], Voltage_Mag=bus_df[1][i], Voltage_Deg=bus_df[2][i],
+            if condition.is_flow:
+                FaultBusData.objects.create(Bus_No=bus_df[0][i], Bus_Code=bus_df[9][i], Voltage_Mag=bus_df[1][i], Voltage_Deg=bus_df[2][i],
                                         Generator_MW=bus_df[3][i],Generator_Mvar=bus_df[4][i],Load_MW=bus_df[5][i],Load_Mvar=bus_df[6][i])
+            else:
+                FaultBusData.objects.create(Bus_No=bus_df[0][i], Voltage_Mag=bus_df[1][i], Voltage_Deg=bus_df[2][i])
 
         for i in range(len(line_df)):
-            FaultLineData.objects.create(From_Bus=line_df[0][i], To_Bus=line_df[1][i], R=line_df[2][i], X=line_df[3][i],
+            if condition.is_not_symmetry:
+                FaultLineData.objects.create(From_Bus=line_df[0][i], To_Bus=line_df[1][i], R=line_df[2][i], X=line_df[3][i],
                                         half_B=line_df[4][i],negative_R=line_df[5][i],negative_X=line_df[6][i],
                                         zero_R=line_df[7][i],zero_X=line_df[8][i],zero_half_B=line_df[10][i])
+            else:
+                FaultLineData.objects.create(From_Bus=line_df[0][i], To_Bus=line_df[1][i], R=line_df[2][i], X=line_df[3][i], half_B=line_df[4][i])
         
         if fault_con.fault_type == 0:
             for i in range(len(result_v)):
@@ -170,7 +203,8 @@ def fault_con(request):
     busdata = BusData.objects.all()
     linedata = LineData.objects.all().exclude(from_bus=0).exclude(to_bus=0)
     condition = conditionCheck.objects.get(find_con=True)
-    context ={'busdata':busdata,'linedata':linedata,'condition':condition}
+    isexample = isExample.objects.get(find_ex=True)
+    context ={'busdata':busdata,'linedata':linedata,'condition':condition,'isexample':isexample}
     return render(request, 'cal/fault_con.html', context=context)
 
 def result(request):
@@ -187,10 +221,11 @@ def result(request):
     otherzbussource = OtherZbusSource.objects.all()
     negativezbussource = negativeZbusSource.objects.all()
     zerozbussource = zeroZbusSource.objects.all()
+    condition = conditionCheck.objects.get(find_con=True)
     context = {'faultbusdata':faultbusdata,'faultlinedata':faultlinedata,'threefaultv':threefaultv,'threefaulti':threefaulti,
                 'otherfaultv':otherfaultv,'otherfaulti':otherfaulti, 'faultcon':faultcon,'threezbus':threezbus,
                 'tsource':threezbussource,'otherzbus':otherzbus,'osource':otherzbussource,'nsource':negativezbussource,
-                'zsource':zerozbussource}
+                'zsource':zerozbussource,'condition':condition}
     return render(request, 'cal/fault_result.html',context=context)
 
 
@@ -228,7 +263,7 @@ def flow_y_bus(line_d):
             bus[tb[i] - 1, tb[i] - 1] += y[i] + half_b[i]
     return bus
 
-def gauss_flow_test(line_d, bus_d):
+def gauss_flow(line_d, bus_d):
     flow_bus = flow_y_bus(line_d)
     j = complex(0, 1)
     bus_n = bus_d.iloc[:, 0]  # bus number
@@ -288,78 +323,99 @@ def gauss_flow_test(line_d, bus_d):
     bus_d.iloc[:, 2] = np.angle(curr_v, deg=True)
     return bus_d, repeat
 
-def fault_line_data_scaling(line_df, fault_type):
-    if fault_type > 0:
-        fb = line_df.iloc[:, 0]
-        con_num = len(fb)
-        line_df.iloc[:,8] += 3 * line_df.iloc[:, 9]
-        append_count = 0
-        for i in range(con_num):
-            if line_df[11][i] == 1:
-                line_df.loc[con_num + append_count] = [line_df[0][i], 0, 0, 0, line_df[4][i], 0, 0,
-                                                        line_df[7][i], line_df[8][i], line_df[9][i],
-                                                        line_df[10][i], line_df[11][i]]
-                append_count += 1
-                line_df[7][i] = 0
-                line_df[8][i] = 0
-                line_df[9][i] = 0
-            if line_df[11][i] == 2:
-                line_df.loc[con_num + append_count] = [0, line_df[1][i], 0, 0, line_df[4][i], 0, 0,
-                                                        line_df[7][i], line_df[8][i], line_df[9][i],
-                                                        line_df[10][i], line_df[11][i]]
-                append_count += 1
-                line_df[7][i] = 0
-                line_df[8][i] = 0
-                line_df[9][i] = 0
-            if line_df[11][i] >= 3:
-                line_df[7][i] = 0
-                line_df[8][i] = 0
-                line_df[9][i] = 0
+def fault_line_data_scaling(line_df):
+    fb = line_df.iloc[:, 0]
+    con_num = len(fb)
+    line_df.iloc[:,8] += 3 * line_df.iloc[:, 9]
+    append_count = 0
+    for i in range(con_num):
+        if line_df[11][i] == 1:
+            line_df.loc[con_num + append_count] = [line_df[0][i], 0, 0, 0, line_df[4][i], 0, 0,
+                                                    line_df[7][i], line_df[8][i], line_df[9][i],
+                                                    line_df[10][i], line_df[11][i]]
+            append_count += 1
+            line_df[7][i] = 0
+            line_df[8][i] = 0
+            line_df[9][i] = 0
+        if line_df[11][i] == 2:
+            line_df.loc[con_num + append_count] = [0, line_df[1][i], 0, 0, line_df[4][i], 0, 0,
+                                                    line_df[7][i], line_df[8][i], line_df[9][i],
+                                                    line_df[10][i], line_df[11][i]]
+            append_count += 1
+            line_df[7][i] = 0
+            line_df[8][i] = 0
+            line_df[9][i] = 0
+        if line_df[11][i] >= 3:
+            line_df[7][i] = 0
+            line_df[8][i] = 0
+            line_df[9][i] = 0
     line_df = line_df.astype({0: 'int'})
     line_df = line_df.astype({1: 'int'})
     return line_df
 
-def line_sliding_scaling(line_d, voltage, fault_bus_1, fault_bus_2, percent):
+def line_sliding_scaling(line_d,bus_d, voltage, fault_bus_1, fault_bus_2, percent, is_not_sym, is_flow):
     fb = line_d.iloc[:, 0]
     tb = line_d.iloc[:, 1]
     con_num = len(fb)
     bus_size = max(max(fb), max(tb))
-    for i in range(con_num):
-        if (fb[i] == fault_bus_1 and tb[i] == fault_bus_2) or (tb[i] == fault_bus_1 and fb[i] == fault_bus_2):
-            temp_line = line_d.loc[i, :]
-            if temp_line[0] == fault_bus_1:
-                line_d.loc[i] = [temp_line[0], bus_size + 1, temp_line[2] * percent,
-                                 temp_line[3] * percent, temp_line[4] * percent,
-                                 temp_line[5] * percent, temp_line[6] * percent,
-                                 temp_line[7] * percent, temp_line[8] * percent,
-                                 temp_line[9] * percent, temp_line[10] * percent,
-                                temp_line[11]]
-                line_d.loc[con_num] = [bus_size + 1, temp_line[1], temp_line[2] * (1-percent),
-                                       temp_line[3] * (1-percent), temp_line[4] * (1-percent),
-                                       temp_line[5] * (1-percent), temp_line[6] * (1-percent),
-                                       temp_line[7] * (1-percent), temp_line[8] * (1-percent),
-                                       temp_line[9] * (1-percent), temp_line[10] * (1-percent),
+    if is_not_sym:
+        for i in range(con_num):
+            if (fb[i] == fault_bus_1 and tb[i] == fault_bus_2) or (tb[i] == fault_bus_1 and fb[i] == fault_bus_2):
+                temp_line = line_d.loc[i, :]
+                if temp_line[0] == fault_bus_1:
+                    line_d.loc[i] = [temp_line[0], bus_size + 1, temp_line[2] * percent,
+                                    temp_line[3] * percent, temp_line[4] * percent,
+                                    temp_line[5] * percent, temp_line[6] * percent,
+                                    temp_line[7] * percent, temp_line[8] * percent,
+                                    temp_line[9] * percent, temp_line[10] * percent,
+                                    temp_line[11]]
+                    line_d.loc[con_num] = [bus_size + 1, temp_line[1], temp_line[2] * (1-percent),
+                                        temp_line[3] * (1-percent), temp_line[4] * (1-percent),
+                                        temp_line[5] * (1-percent), temp_line[6] * (1-percent),
+                                        temp_line[7] * (1-percent), temp_line[8] * (1-percent),
+                                        temp_line[9] * (1-percent), temp_line[10] * (1-percent),
+                                            temp_line[11]]
+                    break
+                else:
+                    line_d.loc[i] = [bus_size + 1, temp_line[1], temp_line[2] * percent,
+                                    temp_line[3] * percent, temp_line[4] * percent,
+                                    temp_line[5] * percent, temp_line[6] * percent,
+                                    temp_line[7] * percent, temp_line[8] * percent,
+                                    temp_line[9] * percent, temp_line[10] * percent,
+                                    temp_line[11]]
+                    line_d.loc[con_num] = [temp_line[0], bus_size + 1, temp_line[2] * (1-percent),
+                                        temp_line[3] * (1-percent), temp_line[4] * (1-percent),
+                                        temp_line[5] * (1-percent), temp_line[6] * (1-percent),
+                                        temp_line[7] * (1-percent), temp_line[8] * (1-percent),
+                                        temp_line[9] * (1-percent), temp_line[10] * (1-percent),
                                         temp_line[11]]
-                break
-            else:
-                line_d.loc[i] = [bus_size + 1, temp_line[1], temp_line[2] * percent,
-                                 temp_line[3] * percent, temp_line[4] * percent,
-                                 temp_line[5] * percent, temp_line[6] * percent,
-                                 temp_line[7] * percent, temp_line[8] * percent,
-                                 temp_line[9] * percent, temp_line[10] * percent,
-                                 temp_line[11]]
-                line_d.loc[con_num] = [temp_line[0], bus_size + 1, temp_line[2] * (1-percent),
-                                       temp_line[3] * (1-percent), temp_line[4] * (1-percent),
-                                       temp_line[5] * (1-percent), temp_line[6] * (1-percent),
-                                       temp_line[7] * (1-percent), temp_line[8] * (1-percent),
-                                       temp_line[9] * (1-percent), temp_line[10] * (1-percent),
-                                       temp_line[11]]
-                break
+                    break
+    else:
+        for i in range(con_num):
+            if (fb[i] == fault_bus_1 and tb[i] == fault_bus_2) or (tb[i] == fault_bus_1 and fb[i] == fault_bus_2):
+                temp_line = line_d.loc[i, :]
+                if temp_line[0] == fault_bus_1:
+                    line_d.loc[i] = [temp_line[0], bus_size + 1, temp_line[2] * percent,
+                                    temp_line[3] * percent, temp_line[4] * percent]
+                    line_d.loc[con_num] = [bus_size + 1, temp_line[1], temp_line[2] * (1-percent),
+                                        temp_line[3] * (1-percent), temp_line[4] * (1-percent)]
+                    break
+                else:
+                    line_d.loc[i] = [bus_size + 1, temp_line[1], temp_line[2] * percent,
+                                    temp_line[3] * percent, temp_line[4] * percent]
+                    line_d.loc[con_num] = [temp_line[0], bus_size + 1, temp_line[2] * (1-percent),
+                                        temp_line[3] * (1-percent), temp_line[4] * (1-percent)]
+                    break
     voltage.loc[bus_size] = voltage[fault_bus_1 - 1] * percent + voltage[fault_bus_2 - 1] * (1-percent)
+    if is_flow:
+        bus_d.loc[bus_size] = [bus_size+1,np.abs(voltage.loc[bus_size]), np.angle(voltage.loc[bus_size],deg=True),0,0,0,0,0,0,1]
+    else:
+        bus_d.loc[bus_size] = [bus_size+1,np.abs(voltage.loc[bus_size]),np.angle(voltage.loc[bus_size],deg=True)]
     fault_loc = bus_size + 1
+    bus_d = bus_d.astype({0: 'int'})
     line_d = line_d.astype({0: 'int'})
     line_d = line_d.astype({1: 'int'})
-    return line_d, voltage, fault_loc
+    return line_d, bus_d, voltage, fault_loc
 
 def y_bus(line_d):
     j = complex(0, 1)

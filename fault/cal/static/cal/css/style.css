@@ -14,6 +14,14 @@ html {
   background-color:yellow;
   margin: 30px 0;
 }
+
+.main-title{
+  font-size: 80px;
+  font-weight: 700;
+  text-align: center;
+  margin: 10vh 0 20vh;
+}
+
 .border,
 .condition{
   background-color:#ffffff;
@@ -23,6 +31,11 @@ html {
   border-radius:30px;
   margin-bottom:30px;
   box-shadow: 10px 5px 5px #aaaaaa;
+}
+
+.start.condition{
+    height:85vh;
+    padding: 50px 0;
 }
 
 label{
@@ -74,6 +87,17 @@ label{
     user-select: none;
     -webkit-user-select: none;
 }
+
+.zero label {
+    width: 20%;
+}
+
+.tab.other label:nth-child(5),
+.tab.other label:nth-child(6),
+.tab.other label:nth-child(7){
+    width:33%
+}
+
 .content {
   min-height: 250px;
 }
@@ -93,4 +117,8 @@ label{
 }
 .border{
     position: relative;
+}
+
+.high{
+    z-index: 2;
 }

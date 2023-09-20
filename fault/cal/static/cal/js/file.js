@@ -6,7 +6,7 @@ function Change() {
     if(key==1){
       d1.style.display="block";
       d2.style.display="none";
-      d3.style.display="none"; 
+      d3.style.display="none";
     }
     if(key==2){
       d1.style.display="none";
@@ -46,21 +46,21 @@ function Reveal(){
 }
 
 function selectActive()  {
-  const target1 = document.getElementById('exampleselect');
-  target1.disabled = false;
+  const fieldset = document.getElementById('fileex');
+  fieldset.disabled = false;
 }
   
   function selectDisable()  {
-  const target1 = document.getElementById('exampleselect');
-  target1.disabled = true;
+  const fieldset = document.getElementById('fileex');
+  fieldset.disabled = true;
 }
 
 function fileActive()  {
-  const target2 = document.getElementById('formFile');
-  target2.disabled = false;
+  const target = document.getElementById('formFile');
+  target.disabled = false;
 }
 
 function fileDisable()  {
-  const target2 = document.getElementById('formFile');
-  target2.disabled = true;
+  const target = document.getElementById('formFile');
+  target.disabled = true;
 }

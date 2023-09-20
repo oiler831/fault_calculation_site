@@ -33,16 +33,21 @@ class ExcelFile(models.Model):
     file = models.FileField(upload_to="input_excel",null=True,blank=True)
     find_file = models.BooleanField(default=False,null=True,blank=True)
 
+class isExample(models.Model):
+    isex = models.BooleanField(default=False)
+    exampleNumber = models.SmallIntegerField(default=-1,null=True,blank=True)
+    find_ex = models.BooleanField(default=False)
+
 
 class FaultBusData(models.Model):
     Bus_No = models.SmallIntegerField()
-    Bus_Code = models.SmallIntegerField()
+    Bus_Code = models.SmallIntegerField(default=0,null=True,blank=True)
     Voltage_Mag = models.FloatField()
     Voltage_Deg = models.FloatField()
-    Generator_MW = models.FloatField()
-    Generator_Mvar = models.FloatField()
-    Load_MW = models.FloatField()
-    Load_Mvar = models.FloatField()
+    Generator_MW = models.FloatField(default=0,null=True,blank=True)
+    Generator_Mvar = models.FloatField(default=0,null=True,blank=True)
+    Load_MW = models.FloatField(default=0,null=True,blank=True)
+    Load_Mvar = models.FloatField(default=0,null=True,blank=True)
 
 
 class FaultLineData(models.Model):
@@ -51,11 +56,11 @@ class FaultLineData(models.Model):
     R = models.FloatField()
     X = models.FloatField()
     half_B = models.FloatField()
-    negative_R = models.FloatField()
-    negative_X = models.FloatField()
-    zero_R = models.FloatField()
-    zero_X = models.FloatField()
-    zero_half_B = models.FloatField()
+    negative_R = models.FloatField(default=0,null=True,blank=True)
+    negative_X = models.FloatField(default=0,null=True,blank=True)
+    zero_R = models.FloatField(default=0,null=True,blank=True)
+    zero_X = models.FloatField(default=0,null=True,blank=True)
+    zero_half_B = models.FloatField(default=0,null=True,blank=True)
 
 
 class ThreeFaultV(models.Model):

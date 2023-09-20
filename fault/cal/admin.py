@@ -1,14 +1,15 @@
 from django.contrib import admin
 from cal.models import (BusData, LineData, FaultCondition, ExcelFile,FaultBusData,FaultLineData,
                         ThreeFaultI,ThreeFaultV,OtherFaultI,OtherFaultV,conditionCheck, ThreeZbus,ThreeZbusSource,
-                        OtherZbus,OtherZbusSource,negativeZbusSource,zeroZbusSource)
+                        OtherZbus,OtherZbusSource,negativeZbusSource,zeroZbusSource,isExample)
 
 # Register your models here.
 admin.site.register(BusData)
 admin.site.register(LineData)
+admin.site.register(ExcelFile)
+admin.site.register(isExample)
 admin.site.register(conditionCheck)
 admin.site.register(FaultCondition)
-admin.site.register(ExcelFile)
 admin.site.register(FaultBusData)
 admin.site.register(FaultLineData)
 admin.site.register(ThreeFaultV)

@@ -4,6 +4,17 @@
 
 {% block content %}
 <div class ="container">
+  {% if isexample.isex %}
+    {% if isexample.exampleNumber == 1 %}
+      <img src="{% static 'cal/images/lightning.svg'%}">
+    {% else %}
+      {% if isexample.exampleNumber == 2 %}
+        <img src="{% static 'cal/images/img.png'%}">
+      {% else %}
+        <img src="{% static 'cal/images/img1.png'%}">
+      {% endif %}
+    {% endif %}
+  {% endif %}
   <form method="POST" class ="condition">
     {% csrf_token %}
     <div class="form-floating">
@@ -126,12 +137,21 @@
         선로 Shunt 어드미턴스 고려
       </label>
     </div>
-    <div class="form-check form-check-inline">
-      <input class="form-check-input" name="is_load_effect" type="checkbox" value="True" id="id_is_load_effect">
-      <label class="form-check-label" for="id_is_load_effect">
-        부하 효과 고려
-      </label>
-    </div>
+    {% if condition.is_flow %}
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" name="is_load_effect" type="checkbox" value="True" id="id_is_load_effect">
+        <label class="form-check-label" for="id_is_load_effect">
+          부하 효과 고려
+        </label>
+      </div>
+    {% else %}
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" name="is_load_effect" type="checkbox" value="True" id="id_is_load_effect" disabled>
+        <label class="form-check-label" for="id_is_load_effect">
+          부하 효과 고려
+        </label>
+      </div>
+    {% endif %}
     <br>
     <button type="submit" class="btn btn-primary">입력</button>
   </form>
