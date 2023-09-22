@@ -1,7 +1,7 @@
 from django.contrib import admin
 from cal.models import (BusData, LineData, FaultCondition, ExcelFile,FaultBusData,FaultLineData,
                         ThreeFaultI,ThreeFaultV,OtherFaultI,OtherFaultV,conditionCheck, ThreeZbus,ThreeZbusSource,
-                        OtherZbus,OtherZbusSource,negativeZbusSource,zeroZbusSource,isExample)
+                        OtherZbus,OtherZbusSource,negativeZbusSource,zeroZbusSource,isExample,OthersequenceI,OthersequenceV)
 
 # Register your models here.
 admin.site.register(BusData)
@@ -22,3 +22,5 @@ admin.site.register(OtherZbus)
 admin.site.register(OtherZbusSource)
 admin.site.register(negativeZbusSource)
 admin.site.register(zeroZbusSource)
+admin.site.register(OthersequenceV)
+admin.site.register(OthersequenceI)

@@ -130,3 +130,24 @@ class zeroZbusSource(models.Model):
     imag_source = models.FloatField(default=0)
     y_real_source = models.FloatField(default=0)
     y_imag_source = models.FloatField(default=0)
+
+
+class OthersequenceV(models.Model):
+    Bus_No = models.SmallIntegerField()
+    Phase_A_Mag = models.FloatField()
+    Phase_A_Deg = models.FloatField()
+    Phase_B_Mag = models.FloatField()
+    Phase_B_Deg = models.FloatField()
+    Phase_C_Mag = models.FloatField()
+    Phase_C_Deg = models.FloatField()
+
+
+class OthersequenceI(models.Model):
+    From_Bus = models.SmallIntegerField()
+    To_Bus = models.SmallIntegerField()
+    Phase_A_Mag = models.FloatField()
+    Phase_A_Deg = models.FloatField()
+    Phase_B_Mag = models.FloatField()
+    Phase_B_Deg = models.FloatField()
+    Phase_C_Mag = models.FloatField()
+    Phase_C_Deg = models.FloatField()

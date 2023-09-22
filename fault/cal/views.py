@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import (FaultCondition, BusData, LineData, ExcelFile,FaultLineData,FaultBusData,
                     ThreeFaultI,ThreeFaultV,OtherFaultI,OtherFaultV,conditionCheck,ThreeZbus,ThreeZbusSource,
-                    OtherZbusSource,OtherZbus,negativeZbusSource,zeroZbusSource,isExample)
+                    OtherZbusSource,OtherZbus,negativeZbusSource,zeroZbusSource,isExample,OthersequenceI,OthersequenceV)
 import pandas as pd
 import numpy as np
 import math
@@ -76,6 +76,10 @@ def fault_con(request):
     clear = ThreeZbus.objects.all()
     clear.delete()
     clear = OtherZbus.objects.all()
+    clear.delete()
+    clear = OthersequenceV.objects.all()
+    clear.delete()
+    clear = OthersequenceI.objects.all()
     clear.delete()
     if request.method == 'POST':
         basemva = request.POST['basemva']
@@ -154,9 +158,11 @@ def fault_con(request):
             result_v, result_cur, threebus, tybus = three_phase_fault(initial_bus_voltage, line_df, bus_df, fault_loc, fault_impedence,
                                                                 fault_con.is_shunt, fault_con.is_load_effect)
         else:
-            result_v, result_cur, bus, negativebus, zerobus, pybus, nybus, zybus = unbalanced_fault(initial_bus_voltage, line_df, bus_df, fault_loc, fault_impedence,
+            result_v, result_cur, bus, negativebus, zerobus, pybus, nybus, zybus, sequencev, sequencei = unbalanced_fault(initial_bus_voltage, line_df, bus_df, fault_loc, fault_impedence,
                                                                 fault_con.fault_type,fault_con.is_shunt, fault_con.is_load_effect)
         result_v, result_cur = after_fault_scaling(line_df, bus_df, result_v, result_cur, fault_loc, fault_con.fault_type)
+        if fault_con.fault_type > 0:
+            sequencev,sequencei = after_fault_scaling(line_df, bus_df, sequencev, sequencei, fault_loc, fault_con.fault_type)
         if condition.is_flow:
             bus_df = after_flow_scaling(bus_df, fault_con.basemva)
         for i in range(len(bus_df)):
@@ -190,9 +196,13 @@ def fault_con(request):
             for i in range(len(result_v)):
                 OtherFaultV.objects.create(Bus_No=result_v[0][i], Phase_A_Mag=result_v[1][i], Phase_A_Deg=result_v[2][i],
                                             Phase_B_Mag=result_v[3][i], Phase_B_Deg=result_v[4][i],Phase_C_Mag=result_v[5][i], Phase_C_Deg=result_v[6][i])
+                OthersequenceV.objects.create(Bus_No=sequencev[0][i], Phase_A_Mag=sequencev[1][i], Phase_A_Deg=sequencev[2][i],
+                                            Phase_B_Mag=sequencev[3][i], Phase_B_Deg=sequencev[4][i],Phase_C_Mag=sequencev[5][i], Phase_C_Deg=sequencev[6][i])
             for i in range(len(result_cur)):
                 OtherFaultI.objects.create(From_Bus=result_cur[0][i], To_Bus=result_cur[1][i], Phase_A_Mag=result_cur[2][i], Phase_A_Deg=result_cur[3][i],
                                             Phase_B_Mag=result_cur[4][i], Phase_B_Deg=result_cur[5][i],Phase_C_Mag=result_cur[6][i], Phase_C_Deg=result_cur[7][i])
+                OthersequenceI.objects.create(From_Bus=sequencei[0][i], To_Bus=sequencei[1][i], Phase_A_Mag=sequencei[2][i], Phase_A_Deg=sequencei[3][i],
+                                            Phase_B_Mag=sequencei[4][i], Phase_B_Deg=sequencei[5][i],Phase_C_Mag=sequencei[6][i], Phase_C_Deg=sequencei[7][i])
             for i in range(len(result_v)):
                 OtherZbus.objects.create(check = i)
                 row = OtherZbus.objects.get(check=i)
@@ -255,6 +265,11 @@ def show_ybus(request):
     context={'threezbus':threezbus,'tsource':threezbussource,'otherzbus':otherzbus,'osource':otherzbussource,'nsource':negativezbussource,
                 'zsource':zerozbussource, 'faultcon':faultcon}
     return render(request, 'cal/ybus.html',context=context)
+
+def sequence(request):
+    sequencev = OthersequenceV.objects.all()
+    sequencei = OthersequenceI.objects.all()
+    return render(request, 'cal/sequence.html',context={'sequencev':sequencev,'sequencei':sequencei})
 
 def phase(request):
     faultcon = FaultCondition.objects.get(to_find=True)
@@ -591,15 +606,18 @@ def unbalanced_fault(bus_voltage, line_d, bus_d, fault_location, fault_impedance
         fault_bus_voltage[i, :] = np.transpose(a_matrix @ symmetrical_components)
 
     fault_line_current = np.zeros((con_num + 1, 3), dtype='complex_')
+    symmetrical_fault_line_current = np.zeros((con_num + 1, 3), dtype='complex_')
 
     for i in range(con_num):
         symmetrical_components = \
             symmetrical_component_fault_current(fb, tb, bus_voltage, symmetrical_fault_bus_voltage,
                                                         positive_z, negative_z, zero_z, i)
+        symmetrical_fault_line_current[i][:] = np.transpose(symmetrical_components)
         fault_line_current[i, :] = np.transpose(a_matrix @ symmetrical_components)
+    symmetrical_fault_line_current[con_num, :] = np.transpose(fault_current)
     fault_line_current[con_num, :] = np.transpose(fault_phase_current)
 
-    return fault_bus_voltage, fault_line_current, positive_fault_bus, negative_fault_bus, zero_fault_bus, pybus, nybus, zybus
+    return fault_bus_voltage, fault_line_current, positive_fault_bus, negative_fault_bus, zero_fault_bus, pybus, nybus, zybus, symmetrical_fault_bus_voltage, symmetrical_fault_line_current
 
 def symmetrical_components_transformation_matrix():
     j = complex(0, 1)

@@ -1,0 +1,84 @@
+{% extends './base.html'%}
+{% load static %}
+
+{% block content %}
+<div class="main">
+  <input type="radio" id="tab-1" name="show" checked/>
+    <input type="radio" id="tab-2" name="show" />
+    <div class="tab other">
+      <label for="tab-1">Fault Sequence Voltage</label>
+      <label for="tab-2">Fault Sequence Current</label>
+    </div>
+    <div class="content">
+      <div class="content-dis">
+        <div class="border">
+          <div class="container  fault">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <td>Bus No</td>
+                  <td>Zero Mag</td>
+                  <td>Zero Deg</td>
+                  <td>Positive Mag</td>
+                  <td>Positive Deg</td>
+                  <td>Negative Mag</td>
+                  <td>Negatvie Deg</td>
+                </tr>
+              </thead>
+              <tbody>
+                {% for sequencev in sequencev %}
+                <tr>
+                  <td>{{sequencev.Bus_No}}</td>
+                  <td>{{sequencev.Phase_A_Mag|floatformat:-4}}</td>
+                  <td>{{sequencev.Phase_A_Deg|floatformat:-4}}</td>
+                  <td>{{sequencev.Phase_B_Mag|floatformat:-4}}</td>
+                  <td>{{sequencev.Phase_B_Deg|floatformat:-4}}</td>
+                  <td>{{sequencev.Phase_C_Mag|floatformat:-4}}</td>
+                  <td>{{sequencev.Phase_C_Deg|floatformat:-4}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="content-dis">
+        <div class="border">
+          <div class="container  fault">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <td>From Bus</td>
+                  <td>To Bus</td>
+                  <td>Zero Mag</td>
+                  <td>Zero Deg</td>
+                  <td>Positive Mag</td>
+                  <td>Positive Deg</td>
+                  <td>Negative Mag</td>
+                  <td>Negatvie Deg</td>
+                </tr>
+              </thead>
+              <tbody>
+                {% for i in sequencei %}
+                <tr>
+                  <td>{{i.From_Bus}}</td>
+                  <td>{{i.To_Bus}}</td>
+                  <td>{{i.Phase_A_Mag|floatformat:-4}}</td>
+                  <td>{{i.Phase_A_Deg|floatformat:-4}}</td>
+                  <td>{{i.Phase_B_Mag|floatformat:-4}}</td>
+                  <td>{{i.Phase_B_Deg|floatformat:-4}}</td>
+                  <td>{{i.Phase_C_Mag|floatformat:-4}}</td>
+                  <td>{{i.Phase_C_Deg|floatformat:-4}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <a class="btn btn-primary" href="{% url 'zbus' %}">이전</a>
+  <a class="btn btn-primary" href="{% url 'phase' %}">다음</a>
+</div>
+{% endblock content%}
