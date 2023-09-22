@@ -104,6 +104,8 @@ class ThreeZbusSource(models.Model):
     row = models.ForeignKey("ThreeZbus", on_delete=models.CASCADE)
     real_source = models.FloatField(default=0)
     imag_source = models.FloatField(default=0)
+    y_real_source = models.FloatField(default=0)
+    y_imag_source = models.FloatField(default=0)
 
 class OtherZbus(models.Model): 
     check = models.SmallIntegerField(default=0)
@@ -112,13 +114,19 @@ class OtherZbusSource(models.Model):
     row = models.ForeignKey("OtherZbus", on_delete=models.CASCADE)
     real_source = models.FloatField(default=0)
     imag_source = models.FloatField(default=0)
+    y_real_source = models.FloatField(default=0)
+    y_imag_source = models.FloatField(default=0)
 
 class negativeZbusSource(models.Model):
     row = models.ForeignKey("OtherZbus", on_delete=models.CASCADE)
     real_source = models.FloatField(default=0)
     imag_source = models.FloatField(default=0)
+    y_real_source = models.FloatField(default=0)
+    y_imag_source = models.FloatField(default=0)
 
 class zeroZbusSource(models.Model):
     row = models.ForeignKey("OtherZbus", on_delete=models.CASCADE)
     real_source = models.FloatField(default=0)
     imag_source = models.FloatField(default=0)
+    y_real_source = models.FloatField(default=0)
+    y_imag_source = models.FloatField(default=0)

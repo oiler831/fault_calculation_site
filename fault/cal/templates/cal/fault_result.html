@@ -195,10 +195,14 @@
                       {% if j.imag_source == 0 %}
                         <td>0</td>
                       {% else %}
-                        <td>j{{j.imag_source|floatformat:-4}}</td>
+                        <td>{{j.imag_source|floatformat:-4}}j</td>
                       {% endif %}
                     {% else %}
-                    <td>{{j.real_source|floatformat:-4}}+j{{j.imag_source|floatformat:-4}}</td>
+                      {% if j.img_source > 0 %}
+                        <td>{{j.real_source|floatformat:-4}}{{j.imag_source|floatformat:-4}}j</td>
+                      {% else %}
+                      <td>{{j.real_source|floatformat:-4}}+{{j.imag_source|floatformat:-4}}j</td>
+                      {%endif%}
                     {% endif %}
                   {% endif %}
                 {% endfor %}
@@ -424,10 +428,14 @@
                         {% if j.imag_source == 0 %}
                           <td>0</td>
                         {% else %}
-                          <td>j{{j.imag_source|floatformat:-4}}</td>
+                          <td>{{j.imag_source|floatformat:-4}}j</td>
                         {% endif %}
                       {% else %}
-                      <td>{{j.real_source|floatformat:-4}}+j{{j.imag_source|floatformat:-4}}</td>
+                      {% if j.img_source > 0 %}
+                        <td>{{j.real_source|floatformat:-4}}+{{j.imag_source|floatformat:-4}}j</td>
+                      {% else %}
+                      <td>{{j.real_source|floatformat:-4}}{{j.imag_source|floatformat:-4}}j</td>
+                      {%endif%}
                       {% endif %}
                     {% endif %}
                   {% endfor %}
@@ -451,10 +459,14 @@
                         {% if j.imag_source == 0 %}
                           <td>0</td>
                         {% else %}
-                          <td>j{{j.imag_source|floatformat:-4}}</td>
+                          <td>{{j.imag_source|floatformat:-4}}j</td>
                         {% endif %}
                       {% else %}
-                      <td>{{j.real_source|floatformat:-4}}+j{{j.imag_source|floatformat:-4}}</td>
+                      {% if j.img_source > 0 %}
+                        <td>{{j.real_source|floatformat:-4}}+{{j.imag_source|floatformat:-4}}j</td>
+                      {% else %}
+                      <td>{{j.real_source|floatformat:-4}}{{j.imag_source|floatformat:-4}}j</td>
+                      {%endif%}
                       {% endif %}
                     {% endif %}
                   {% endfor %}
@@ -478,10 +490,14 @@
                         {% if j.imag_source == 0 %}
                           <td>0</td>
                         {% else %}
-                          <td>j{{j.imag_source|floatformat:-4}}</td>
+                          <td>{{j.imag_source|floatformat:-4}}j</td>
                         {% endif %}
                       {% else %}
-                      <td>{{j.real_source|floatformat:-4}}+j{{j.imag_source|floatformat:-4}}</td>
+                      {% if j.img_source > 0 %}
+                        <td>{{j.real_source|floatformat:-4}}+{{j.imag_source|floatformat:-4}}j</td>
+                      {% else %}
+                      <td>{{j.real_source|floatformat:-4}}{{j.imag_source|floatformat:-4}}j</td>
+                      {%endif%}
                       {% endif %}
                     {% endif %}
                   {% endfor %}

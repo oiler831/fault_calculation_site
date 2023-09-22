@@ -151,10 +151,10 @@ def fault_con(request):
                                     fault_con.line_percentage/100, condition.is_flow, condition.is_not_symmetry)
         
         if fault_con.fault_type == 0:
-            result_v, result_cur, threebus = three_phase_fault(initial_bus_voltage, line_df, bus_df, fault_loc, fault_impedence,
+            result_v, result_cur, threebus, tybus = three_phase_fault(initial_bus_voltage, line_df, bus_df, fault_loc, fault_impedence,
                                                                 fault_con.is_shunt, fault_con.is_load_effect)
         else:
-            result_v, result_cur, bus, negativebus, zerobus = unbalanced_fault(initial_bus_voltage, line_df, bus_df, fault_loc, fault_impedence,
+            result_v, result_cur, bus, negativebus, zerobus, pybus, nybus, zybus = unbalanced_fault(initial_bus_voltage, line_df, bus_df, fault_loc, fault_impedence,
                                                                 fault_con.fault_type,fault_con.is_shunt, fault_con.is_load_effect)
         result_v, result_cur = after_fault_scaling(line_df, bus_df, result_v, result_cur, fault_loc, fault_con.fault_type)
         if condition.is_flow:
@@ -184,7 +184,8 @@ def fault_con(request):
                 ThreeZbus.objects.create(check = i)
                 row = ThreeZbus.objects.get(check=i)
                 for j in range(len(result_v)):
-                    ThreeZbusSource.objects.create(row = row, real_source=threebus[i][j].real, imag_source=threebus[i][j].imag)
+                    ThreeZbusSource.objects.create(row = row, real_source=threebus[i][j].real, imag_source=threebus[i][j].imag,
+                                                    y_real_source = tybus[i][j].real, y_imag_source = tybus[i][j].imag)
         else:
             for i in range(len(result_v)):
                 OtherFaultV.objects.create(Bus_No=result_v[0][i], Phase_A_Mag=result_v[1][i], Phase_A_Deg=result_v[2][i],
@@ -196,9 +197,12 @@ def fault_con(request):
                 OtherZbus.objects.create(check = i)
                 row = OtherZbus.objects.get(check=i)
                 for j in range(len(result_v)):
-                    OtherZbusSource.objects.create(row = row,real_source=bus[i][j].real, imag_source=bus[i][j].imag)
-                    negativeZbusSource.objects.create(row = row,real_source=negativebus[i][j].real, imag_source=negativebus[i][j].imag)
-                    zeroZbusSource.objects.create(row = row,real_source=zerobus[i][j].real, imag_source=zerobus[i][j].imag)
+                    OtherZbusSource.objects.create(row = row,real_source=bus[i][j].real, imag_source=bus[i][j].imag,
+                                                    y_real_source = pybus[i][j].real, y_imag_source = pybus[i][j].imag)
+                    negativeZbusSource.objects.create(row = row,real_source=negativebus[i][j].real, imag_source=negativebus[i][j].imag,
+                                                        y_real_source = nybus[i][j].real, y_imag_source = nybus[i][j].imag)
+                    zeroZbusSource.objects.create(row = row,real_source=zerobus[i][j].real, imag_source=zerobus[i][j].imag,
+                                                    y_real_source = zybus[i][j].real, y_imag_source = zybus[i][j].imag)
         return redirect('result')
     busdata = BusData.objects.all()
     linedata = LineData.objects.all().exclude(from_bus=0).exclude(to_bus=0)
@@ -228,6 +232,38 @@ def result(request):
                 'zsource':zerozbussource,'condition':condition}
     return render(request, 'cal/fault_result.html',context=context)
 
+def show_zbus(request):
+    faultcon = FaultCondition.objects.get(to_find=True)
+    threezbus=ThreeZbus.objects.all()
+    threezbussource = ThreeZbusSource.objects.all()
+    otherzbus=OtherZbus.objects.all()
+    otherzbussource = OtherZbusSource.objects.all()
+    negativezbussource = negativeZbusSource.objects.all()
+    zerozbussource = zeroZbusSource.objects.all()
+    context={'threezbus':threezbus,'tsource':threezbussource,'otherzbus':otherzbus,'osource':otherzbussource,'nsource':negativezbussource,
+                'zsource':zerozbussource, 'faultcon':faultcon}
+    return render(request, 'cal/zbus.html',context=context)
+
+def show_ybus(request):
+    faultcon = FaultCondition.objects.get(to_find=True)
+    threezbus=ThreeZbus.objects.all()
+    threezbussource = ThreeZbusSource.objects.all()
+    otherzbus=OtherZbus.objects.all()
+    otherzbussource = OtherZbusSource.objects.all()
+    negativezbussource = negativeZbusSource.objects.all()
+    zerozbussource = zeroZbusSource.objects.all()
+    context={'threezbus':threezbus,'tsource':threezbussource,'otherzbus':otherzbus,'osource':otherzbussource,'nsource':negativezbussource,
+                'zsource':zerozbussource, 'faultcon':faultcon}
+    return render(request, 'cal/ybus.html',context=context)
+
+def phase(request):
+    faultcon = FaultCondition.objects.get(to_find=True)
+    threefaultv=ThreeFaultV.objects.all()
+    threefaulti=ThreeFaultI.objects.all()
+    otherfaultv=OtherFaultV.objects.all()
+    otherfaulti=OtherFaultI.objects.all()
+    context={'threefaultv':threefaultv,'threefaulti':threefaulti,'otherfaultv':otherfaultv,'otherfaulti':otherfaulti,'faultcon':faultcon}
+    return render(request, 'cal/phase.html',context=context)
 
 
 def bus_scaling(bus_df, basemva):
@@ -448,7 +484,7 @@ def y_bus(line_d):
 
 
 def zbus(line_d):
-    return np.linalg.inv(y_bus(line_d))
+    return np.linalg.inv(y_bus(line_d)), y_bus(line_d)
 
 
 def load_zbus(line_d, bus_d):
@@ -465,7 +501,7 @@ def load_zbus(line_d, bus_d):
             continue
         else:
             bus[i, i] += conj_s_load[i] / (v_mag[i]*v_mag[i])
-    return np.linalg.inv(bus)
+    return np.linalg.inv(bus), bus
 
 
 def three_phase_fault(bus_voltage, line_d, bus_d, fault_location, fault_impedance,
@@ -485,9 +521,9 @@ def three_phase_fault(bus_voltage, line_d, bus_d, fault_location, fault_impedanc
     con_num = len(fb)
     bus_size = max(max(fb), max(tb))
     if is_bus_load:
-        fault_bus = load_zbus(three_phase_d, bus_d)
+        fault_bus, ybus = load_zbus(three_phase_d, bus_d)
     else:
-        fault_bus = zbus(three_phase_d)
+        fault_bus, ybus = zbus(three_phase_d)
     fl = fault_location - 1
     fault_current = bus_voltage[fl] / (fault_impedance + fault_bus[fl][fl])
     fault_bus_voltage = bus_voltage.copy()
@@ -503,7 +539,7 @@ def three_phase_fault(bus_voltage, line_d, bus_d, fault_location, fault_impedanc
         else:
             fault_line_current[i] = (fault_bus_voltage[fb[i] - 1] - fault_bus_voltage[tb[i] - 1]) / z[i]
     fault_line_current[con_num] = fault_current
-    return fault_bus_voltage, fault_line_current, fault_bus
+    return fault_bus_voltage, fault_line_current, fault_bus, ybus
 
 
 def unbalanced_fault(bus_voltage, line_d, bus_d, fault_location, fault_impedance, fault_type,
@@ -530,13 +566,13 @@ def unbalanced_fault(bus_voltage, line_d, bus_d, fault_location, fault_impedance
     if not half_b_consider:
         half_b *= 0
     if is_bus_load:
-        positive_fault_bus = df_to_load_zbus(fb, tb, positive_r, positive_x, half_b, bus_d)
-        negative_fault_bus = df_to_load_zbus(fb, tb, negative_r, negative_x, half_b, bus_d)
-        zero_fault_bus = df_to_load_zbus(fb, tb, zero_r, zero_x, zero_half_b, bus_d)
+        positive_fault_bus, pybus = df_to_load_zbus(fb, tb, positive_r, positive_x, half_b, bus_d)
+        negative_fault_bus, nybus = df_to_load_zbus(fb, tb, negative_r, negative_x, half_b, bus_d)
+        zero_fault_bus, zybus = df_to_load_zbus(fb, tb, zero_r, zero_x, zero_half_b, bus_d)
     else:
-        positive_fault_bus = df_to_zbus(fb, tb, positive_r, positive_x, half_b)
-        negative_fault_bus = df_to_zbus(fb, tb, negative_r, negative_x, half_b)
-        zero_fault_bus = df_to_zbus(fb, tb, zero_r, zero_x, zero_half_b)
+        positive_fault_bus, pybus = df_to_zbus(fb, tb, positive_r, positive_x, half_b)
+        negative_fault_bus, nybus = df_to_zbus(fb, tb, negative_r, negative_x, half_b)
+        zero_fault_bus, zybus = df_to_zbus(fb, tb, zero_r, zero_x, zero_half_b)
     fl = fault_location - 1
     a_matrix = symmetrical_components_transformation_matrix()
 
@@ -563,7 +599,7 @@ def unbalanced_fault(bus_voltage, line_d, bus_d, fault_location, fault_impedance
         fault_line_current[i, :] = np.transpose(a_matrix @ symmetrical_components)
     fault_line_current[con_num, :] = np.transpose(fault_phase_current)
 
-    return fault_bus_voltage, fault_line_current, positive_fault_bus, negative_fault_bus, zero_fault_bus
+    return fault_bus_voltage, fault_line_current, positive_fault_bus, negative_fault_bus, zero_fault_bus, pybus, nybus, zybus
 
 def symmetrical_components_transformation_matrix():
     j = complex(0, 1)

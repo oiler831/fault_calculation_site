@@ -1,0 +1,155 @@
+{% extends './base.html'%}
+{% load static %}
+
+{% block content %}
+{% if faultcon.fault_type == 0 %}
+<div class="main">
+  <input type="radio" id="tab-1" name="show" checked/>
+  <div class="tab zero">
+    <label for="tab-1">Ybus</label>
+  </div>
+  <div class="content">
+    <div class="content-dis">
+      <div class="border">
+        <div class="container fault">
+          <table class="table table-striped">
+            <tbody>
+              {% for i in threezbus %}
+                <tr>
+                {% for j in tsource %}
+                  {% if i.check == j.row.check %}
+                    {% if j.y_real_source == 0 %}
+                      {% if j.y_imag_source == 0 %}
+                        <td>0</td>
+                      {% else %}
+                        <td>{{j.y_imag_source|floatformat:-4}}j</td>
+                      {% endif %}
+                    {% else %}
+                      {% if j.y_imag_source > 0 %}
+                        <td>{{j.y_real_source|floatformat:-4}}+{{j.y_imag_source|floatformat:-4}}j</td>
+                      {% else %}
+                      <td>{{j.y_real_source|floatformat:-4}}{{j.y_imag_source|floatformat:-4}}j</td>
+                      {%endif%}
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+                </tr>
+              {% endfor %} 
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <a class="btn btn-primary" href="{% url 'zbus' %}">다음</a>
+  </div>
+</div>
+{% else %}
+<div class="main">
+  <input type="radio" id="tab-1" name="show" checked/>
+  <input type="radio" id="tab-2" name="show" />
+  <input type="radio" id="tab-3" name="show" />
+    <div class="tab other">
+      <label for="tab-1">Positive Ybus</label>
+      <label for="tab-2">Negative Ybus</label>
+      <label for="tab-3">Zero Ybus</label>
+    </div>
+    <div class="content">
+      <div class="content-dis">
+        <div class="border">
+          <div class="container fault">
+            <table class="table table-striped">
+              <tbody>
+                {% for i in otherzbus %}
+                  <tr>
+                  {% for j in osource %}
+                    {% if i.check == j.row.check %}
+                      {% if j.y_real_source == 0 %}
+                        {% if j.y_imag_source == 0 %}
+                          <td>0</td>
+                        {% else %}
+                          <td>{{j.y_imag_source|floatformat:-4}}j</td>
+                        {% endif %}
+                      {% else %}
+                      {% if j.y_imag_source > 0 %}
+                        <td>{{j.y_real_source|floatformat:-4}}+{{j.y_imag_source|floatformat:-4}}j</td>
+                      {% else %}
+                        <td>{{j.y_real_source|floatformat:-4}}{{j.y_imag_source|floatformat:-4}}j</td>
+                      {%endif%}
+                      {% endif %}
+                    {% endif %}
+                  {% endfor %}
+                  </tr>
+                {% endfor %} 
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="content-dis">
+        <div class="border">
+          <div class="container fault">
+            <table class="table table-striped">
+              <tbody>
+                {% for i in otherzbus %}
+                  <tr>
+                  {% for j in nsource %}
+                    {% if i.check == j.row.check %}
+                      {% if j.y_real_source == 0 %}
+                        {% if j.y_imag_source == 0 %}
+                          <td>0</td>
+                        {% else %}
+                          <td>{{j.y_imag_source|floatformat:-4}}j</td>
+                        {% endif %}
+                      {% else %}
+                      {% if j.y_imag_source > 0 %}
+                        <td>{{j.y_real_source|floatformat:-4}}+{{j.y_imag_source|floatformat:-4}}j</td>
+                      {% else %}
+                      <td>{{j.y_real_source|floatformat:-4}}{{j.y_imag_source|floatformat:-4}}j</td>
+                      {%endif%}
+                      {% endif %}
+                    {% endif %}
+                  {% endfor %}
+                  </tr>
+                {% endfor %} 
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="content-dis">
+        <div class="border">
+          <div class="container fault">
+            <table class="table table-striped">
+              <tbody>
+                {% for i in otherzbus %}
+                  <tr>
+                  {% for j in zsource %}
+                    {% if i.check == j.row.check %}
+                      {% if j.y_real_source == 0 %}
+                        {% if j.y_imag_source == 0 %}
+                          <td>0</td>
+                        {% else %}
+                          <td>{{j.y_imag_source|floatformat:-4}}j</td>
+                        {% endif %}
+                      {% else %}
+                      {% if j.y_imag_source > 0 %}
+                        <td>{{j.y_real_source|floatformat:-4}}+{{j.y_imag_source|floatformat:-4}}j</td>
+                      {% else %}
+                      <td>{{j.y_real_source|floatformat:-4}}{{j.y_imag_source|floatformat:-4}}j</td>
+                      {%endif%}
+                      {% endif %}
+                    {% endif %}
+                  {% endfor %}
+                  </tr>
+                {% endfor %} 
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <a class="btn btn-primary" href="{% url 'zbus' %}">다음</a>
+</div>
+{% endif %}
+{% endblock content %}
