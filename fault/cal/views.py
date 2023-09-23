@@ -262,6 +262,8 @@ def fault_con(request):
     return render(request, 'cal/fault_con.html', context=context)
 
 def result(request):
+    busdata = BusData.objects.all()
+    linedata = LineData.objects.all()
     faultcon = FaultCondition.objects.get(to_find=True)
     faultbusdata=FaultBusData.objects.all()
     faultlinedata=FaultLineData.objects.all()
@@ -275,11 +277,13 @@ def result(request):
     otherzbussource = OtherZbusSource.objects.all()
     negativezbussource = negativeZbusSource.objects.all()
     zerozbussource = zeroZbusSource.objects.all()
+    sequencev = OthersequenceV.objects.all()
+    sequencei = OthersequenceI.objects.all()
     condition = conditionCheck.objects.get(find_con=True)
     context = {'faultbusdata':faultbusdata,'faultlinedata':faultlinedata,'threefaultv':threefaultv,'threefaulti':threefaulti,
                 'otherfaultv':otherfaultv,'otherfaulti':otherfaulti, 'faultcon':faultcon,'threezbus':threezbus,
                 'tsource':threezbussource,'otherzbus':otherzbus,'osource':otherzbussource,'nsource':negativezbussource,
-                'zsource':zerozbussource,'condition':condition}
+                'zsource':zerozbussource,'condition':condition,'busdata':busdata,'linedata':linedata,'sequencev':sequencev,'sequencei':sequencei}
     return render(request, 'cal/fault_result.html',context=context)
 
 def initial(request):
