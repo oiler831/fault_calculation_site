@@ -165,8 +165,6 @@ def fault_con(request):
 
         initial_bus_voltage = bus_df.iloc[:, 1] * np.exp(j * np.deg2rad(bus_df.iloc[:, 2]))
 
-        if fault_con.fault_type > 0: 
-            line_df = fault_line_data_scaling(line_df) 
         
         fault_impedence = fault_con.impedence_R + j * fault_con.impedence_X
 
@@ -193,6 +191,9 @@ def fault_con(request):
                 for i in range(len(line_df)):
                     SliderLine.objects.create(From_bus = line_df[0][i],To_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],half_B = line_df[4][i])
         
+        if fault_con.fault_type > 0: 
+            line_df = fault_line_data_scaling(line_df) 
+
         if fault_con.fault_type == 0:
             result_v, result_cur, threebus, tybus = three_phase_fault(initial_bus_voltage, line_df, bus_df, fault_loc, fault_impedence,
                                                                 fault_con.is_shunt, fault_con.is_load_effect)
@@ -206,7 +207,7 @@ def fault_con(request):
             bus_df = after_flow_scaling(bus_df, fault_con.basemva)
         for i in range(len(bus_df)):
             if condition.is_flow:
-                FaultBusData.objects.create(Bus_No=bus_df[0][i], Bus_Code=bus_df[9][i], Voltage_Mag=bus_df[1][i], Voltage_Deg=bus_df[2][i],
+                FaultBusData.objects.create(Bus_No=bus_df[0][i], Voltage_Mag=bus_df[1][i], Voltage_Deg=bus_df[2][i],
                                         Generator_MW=bus_df[3][i],Generator_Mvar=bus_df[4][i],Load_MW=bus_df[5][i],Load_Mvar=bus_df[6][i])
             else:
                 FaultBusData.objects.create(Bus_No=bus_df[0][i], Voltage_Mag=bus_df[1][i], Voltage_Deg=bus_df[2][i])
@@ -252,7 +253,7 @@ def fault_con(request):
                                                         y_real_source = nybus[i][j].real, y_imag_source = nybus[i][j].imag)
                     zeroZbusSource.objects.create(row = row,real_source=zerobus[i][j].real, imag_source=zerobus[i][j].imag,
                                                     y_real_source = zybus[i][j].real, y_imag_source = zybus[i][j].imag)
-        return redirect('result')
+        return redirect('initial')
     busdata = BusData.objects.all()
     linedata = LineData.objects.all().exclude(from_bus=0).exclude(to_bus=0)
     condition = conditionCheck.objects.get(find_con=True)
@@ -282,10 +283,11 @@ def result(request):
     return render(request, 'cal/fault_result.html',context=context)
 
 def initial(request):
+    faultcon = FaultCondition.objects.get(to_find=True)
     busdata = BusData.objects.all()
     linedata = LineData.objects.all()
     condition = conditionCheck.objects.get(find_con=True)
-    context ={'busdata':busdata,'linedata':linedata,'condition':condition}
+    context ={'busdata':busdata,'linedata':linedata,'condition':condition,'faultcon':faultcon}
     return render(request, 'cal/initial_circuit.html', context=context)
 
 def flow(request):
@@ -301,6 +303,11 @@ def slider(request):
     fault_con = FaultCondition.objects.get(to_find=True)
     context={'sliderbus':sliderbus, 'sliderline':sliderline,'fault_con':fault_con,'condition':condition}
     return render(request,'cal/slider.html',context=context)
+
+def transformer(request):
+    faultlinedata=FaultLineData.objects.all()
+    faultcon = FaultCondition.objects.get(to_find=True)
+    return render(request,'cal/transformer.html',context={'faultlinedata':faultlinedata,'faultcon':faultcon})
 
 def show_zbus(request):
     faultcon = FaultCondition.objects.get(to_find=True)

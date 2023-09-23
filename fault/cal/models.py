@@ -60,7 +60,6 @@ class isExample(models.Model):
 
 class FaultBusData(models.Model):
     Bus_No = models.SmallIntegerField()
-    Bus_Code = models.SmallIntegerField(default=0,null=True,blank=True)
     Voltage_Mag = models.FloatField()
     Voltage_Deg = models.FloatField()
     Generator_MW = models.FloatField(default=0,null=True,blank=True)

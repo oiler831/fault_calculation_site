@@ -134,6 +134,18 @@
       </div>
     </div>
   </div>
-  <a class="btn btn-primary" href="{% url 'ybus' %}">다음</a>
+  {% if faultcon.is_flow %}
+    <a class="btn btn-primary" href="{% url 'flow' %}">다음</a>
+  {% else %}
+    {% if faultcon.is_bus_fault %}
+      {% if faultcon.fault_type == 0 %}
+        <a class="btn btn-primary" href="{% url 'ybus' %}">다음</a>
+      {% else%}
+        <a class="btn btn-primary" href="{% url 'transformer' %}">다음</a>
+      {% endif %}
+    {% else %}
+      <a class="btn btn-primary" href="{% url 'slider' %}">다음</a>
+    {% endif %}
+  {% endif %}
 </div>
 {% endblock content%}

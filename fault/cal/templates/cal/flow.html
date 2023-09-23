@@ -43,6 +43,14 @@
     </div>
   </div>
   <a class="btn btn-primary" href="{% url 'initial' %}">이전</a>
-  <a class="btn btn-primary" href="{% url 'ybus' %}">다음</a>
+  {% if fault_con.is_bus_fault %}
+    {% if fault_con.fault_type == 0 %}
+      <a class="btn btn-primary" href="{% url 'ybus' %}">다음</a>
+    {% else%}
+      <a class="btn btn-primary" href="{% url 'transformer' %}">다음</a>
+    {% endif %}
+  {% else %}
+    <a class="btn btn-primary" href="{% url 'slider' %}">다음</a>
+  {% endif %}
 </div>
 {% endblock content%}

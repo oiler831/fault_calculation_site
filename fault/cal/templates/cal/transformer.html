@@ -1,0 +1,62 @@
+{% extends './base.html'%}
+{% load static %}
+
+{% block content %}
+<div class="main">
+  <input type="radio" id="tab-1" name="show" checked/>
+    <div class="tab other">
+      <label for="tab-1">Consider Transformers</label>
+    </div>
+    <div class="content">
+      <div class="content-dis">
+        <div class="border">
+          <div class="container fault">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <td>From Bus</td>
+                  <td>To Bus</td>
+                  <td>R</td>
+                  <td>X</td>
+                  <td>half_B</td>
+                  <td>negative_R</td>
+                  <td>negative_X</td>
+                  <td>zero_R</td>
+                  <td>zero_X</td>
+                  <td>zero_half_B</td>
+                </tr>
+              </thead>
+              <tbody>
+                {% for i in faultlinedata %}
+                <tr>
+                  <td>{{i.From_Bus}}</td>
+                  <td>{{i.To_Bus}}</td>
+                  <td>{{i.R|floatformat:-4}}</td>
+                  <td>{{i.X|floatformat:-4}}</td>
+                  <td>{{i.half_B|floatformat:-4}}</td>
+                  <td>{{i.negative_R|floatformat:-4}}</td>
+                  <td>{{i.negative_X|floatformat:-4}}</td>
+                  <td>{{i.zero_R|floatformat:-4}}</td>
+                  <td>{{i.zero_X|floatformat:-4}}</td>
+                  <td>{{i.zero_half_B|floatformat:-4}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% if faultcon.is_bus_fault %}
+    {% if faultcon.is_flow %}
+      <a class="btn btn-primary" href="{% url 'flow' %}">이전</a>
+    {% else %}
+      <a class="btn btn-primary" href="{% url 'initial' %}">이전</a>
+    {% endif %}
+  {% else %}
+    <a class="btn btn-primary" href="{% url 'slider' %}">이전</a>
+  {% endif %}
+  <a class="btn btn-primary" href="{% url 'ybus' %}">다음</a>
+</div>
+{% endblock content%}

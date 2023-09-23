@@ -4,17 +4,6 @@
 
 {% block content %}
 <div class ="container">
-  {% if isexample.isex %}
-    {% if isexample.exampleNumber == 1 %}
-      <img src="{% static 'cal/images/lightning.svg'%}">
-    {% else %}
-      {% if isexample.exampleNumber == 2 %}
-        <img src="{% static 'cal/images/img.png'%}">
-      {% else %}
-        <img src="{% static 'cal/images/img1.png'%}">
-      {% endif %}
-    {% endif %}
-  {% endif %}
   <form method="POST" class ="condition">
     {% csrf_token %}
     <div class="form-floating">
@@ -156,6 +145,17 @@
     <button type="submit" class="btn btn-primary">입력</button>
   </form>
 </div>
+{% if isexample.isex %}
+    {% if isexample.exampleNumber == 1 %}
+      <img src="{% static 'cal/images/lightning.svg'%}">
+    {% else %}
+      {% if isexample.exampleNumber == 2 %}
+        <img src="{% static 'cal/images/img.png'%}">
+      {% else %}
+        <img src="{% static 'cal/images/img1.png'%}">
+      {% endif %}
+    {% endif %}
+  {% endif %}
 {% endblock content %}
 
 {% block script %}

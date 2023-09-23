@@ -8,6 +8,7 @@ urlpatterns = [
     path('initial_input/',views.initial, name='initial'),
     path('flow/',views.flow, name='flow'),
     path('slider/',views.slider, name='slider'),
+    path('transformer/',views.transformer, name='transformer'),
     path('ybus/',views.show_ybus, name='ybus'),
     path('zbus/',views.show_zbus, name='zbus'),
     path('sequence/', views.sequence,name='sequence'),
