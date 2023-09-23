@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from .models import (FaultCondition, BusData, LineData, ExcelFile,FaultLineData,FaultBusData,
                     ThreeFaultI,ThreeFaultV,OtherFaultI,OtherFaultV,conditionCheck,ThreeZbus,ThreeZbusSource,
-                    OtherZbusSource,OtherZbus,negativeZbusSource,zeroZbusSource,isExample,OthersequenceI,OthersequenceV)
+                    OtherZbusSource,OtherZbus,negativeZbusSource,zeroZbusSource,isExample,OthersequenceI,OthersequenceV,
+                    Afterflow,SliderLine,Sliderbus)
 import pandas as pd
 import numpy as np
 import math
@@ -41,10 +42,6 @@ def upload_excel_to_db(request):
         isExample.objects.create(isex=request.POST['isexample'],exampleNumber=request.POST.get('exampleselect'),find_ex=True)
         bus_df = pd.read_excel(excel_file,header=None,sheet_name=0)
         line_df = pd.read_excel(excel_file,header=None,sheet_name=1)
-        for i in range(len(bus_df)):
-            BusData.objects.create(bus_num = bus_df[0][i])
-        for i in range(len(line_df)):
-            LineData.objects.create(from_bus = line_df[0][i],to_bus = line_df[1][i])
         if len(bus_df.columns) != 10:
             is_flow = False
         else:
@@ -53,6 +50,22 @@ def upload_excel_to_db(request):
             is_not_symmetry = False
         else:
             is_not_symmetry = True
+        if is_flow:
+            for i in range(len(bus_df)):
+                BusData.objects.create(bus_num = bus_df[0][i],Voltage_Mag=bus_df[1][i],Voltage_Deg=bus_df[2][i],Generator_MW=bus_df[3][i],
+                                    Generator_Mvar = bus_df[4][i],Load_MW=bus_df[5][i],Load_Mvar=bus_df[6][i],Qmax=bus_df[7][i],
+                                    Qmin=bus_df[8][i], Bus_Code=bus_df[9][i])
+        else:
+            for i in range(len(bus_df)):
+                BusData.objects.create(bus_num = bus_df[0][i],Voltage_Mag=bus_df[1][i],Voltage_Deg=bus_df[2][i])
+        if is_not_symmetry:
+            for i in range(len(line_df)):
+                LineData.objects.create(from_bus = line_df[0][i],to_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],
+                                        half_B = line_df[4][i],negative_R = line_df[5][i],negative_X = line_df[6][i],zero_R = line_df[7][i],
+                                        zero_X = line_df[8][i],Xn = line_df[9][i],zero_half_B = line_df[10][i],line_type = line_df[11][i])
+        else:
+            for i in range(len(line_df)):
+                LineData.objects.create(from_bus = line_df[0][i],to_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],half_B = line_df[4][i])
         conditionCheck.objects.create(is_flow=is_flow,is_not_symmetry=is_not_symmetry,find_con=True)
         return redirect('condition')
     return render(request,'cal/file.html')
@@ -80,6 +93,12 @@ def fault_con(request):
     clear = OthersequenceV.objects.all()
     clear.delete()
     clear = OthersequenceI.objects.all()
+    clear.delete()
+    clear = Afterflow.objects.all()
+    clear.delete()
+    clear = Sliderbus.objects.all()
+    clear.delete()
+    clear = SliderLine.objects.all()
     clear.delete()
     if request.method == 'POST':
         basemva = request.POST['basemva']
@@ -139,10 +158,14 @@ def fault_con(request):
             bus_df = bus_scaling(bus_df, fault_con.basemva)
             if fault_con.is_flow:
                 bus_df, repeat_count = gauss_flow(line_df, bus_df)
+                for i in range(len(bus_df)):
+                    Afterflow.objects.create(Bus_No=bus_df[0][i],Voltage_Mag=bus_df[1][i],Voltage_Deg=bus_df[2][i],
+                                            Generator_MW=bus_df[3][i]*fault_con.basemva, Generator_Mvar=bus_df[4][i]*fault_con.basemva,
+                                            Load_MW=bus_df[5][i]*fault_con.basemva,Load_Mvar=bus_df[6][i]*fault_con.basemva)
 
         initial_bus_voltage = bus_df.iloc[:, 1] * np.exp(j * np.deg2rad(bus_df.iloc[:, 2]))
 
-        if condition.is_not_symmetry: 
+        if fault_con.fault_type > 0: 
             line_df = fault_line_data_scaling(line_df) 
         
         fault_impedence = fault_con.impedence_R + j * fault_con.impedence_X
@@ -153,6 +176,22 @@ def fault_con(request):
             line_df, bus_df, initial_bus_voltage, fault_loc = \
                 line_sliding_scaling(line_df,bus_df, initial_bus_voltage, fault_con.fault_line_1, fault_con.fault_line_2,
                                     fault_con.line_percentage/100, condition.is_flow, condition.is_not_symmetry)
+            if condition.is_flow:
+                for i in range(len(bus_df)):
+                    Sliderbus.objects.create(Bus_No=bus_df[0][i],Voltage_Mag=bus_df[1][i],Voltage_Deg=bus_df[2][i],
+                                            Generator_MW=bus_df[3][i]*fault_con.basemva, Generator_Mvar=bus_df[4][i]*fault_con.basemva,
+                                            Load_MW=bus_df[5][i]*fault_con.basemva,Load_Mvar=bus_df[6][i]*fault_con.basemva)
+            else:
+                for i in range(len(bus_df)):
+                    Sliderbus.objects.create(Bus_No=bus_df[0][i],Voltage_Mag=bus_df[1][i],Voltage_Deg=bus_df[2][i])
+            if condition.is_not_symmetry:
+                for i in range(len(line_df)):
+                    SliderLine.objects.create(From_bus = line_df[0][i],To_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],
+                                            half_B = line_df[4][i],negative_R = line_df[5][i],negative_X = line_df[6][i],zero_R = line_df[7][i],
+                                            zero_X = line_df[8][i],Xn = line_df[9][i],zero_half_B = line_df[10][i],line_type = line_df[11][i])
+            else:
+                for i in range(len(line_df)):
+                    SliderLine.objects.create(From_bus = line_df[0][i],To_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],half_B = line_df[4][i])
         
         if fault_con.fault_type == 0:
             result_v, result_cur, threebus, tybus = three_phase_fault(initial_bus_voltage, line_df, bus_df, fault_loc, fault_impedence,
@@ -241,6 +280,27 @@ def result(request):
                 'tsource':threezbussource,'otherzbus':otherzbus,'osource':otherzbussource,'nsource':negativezbussource,
                 'zsource':zerozbussource,'condition':condition}
     return render(request, 'cal/fault_result.html',context=context)
+
+def initial(request):
+    busdata = BusData.objects.all()
+    linedata = LineData.objects.all()
+    condition = conditionCheck.objects.get(find_con=True)
+    context ={'busdata':busdata,'linedata':linedata,'condition':condition}
+    return render(request, 'cal/initial_circuit.html', context=context)
+
+def flow(request):
+    afterflow=Afterflow.objects.all()
+    fault_con = FaultCondition.objects.get(to_find=True)
+    context={'afterflow':afterflow, 'fault_con':fault_con}
+    return render(request,'cal/flow.html',context=context)
+
+def slider(request):
+    sliderbus = Sliderbus.objects.all()
+    sliderline = SliderLine.objects.all()
+    condition = conditionCheck.objects.get(find_con=True)
+    fault_con = FaultCondition.objects.get(to_find=True)
+    context={'sliderbus':sliderbus, 'sliderline':sliderline,'fault_con':fault_con,'condition':condition}
+    return render(request,'cal/slider.html',context=context)
 
 def show_zbus(request):
     faultcon = FaultCondition.objects.get(to_find=True)

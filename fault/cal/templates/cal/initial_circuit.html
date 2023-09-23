@@ -1,0 +1,139 @@
+{% extends './base.html'%}
+{% load static %}
+
+{% block content %}
+<div class="main">
+  <input type="radio" id="tab-1" name="show" checked/>
+    <input type="radio" id="tab-2" name="show" />
+    <div class="tab other">
+      <label for="tab-1">Initial Bus Data</label>
+      <label for="tab-2">Initial Line Data</label>
+    </div>
+    <div class="content">
+      <div class="content-dis">
+        <div class="border">
+          <div class="container  fault">
+            <table class="table table-striped">
+              {% if condition.is_flow %}
+                <thead>
+                  <tr>
+                    <td>Bus No</td>
+                    <td>Voltage Mag</td>
+                    <td>Voltage Deg</td>
+                    <td>Generator MW</td>
+                    <td>Generator Mvar</td>
+                    <td>Load MW</td>
+                    <td>Load Mvar</td>
+                    <td>Qmax</td>
+                    <td>Qmin</td>
+                    <td>Bus Code</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for i in busdata %}
+                  <tr>
+                    <td>{{i.bus_num}}</td>
+                    <td>{{i.Voltage_Mag|floatformat:-4}}</td>
+                    <td>{{i.Voltage_Deg|floatformat:-4}}</td>
+                    <td>{{i.Generator_MW|floatformat:-4}}</td>
+                    <td>{{i.Generator_Mvar|floatformat:-4}}</td>
+                    <td>{{i.Load_MW|floatformat:-4}}</td>
+                    <td>{{i.Load_Mvar|floatformat:-4}}</td>
+                    <td>{{i.Qmax|floatformat:-4}}</td>
+                    <td>{{i.Qmin|floatformat:-4}}</td>
+                    <td>{{i.Bus_Code}}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              {% else %}
+                <thead>
+                  <tr>
+                    <td>Bus No</td>
+                    <td>Voltage Mag</td>
+                    <td>Voltage Deg</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for i in busdata %}
+                  <tr>
+                    <td>{{i.bus_num}}</td>
+                    <td>{{i.Voltage_Mag|floatformat:-4}}</td>
+                    <td>{{i.Voltage_Deg|floatformat:-4}}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              {% endif %}
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="content-dis">
+        <div class="border">
+          <div class="container  fault">
+            <table class="table table-striped">
+              {% if condition.is_not_symmetry %}
+                <thead>
+                  <tr>
+                    <td>From Bus</td>
+                    <td>To Bus</td>
+                    <td>R</td>
+                    <td>X</td>
+                    <td>half_B</td>
+                    <td>negative_R</td>
+                    <td>negative_X</td>
+                    <td>zero_R</td>
+                    <td>zero_X</td>
+                    <td>Xn</td>
+                    <td>zero_half_B</td>
+                    <td>line_type</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for i in linedata %}
+                  <tr>
+                    <td>{{i.from_bus}}</td>
+                    <td>{{i.to_bus}}</td>
+                    <td>{{i.R|floatformat:-4}}</td>
+                    <td>{{i.X|floatformat:-4}}</td>
+                    <td>{{i.half_B|floatformat:-4}}</td>
+                    <td>{{i.negative_R|floatformat:-4}}</td>
+                    <td>{{i.negative_X|floatformat:-4}}</td>
+                    <td>{{i.zero_R|floatformat:-4}}</td>
+                    <td>{{i.zero_X|floatformat:-4}}</td>
+                    <td>{{i.Xn|floatformat:-4}}</td>
+                    <td>{{i.zero_half_B|floatformat:-4}}</td>
+                    <td>{{i.line_type|floatformat:-4}}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              {% else %}
+                <thead>
+                  <tr>
+                    <td>From Bus</td>
+                    <td>To Bus</td>
+                    <td>R</td>
+                    <td>X</td>
+                    <td>half_B</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for i in linedata %}
+                  <tr>
+                    <td>{{i.from_bus}}</td>
+                    <td>{{i.to_bus}}</td>
+                    <td>{{i.R|floatformat:-4}}</td>
+                    <td>{{i.X|floatformat:-4}}</td>
+                    <td>{{i.half_B|floatformat:-4}}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              {% endif %}
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <a class="btn btn-primary" href="{% url 'ybus' %}">다음</a>
+</div>
+{% endblock content%}

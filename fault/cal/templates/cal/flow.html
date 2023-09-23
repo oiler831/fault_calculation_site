@@ -1,0 +1,48 @@
+{% extends './base.html'%}
+{% load static %}
+
+{% block content %}
+<div class="main">
+  <input type="radio" id="tab-1" name="show" checked/>
+    <div class="tab other">
+      <label for="tab-1">After Flow calculations</label>
+    </div>
+    <div class="content">
+      <div class="content-dis">
+        <div class="border">
+          <div class="container  fault">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <td>Bus No</td>
+                  <td>Voltage Mag</td>
+                  <td>Voltage Deg</td>
+                  <td>Generator MW</td>
+                  <td>Generator Mvar</td>
+                  <td>Load MW</td>
+                  <td>Load Mvar</td>
+                </tr>
+              </thead>
+              <tbody>
+                {% for i in afterflow %}
+                <tr>
+                  <td>{{i.Bus_No}}</td>
+                  <td>{{i.Voltage_Mag|floatformat:-4}}</td>
+                  <td>{{i.Voltage_Deg|floatformat:-4}}</td>
+                  <td>{{i.Generator_MW|floatformat:-4}}</td>
+                  <td>{{i.Generator_Mvar|floatformat:-4}}</td>
+                  <td>{{i.Load_MW|floatformat:-4}}</td>
+                  <td>{{i.Load_Mvar|floatformat:-4}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <a class="btn btn-primary" href="{% url 'initial' %}">이전</a>
+  <a class="btn btn-primary" href="{% url 'ybus' %}">다음</a>
+</div>
+{% endblock content%}

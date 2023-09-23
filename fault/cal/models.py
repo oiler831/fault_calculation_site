@@ -4,10 +4,29 @@ from django.db import models
 
 class BusData(models.Model):
     bus_num =models.SmallIntegerField()
+    Voltage_Mag = models.FloatField(default=0)
+    Voltage_Deg = models.FloatField(default=0)
+    Generator_MW = models.FloatField(default=0,null=True,blank=True)
+    Generator_Mvar = models.FloatField(default=0,null=True,blank=True)
+    Load_MW = models.FloatField(default=0,null=True,blank=True)
+    Load_Mvar = models.FloatField(default=0,null=True,blank=True)
+    Qmin = models.FloatField(default=0,null=True,blank=True)
+    Qmax = models.FloatField(default=0,null=True,blank=True)
+    Bus_Code = models.SmallIntegerField(default=0,null=True,blank=True)
 
 class LineData(models.Model):
     to_bus =models.SmallIntegerField()
     from_bus = models.SmallIntegerField()
+    R = models.FloatField(default=0)
+    X = models.FloatField(default=0)
+    half_B = models.FloatField(default=0)
+    negative_R = models.FloatField(default=0,null=True,blank=True)
+    negative_X = models.FloatField(default=0,null=True,blank=True)
+    zero_R = models.FloatField(default=0,null=True,blank=True)
+    zero_X = models.FloatField(default=0,null=True,blank=True)
+    Xn = models.FloatField(default=0,null=True,blank=True)
+    zero_half_B = models.FloatField(default=0,null=True,blank=True)
+    line_type = models.SmallIntegerField(default=0,null=True,blank=True)
 
 class conditionCheck(models.Model):
     is_not_symmetry = models.BooleanField()
@@ -151,3 +170,35 @@ class OthersequenceI(models.Model):
     Phase_B_Deg = models.FloatField()
     Phase_C_Mag = models.FloatField()
     Phase_C_Deg = models.FloatField()
+
+class Afterflow(models.Model):
+    Bus_No =models.SmallIntegerField()
+    Voltage_Mag = models.FloatField(default=0)
+    Voltage_Deg = models.FloatField(default=0)
+    Generator_MW = models.FloatField(default=0)
+    Generator_Mvar = models.FloatField(default=0)
+    Load_MW = models.FloatField(default=0)
+    Load_Mvar = models.FloatField(default=0)
+
+class Sliderbus(models.Model):
+    Bus_No =models.SmallIntegerField()
+    Voltage_Mag = models.FloatField(default=0)
+    Voltage_Deg = models.FloatField(default=0)
+    Generator_MW = models.FloatField(default=0,null=True,blank=True)
+    Generator_Mvar = models.FloatField(default=0,null=True,blank=True)
+    Load_MW = models.FloatField(default=0,null=True,blank=True)
+    Load_Mvar = models.FloatField(default=0,null=True,blank=True)
+
+class SliderLine(models.Model):
+    From_bus = models.SmallIntegerField()
+    To_bus =models.SmallIntegerField()
+    R = models.FloatField(default=0)
+    X = models.FloatField(default=0)
+    half_B = models.FloatField(default=0)
+    negative_R = models.FloatField(default=0,null=True,blank=True)
+    negative_X = models.FloatField(default=0,null=True,blank=True)
+    zero_R = models.FloatField(default=0,null=True,blank=True)
+    zero_X = models.FloatField(default=0,null=True,blank=True)
+    Xn = models.FloatField(default=0,null=True,blank=True)
+    zero_half_B = models.FloatField(default=0,null=True,blank=True)
+    line_type = models.SmallIntegerField(default=0,null=True,blank=True)
