@@ -52,5 +52,26 @@
   {% else %}
     <a class="btn btn-primary" href="{% url 'slider' %}">다음</a>
   {% endif %}
+  {% if fault_con.is_bus_fault %}
+    {% if fault_con.fault_type == 0 %}
+      {% if fault_con.is_shunt %}
+        {% if fault_con.is_load_effect %}
+          <img src="{% static 'cal/images/ybusbload.png'%}">
+        {% else %}
+          <img src="{% static 'cal/images/ybusb.png'%}">
+        {% endif %}
+      {% else %}
+        {% if fault_con.is_load_effect %}
+          <img src="{% static 'cal/images/ybusload.png'%}">
+        {% else %}
+          <img src="{% static 'cal/images/ybus.png'%}">
+        {% endif %}
+      {% endif%}
+    {% else%}
+      <a class="btn btn-primary" href="{% url 'transformer' %}">다음</a>
+    {% endif %}
+  {% else %}
+    <a class="btn btn-primary" href="{% url 'slider' %}">다음</a>
+  {% endif %}
 </div>
 {% endblock content%}

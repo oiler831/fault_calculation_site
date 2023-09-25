@@ -91,13 +91,13 @@
                   <td>To Bus</td>
                   <td>R</td>
                   <td>X</td>
-                  <td>half_B</td>
+                  <td>B</td>
                   <td>negative_R</td>
                   <td>negative_X</td>
                   <td>zero_R</td>
                   <td>zero_X</td>
                   <td>Xn</td>
-                  <td>zero_half_B</td>
+                  <td>zero_B</td>
                   <td>line_type</td>
                 </tr>
               </thead>
@@ -108,13 +108,13 @@
                   <td>{{i.to_bus}}</td>
                   <td>{{i.R|floatformat:-4}}</td>
                   <td>{{i.X|floatformat:-4}}</td>
-                  <td>{{i.half_B|floatformat:-4}}</td>
+                  <td>{{i.B|floatformat:-4}}</td>
                   <td>{{i.negative_R|floatformat:-4}}</td>
                   <td>{{i.negative_X|floatformat:-4}}</td>
                   <td>{{i.zero_R|floatformat:-4}}</td>
                   <td>{{i.zero_X|floatformat:-4}}</td>
                   <td>{{i.Xn|floatformat:-4}}</td>
-                  <td>{{i.zero_half_B|floatformat:-4}}</td>
+                  <td>{{i.zero_B|floatformat:-4}}</td>
                   <td>{{i.line_type|floatformat:-4}}</td>
                 </tr>
                 {% endfor %}
@@ -126,7 +126,7 @@
                   <td>To Bus</td>
                   <td>R</td>
                   <td>X</td>
-                  <td>half_B</td>
+                  <td>B</td>
                 </tr>
               </thead>
               <tbody>
@@ -136,7 +136,7 @@
                   <td>{{i.to_bus}}</td>
                   <td>{{i.R|floatformat:-4}}</td>
                   <td>{{i.X|floatformat:-4}}</td>
-                  <td>{{i.half_B|floatformat:-4}}</td>
+                  <td>{{i.B|floatformat:-4}}</td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -207,12 +207,12 @@
                   <td>To Bus</td>
                   <td>R(pu)</td>
                   <td>X(pu)</td>
-                  <td>half B(pu)</td>
+                  <td>B(pu)</td>
                   <td>negative R(pu)</td>
                   <td>negative X(pu)</td>
                   <td>zero R(pu)</td>
                   <td>zero X(pu)</td>
-                  <td>zero half B(pu)</td>
+                  <td>zero B(pu)</td>
                 </tr>
               </thead>
               <tbody>
@@ -222,12 +222,12 @@
                   <td>{{linedata.To_Bus}}</td>
                   <td>{{linedata.R|floatformat:-4}}</td>
                   <td>{{linedata.X|floatformat:-4}}</td>
-                  <td>{{linedata.half_B|floatformat:-4}}</td>
+                  <td>{{linedata.B|floatformat:-4}}</td>
                   <td>{{linedata.negative_R|floatformat:-4}}</td>
                   <td>{{linedata.negative_X|floatformat:-4}}</td>
                   <td>{{linedata.zero_R|floatformat:-4}}</td>
                   <td>{{linedata.zero_X|floatformat:-4}}</td>
-                  <td>{{linedata.zero_half_B|floatformat:-4}}</td>
+                  <td>{{linedata.zero_B|floatformat:-4}}</td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -238,7 +238,7 @@
                   <td>To Bus</td>
                   <td>R(pu)</td>
                   <td>X(pu)</td>
-                  <td>half B(pu)</td>
+                  <td>B(pu)</td>
                 </tr>
               </thead>
               <tbody>
@@ -248,7 +248,7 @@
                   <td>{{linedata.To_Bus}}</td>
                   <td>{{linedata.R|floatformat:-4}}</td>
                   <td>{{linedata.X|floatformat:-4}}</td>
-                  <td>{{linedata.half_B|floatformat:-4}}</td>
+                  <td>{{linedata.B|floatformat:-4}}</td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -274,9 +274,9 @@
                       {% endif %}
                     {% else %}
                       {% if j.y_imag_source > 0 %}
-                        <td>{{j.y_real_source|floatformat:-4}}{{j.y_imag_source|floatformat:-4}}j</td>
+                        <td>{{j.y_real_source|floatformat:-4}}+{{j.y_imag_source|floatformat:-4}}j</td>
                       {% else %}
-                      <td>{{j.y_real_source|floatformat:-4}}+{{j.y_imag_source|floatformat:-4}}j</td>
+                      <td>{{j.y_real_source|floatformat:-4}}{{j.y_imag_source|floatformat:-4}}j</td>
                       {%endif%}
                     {% endif %}
                   {% endif %}
@@ -305,9 +305,9 @@
                       {% endif %}
                     {% else %}
                       {% if j.imag_source > 0 %}
-                        <td>{{j.real_source|floatformat:-4}}{{j.imag_source|floatformat:-4}}j</td>
+                        <td>{{j.real_source|floatformat:-4}}+{{j.imag_source|floatformat:-4}}j</td>
                       {% else %}
-                      <td>{{j.real_source|floatformat:-4}}+{{j.imag_source|floatformat:-4}}j</td>
+                      <td>{{j.real_source|floatformat:-4}}{{j.imag_source|floatformat:-4}}j</td>
                       {%endif%}
                     {% endif %}
                   {% endif %}
@@ -370,7 +370,7 @@
       </div>
     </div>
   </div>
-  <button type="button" class="high btn btn-success">엑셀출력</button>
+  <a href="{{ outfile.rfile.url}}" class="btn btn-outline-dark" role="button" download="fault_calculation_result.xlsx">Download</a>
 </div>
 {% else %}
 <div class="main">
@@ -473,13 +473,13 @@
                     <td>To Bus</td>
                     <td>R</td>
                     <td>X</td>
-                    <td>half_B</td>
+                    <td>B</td>
                     <td>negative_R</td>
                     <td>negative_X</td>
                     <td>zero_R</td>
                     <td>zero_X</td>
                     <td>Xn</td>
-                    <td>zero_half_B</td>
+                    <td>zero_B</td>
                     <td>line_type</td>
                   </tr>
                 </thead>
@@ -490,13 +490,13 @@
                     <td>{{i.to_bus}}</td>
                     <td>{{i.R|floatformat:-4}}</td>
                     <td>{{i.X|floatformat:-4}}</td>
-                    <td>{{i.half_B|floatformat:-4}}</td>
+                    <td>{{i.B|floatformat:-4}}</td>
                     <td>{{i.negative_R|floatformat:-4}}</td>
                     <td>{{i.negative_X|floatformat:-4}}</td>
                     <td>{{i.zero_R|floatformat:-4}}</td>
                     <td>{{i.zero_X|floatformat:-4}}</td>
                     <td>{{i.Xn|floatformat:-4}}</td>
-                    <td>{{i.zero_half_B|floatformat:-4}}</td>
+                    <td>{{i.zero_B|floatformat:-4}}</td>
                     <td>{{i.line_type|floatformat:-4}}</td>
                   </tr>
                   {% endfor %}
@@ -508,7 +508,7 @@
                     <td>To Bus</td>
                     <td>R</td>
                     <td>X</td>
-                    <td>half_B</td>
+                    <td>B</td>
                   </tr>
                 </thead>
                 <tbody>
@@ -518,7 +518,7 @@
                     <td>{{i.to_bus}}</td>
                     <td>{{i.R|floatformat:-4}}</td>
                     <td>{{i.X|floatformat:-4}}</td>
-                    <td>{{i.half_B|floatformat:-4}}</td>
+                    <td>{{i.B|floatformat:-4}}</td>
                   </tr>
                   {% endfor %}
                 </tbody>
@@ -586,57 +586,6 @@
       </div>
       <div class="content-dis">
         <div class="border">
-          <div class="container fault">
-            <table class="table table-striped">
-              {% if condition.is_flow %}
-              <thead>
-                <tr>
-                  <td>Bus No</td>
-                  <td>Voltage Mag</td>
-                  <td>Voltage Deg</td>
-                  <td>Generator MW</td>
-                  <td>Generator Mvar</td>
-                  <td>Load MW</td>
-                  <td>Load Mvar</td>
-                </tr>
-              </thead>
-              <tbody>
-                {% for busdata in faultbusdata %}
-                <tr>
-                  <td>{{busdata.Bus_No}}</td>
-                  <td>{{busdata.Voltage_Mag|floatformat:-4}}</td>
-                  <td>{{busdata.Voltage_Deg|floatformat:-4}}</td>
-                  <td>{{busdata.Generator_MW|floatformat:-4}}</td>
-                  <td>{{busdata.Generator_Mvar|floatformat:-4}}</td>
-                  <td>{{busdata.Load_MW|floatformat:-4}}</td>
-                  <td>{{busdata.Load_Mvar|floatformat:-4}}</td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            {% else %}
-            <thead>
-              <tr>
-                <td>Bus No</td>
-                <td>Voltage Mag</td>
-                <td>Voltage Deg</td>
-              </tr>
-            </thead>
-            <tbody>
-              {% for busdata in faultbusdata %}
-              <tr>
-                <td>{{busdata.Bus_No}}</td>
-                <td>{{busdata.Voltage_Mag|floatformat:-4}}</td>
-                <td>{{busdata.Voltage_Deg|floatformat:-4}}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-            {% endif %}
-            </table>
-          </div>
-        </div>
-      </div>
-      <div class="content-dis">
-        <div class="border">
           <div class="container  fault">
             <table class="table table-striped">
               {% if condition.is_not_symmetry %}
@@ -646,12 +595,12 @@
                   <td>To Bus</td>
                   <td>R(pu)</td>
                   <td>X(pu)</td>
-                  <td>half B(pu)</td>
+                  <td>B(pu)</td>
                   <td>negative R(pu)</td>
                   <td>negative X(pu)</td>
                   <td>zero R(pu)</td>
                   <td>zero X(pu)</td>
-                  <td>zero half B(pu)</td>
+                  <td>zero B(pu)</td>
                 </tr>
               </thead>
               <tbody>
@@ -661,12 +610,12 @@
                   <td>{{linedata.To_Bus}}</td>
                   <td>{{linedata.R|floatformat:-4}}</td>
                   <td>{{linedata.X|floatformat:-4}}</td>
-                  <td>{{linedata.half_B|floatformat:-4}}</td>
+                  <td>{{linedata.B|floatformat:-4}}</td>
                   <td>{{linedata.negative_R|floatformat:-4}}</td>
                   <td>{{linedata.negative_X|floatformat:-4}}</td>
                   <td>{{linedata.zero_R|floatformat:-4}}</td>
                   <td>{{linedata.zero_X|floatformat:-4}}</td>
-                  <td>{{linedata.zero_half_B|floatformat:-4}}</td>
+                  <td>{{linedata.zero_B|floatformat:-4}}</td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -677,7 +626,7 @@
                   <td>To Bus</td>
                   <td>R(pu)</td>
                   <td>X(pu)</td>
-                  <td>half B(pu)</td>
+                  <td>B(pu)</td>
                 </tr>
               </thead>
               <tbody>
@@ -687,7 +636,7 @@
                   <td>{{linedata.To_Bus}}</td>
                   <td>{{linedata.R|floatformat:-4}}</td>
                   <td>{{linedata.X|floatformat:-4}}</td>
-                  <td>{{linedata.half_B|floatformat:-4}}</td>
+                  <td>{{linedata.B|floatformat:-4}}</td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -1016,7 +965,7 @@
       </div>
     </div>
   </div>
-  <button type="button" class="high btn btn-success">엑셀출력</button>
+  <a href="{{ outfile.rfile.url}}" class="btn btn-outline-dark" role="button" download="fault_calculation_result.xlsx">Download</a>
 </div>
 {% endif %}
 {% endblock content %}

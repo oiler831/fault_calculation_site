@@ -43,6 +43,7 @@
   </div>
   <a class="btn btn-primary" href="{% url 'ybus' %}">이전</a>
   <a class="btn btn-primary" href="{% url 'phase' %}">다음</a>
+  <img src="{% static 'cal/images/threefault.png'%}">
 </div>
 {% else %}
 <div class="main">
@@ -152,6 +153,15 @@
   </div>
   <a class="btn btn-primary" href="{% url 'ybus' %}">이전</a>
   <a class="btn btn-primary" href="{% url 'sequence' %}">다음</a>
+  {% if faultcon.fault_type == 1%}
+    <img src="{% static 'cal/images/single-line.png'%}">
+  {% else%}
+    {% if faultcon.fault_type == 2%}
+      <img src="{% static 'cal/images/line-to-line.png'%}">
+    {% else %}
+      <img src="{% static 'cal/images/double-line.png'%}">
+    {% endif %}
+  {% endif %}
 </div>
 {% endif %}
 {% endblock content %}

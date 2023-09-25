@@ -33,13 +33,13 @@ label{
 #tab-5:checked ~ .tab label:nth-child(5),
 #tab-6:checked ~ .tab label:nth-child(6),
 #tab-7:checked ~ .tab label:nth-child(7),
-#tab-8:checked ~ .content div:nth-child(8),
-#tab-9:checked ~ .content div:nth-child(9),
-#tab-10:checked ~ .content div:nth-child(10),
-#tab-11:checked ~ .content div:nth-child(11),
-#tab-12:checked ~ .content div:nth-child(12),
-#tab-13:checked ~ .content div:nth-child(13),
-#tab-14:checked ~ .content div:nth-child(14){
+#tab-8:checked ~ .tab label:nth-child(8),
+#tab-9:checked ~ .tab label:nth-child(9),
+#tab-10:checked ~ .tab label:nth-child(10),
+#tab-11:checked ~ .tab label:nth-child(11),
+#tab-12:checked ~ .tab label:nth-child(12),
+#tab-13:checked ~ .tab label:nth-child(13),
+#tab-14:checked ~ .tab label:nth-child(14){
   background-color: rgba(0, 0, 0, 0.2);
   box-shadow: none;
 }

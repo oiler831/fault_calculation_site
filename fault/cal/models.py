@@ -10,22 +10,22 @@ class BusData(models.Model):
     Generator_Mvar = models.FloatField(default=0,null=True,blank=True)
     Load_MW = models.FloatField(default=0,null=True,blank=True)
     Load_Mvar = models.FloatField(default=0,null=True,blank=True)
-    Qmin = models.FloatField(default=0,null=True,blank=True)
     Qmax = models.FloatField(default=0,null=True,blank=True)
+    Qmin = models.FloatField(default=0,null=True,blank=True)
     Bus_Code = models.SmallIntegerField(default=0,null=True,blank=True)
 
 class LineData(models.Model):
-    to_bus =models.SmallIntegerField()
     from_bus = models.SmallIntegerField()
+    to_bus =models.SmallIntegerField()
     R = models.FloatField(default=0)
     X = models.FloatField(default=0)
-    half_B = models.FloatField(default=0)
+    B = models.FloatField(default=0)
     negative_R = models.FloatField(default=0,null=True,blank=True)
     negative_X = models.FloatField(default=0,null=True,blank=True)
     zero_R = models.FloatField(default=0,null=True,blank=True)
     zero_X = models.FloatField(default=0,null=True,blank=True)
     Xn = models.FloatField(default=0,null=True,blank=True)
-    zero_half_B = models.FloatField(default=0,null=True,blank=True)
+    zero_B = models.FloatField(default=0,null=True,blank=True)
     line_type = models.SmallIntegerField(default=0,null=True,blank=True)
 
 class conditionCheck(models.Model):
@@ -73,12 +73,12 @@ class FaultLineData(models.Model):
     To_Bus = models.SmallIntegerField()
     R = models.FloatField()
     X = models.FloatField()
-    half_B = models.FloatField()
+    B = models.FloatField()
     negative_R = models.FloatField(default=0,null=True,blank=True)
     negative_X = models.FloatField(default=0,null=True,blank=True)
     zero_R = models.FloatField(default=0,null=True,blank=True)
     zero_X = models.FloatField(default=0,null=True,blank=True)
-    zero_half_B = models.FloatField(default=0,null=True,blank=True)
+    zero_B = models.FloatField(default=0,null=True,blank=True)
 
 
 class ThreeFaultV(models.Model):
@@ -193,11 +193,15 @@ class SliderLine(models.Model):
     To_bus =models.SmallIntegerField()
     R = models.FloatField(default=0)
     X = models.FloatField(default=0)
-    half_B = models.FloatField(default=0)
+    B = models.FloatField(default=0)
     negative_R = models.FloatField(default=0,null=True,blank=True)
     negative_X = models.FloatField(default=0,null=True,blank=True)
     zero_R = models.FloatField(default=0,null=True,blank=True)
     zero_X = models.FloatField(default=0,null=True,blank=True)
     Xn = models.FloatField(default=0,null=True,blank=True)
-    zero_half_B = models.FloatField(default=0,null=True,blank=True)
+    zero_B = models.FloatField(default=0,null=True,blank=True)
     line_type = models.SmallIntegerField(default=0,null=True,blank=True)
+
+class resultfile(models.Model):
+    rfile = models.FileField(upload_to='result')
+    find_file = models.BooleanField(default=False,null=True,blank=True)

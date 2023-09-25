@@ -2,10 +2,12 @@ from django.shortcuts import render, redirect
 from .models import (FaultCondition, BusData, LineData, ExcelFile,FaultLineData,FaultBusData,
                     ThreeFaultI,ThreeFaultV,OtherFaultI,OtherFaultV,conditionCheck,ThreeZbus,ThreeZbusSource,
                     OtherZbusSource,OtherZbus,negativeZbusSource,zeroZbusSource,isExample,OthersequenceI,OthersequenceV,
-                    Afterflow,SliderLine,Sliderbus)
+                    Afterflow,SliderLine,Sliderbus,resultfile)
 import pandas as pd
 import numpy as np
 import math
+from pathlib import Path
+from django.core.files import File
 
 # Create your views here.
 def index(request):
@@ -61,11 +63,11 @@ def upload_excel_to_db(request):
         if is_not_symmetry:
             for i in range(len(line_df)):
                 LineData.objects.create(from_bus = line_df[0][i],to_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],
-                                        half_B = line_df[4][i],negative_R = line_df[5][i],negative_X = line_df[6][i],zero_R = line_df[7][i],
-                                        zero_X = line_df[8][i],Xn = line_df[9][i],zero_half_B = line_df[10][i],line_type = line_df[11][i])
+                                        B = line_df[4][i],negative_R = line_df[5][i],negative_X = line_df[6][i],zero_R = line_df[7][i],
+                                        zero_X = line_df[8][i],Xn = line_df[9][i],zero_B = line_df[10][i],line_type = line_df[11][i])
         else:
             for i in range(len(line_df)):
-                LineData.objects.create(from_bus = line_df[0][i],to_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],half_B = line_df[4][i])
+                LineData.objects.create(from_bus = line_df[0][i],to_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i])
         conditionCheck.objects.create(is_flow=is_flow,is_not_symmetry=is_not_symmetry,find_con=True)
         return redirect('condition')
     return render(request,'cal/file.html')
@@ -185,11 +187,11 @@ def fault_con(request):
             if condition.is_not_symmetry:
                 for i in range(len(line_df)):
                     SliderLine.objects.create(From_bus = line_df[0][i],To_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],
-                                            half_B = line_df[4][i],negative_R = line_df[5][i],negative_X = line_df[6][i],zero_R = line_df[7][i],
-                                            zero_X = line_df[8][i],Xn = line_df[9][i],zero_half_B = line_df[10][i],line_type = line_df[11][i])
+                                            B = line_df[4][i],negative_R = line_df[5][i],negative_X = line_df[6][i],zero_R = line_df[7][i],
+                                            zero_X = line_df[8][i],Xn = line_df[9][i],zero_B = line_df[10][i],line_type = line_df[11][i])
             else:
                 for i in range(len(line_df)):
-                    SliderLine.objects.create(From_bus = line_df[0][i],To_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],half_B = line_df[4][i])
+                    SliderLine.objects.create(From_bus = line_df[0][i],To_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i])
         
         if fault_con.fault_type > 0: 
             line_df = fault_line_data_scaling(line_df) 
@@ -215,10 +217,10 @@ def fault_con(request):
         for i in range(len(line_df)):
             if condition.is_not_symmetry:
                 FaultLineData.objects.create(From_Bus=line_df[0][i], To_Bus=line_df[1][i], R=line_df[2][i], X=line_df[3][i],
-                                        half_B=line_df[4][i],negative_R=line_df[5][i],negative_X=line_df[6][i],
-                                        zero_R=line_df[7][i],zero_X=line_df[8][i],zero_half_B=line_df[10][i])
+                                        B=line_df[4][i],negative_R=line_df[5][i],negative_X=line_df[6][i],
+                                        zero_R=line_df[7][i],zero_X=line_df[8][i],zero_B=line_df[10][i])
             else:
-                FaultLineData.objects.create(From_Bus=line_df[0][i], To_Bus=line_df[1][i], R=line_df[2][i], X=line_df[3][i], half_B=line_df[4][i])
+                FaultLineData.objects.create(From_Bus=line_df[0][i], To_Bus=line_df[1][i], R=line_df[2][i], X=line_df[3][i], B=line_df[4][i])
         
         if fault_con.fault_type == 0:
             for i in range(len(result_v)):
@@ -280,10 +282,113 @@ def result(request):
     sequencev = OthersequenceV.objects.all()
     sequencei = OthersequenceI.objects.all()
     condition = conditionCheck.objects.get(find_con=True)
+    clear = resultfile.objects.all()
+    clear.delete()
+    j = complex(0, 1)
+    initial_bus = pd.DataFrame(BusData.objects.all().values()).drop('id', axis=1)
+    initial_line = pd.DataFrame(LineData.objects.all().values()).drop('id', axis=1)
+    fault_bus = pd.DataFrame(FaultBusData.objects.all().values()).drop('id',axis=1)
+    fault_line = pd.DataFrame(FaultLineData.objects.all().values()).drop('id',axis=1)
+    if condition.is_flow == False:
+        initial_bus.drop(['Generator_MW','Generator_Mvar','Load_MW','Load_Mvar','Qmax','Qmin','Bus_Code'],axis=1,inplace=True)
+        fault_bus.drop(['Generator_MW','Generator_Mvar','Load_MW','Load_Mvar'],axis=1,inplace=True)
+    if condition.is_not_symmetry == False:
+        initial_line.drop(['negative_R','negative_X','zero_R','zero_X','Xn','zero_B','line_type'],axis=1,inplace=True)
+        fault_line.drop(['negative_R','negative_X','zero_R','zero_X','zero_B'],axis=1,inplace=True)
+    bus_size = max(fault_bus.iloc[:,0])
+    if faultcon.fault_type==0:
+        ybus = np.zeros((bus_size, bus_size), dtype='complex_')
+        zbus = np.zeros((bus_size, bus_size), dtype='complex_')
+        bus = pd.DataFrame(ThreeZbusSource.objects.all().values())
+        z_real = np.round(bus.iloc[:,2],4)
+        z_imag = np.round(bus.iloc[:,3],4)
+        y_real = np.round(bus.iloc[:,4],4)
+        y_imag = np.round(bus.iloc[:,5],4)
+        for i in range(bus_size):
+            for k in range(bus_size):
+                ybus[i][k] = y_real[bus_size*i+k]+j*y_imag[bus_size*i+k]
+                zbus[i][k] = z_real[bus_size*i+k]+j*z_imag[bus_size*i+k]
+                
+        ybus = pd.DataFrame(ybus)
+        zbus = pd.DataFrame(zbus)
+        threev = pd.DataFrame(ThreeFaultV.objects.all().values()).drop('id',axis=1)
+        threei = pd.DataFrame(ThreeFaultI.objects.all().values()).drop('id',axis=1)
+        with pd.ExcelWriter('/home/jin/graduation/fault/media/result/result.xlsx') as writer:
+            initial_bus.to_excel(writer, sheet_name='initial_bus',index=False)
+            initial_line.to_excel(writer, sheet_name='initial_line',index=False)
+            fault_bus.to_excel(writer, sheet_name='fault_bus',index=False)
+            fault_line.to_excel(writer, sheet_name='fault_line',index=False)
+            ybus.to_excel(writer, sheet_name='ybus',index=False,header=None)
+            zbus.to_excel(writer, sheet_name='zbus',index=False,header=None)
+            threev.to_excel(writer, sheet_name='fault voltage',index=False)
+            threei.to_excel(writer, sheet_name='fault current',index=False)
+    else:
+        pybus = np.zeros((bus_size, bus_size), dtype='complex_')
+        nybus = np.zeros((bus_size, bus_size), dtype='complex_')
+        zybus = np.zeros((bus_size, bus_size), dtype='complex_')
+        pzbus = np.zeros((bus_size, bus_size), dtype='complex_')
+        nzbus = np.zeros((bus_size, bus_size), dtype='complex_')
+        zzbus = np.zeros((bus_size, bus_size), dtype='complex_')
+        pbus = pd.DataFrame(OtherZbusSource.objects.all().values())
+        nbus = pd.DataFrame(negativeZbusSource.objects.all().values())
+        zbus = pd.DataFrame(zeroZbusSource.objects.all().values())
+        zp_real = np.round(pbus.iloc[:,2],4)
+        zp_imag = np.round(pbus.iloc[:,3],4)
+        yp_real = np.round(pbus.iloc[:,4],4)
+        yp_imag = np.round(pbus.iloc[:,5],4)
+        zn_real = np.round(nbus.iloc[:,2],4)
+        zn_imag = np.round(nbus.iloc[:,3],4)
+        yn_real = np.round(nbus.iloc[:,4],4)
+        yn_imag = np.round(nbus.iloc[:,5],4)
+        zz_real = np.round(zbus.iloc[:,2],4)
+        zz_imag = np.round(zbus.iloc[:,3],4)
+        yz_real = np.round(zbus.iloc[:,4],4)
+        yz_imag = np.round(zbus.iloc[:,5],4)
+        for i in range(bus_size):
+            for k in range(bus_size):
+                pybus[i][k] = yp_real[bus_size*i+k]+j*yp_imag[bus_size*i+k]
+                pzbus[i][k] = zp_real[bus_size*i+k]+j*zp_imag[bus_size*i+k]
+                nybus[i][k] = yn_real[bus_size*i+k]+j*yn_imag[bus_size*i+k]
+                nzbus[i][k] = zn_real[bus_size*i+k]+j*zn_imag[bus_size*i+k]
+                zybus[i][k] = yz_real[bus_size*i+k]+j*yz_imag[bus_size*i+k]
+                zzbus[i][k] = zz_real[bus_size*i+k]+j*zz_imag[bus_size*i+k]
+                
+        pybus = pd.DataFrame(pybus)
+        pzbus = pd.DataFrame(pzbus)
+        nybus = pd.DataFrame(nybus)
+        nzbus = pd.DataFrame(nzbus)
+        zybus = pd.DataFrame(zybus)
+        zzbus = pd.DataFrame(zzbus)
+        sequence_v = pd.DataFrame(OthersequenceV.objects.all().values()).drop('id',axis=1)
+        sequence_i = pd.DataFrame(OthersequenceI.objects.all().values()).drop('id',axis=1)
+        otherv = pd.DataFrame(OtherFaultV.objects.all().values()).drop('id',axis=1)
+        otheri = pd.DataFrame(OtherFaultI.objects.all().values()).drop('id',axis=1)
+        with pd.ExcelWriter('/home/jin/graduation/fault/media/result/result.xlsx') as writer:
+            initial_bus.to_excel(writer, sheet_name='initial_bus',index=False)
+            initial_line.to_excel(writer, sheet_name='initial_line',index=False)
+            fault_bus.to_excel(writer, sheet_name='fault_bus',index=False)
+            fault_line.to_excel(writer, sheet_name='fault_line',index=False)
+            pybus.to_excel(writer, sheet_name='positive ybus',index=False,header=None)
+            nybus.to_excel(writer, sheet_name='negative ybus',index=False,header=None)
+            zybus.to_excel(writer, sheet_name='zero ybus',index=False,header=None)
+            pzbus.to_excel(writer, sheet_name='positive zbus',index=False,header=None)
+            nzbus.to_excel(writer, sheet_name='negative zbus',index=False,header=None)
+            zzbus.to_excel(writer, sheet_name='zero zbus',index=False,header=None)
+            sequence_v.to_excel(writer, sheet_name='fault sequence voltage',index=False)
+            sequence_i.to_excel(writer, sheet_name='fault sequence current',index=False) 
+            otherv.to_excel(writer, sheet_name='fault phase voltage',index=False)
+            otheri.to_excel(writer, sheet_name='fault phase current',index=False)
+    resultfile.objects.create(find_file=True)
+    outfile = resultfile.objects.get(find_file=True)
+    path = Path('/home/jin/graduation/fault/media/result/result.xlsx')
+    with path.open(mode='rb') as f:
+        outfile.rfile = File(f, name=path.name)
+        outfile.save()
     context = {'faultbusdata':faultbusdata,'faultlinedata':faultlinedata,'threefaultv':threefaultv,'threefaulti':threefaulti,
                 'otherfaultv':otherfaultv,'otherfaulti':otherfaulti, 'faultcon':faultcon,'threezbus':threezbus,
                 'tsource':threezbussource,'otherzbus':otherzbus,'osource':otherzbussource,'nsource':negativezbussource,
-                'zsource':zerozbussource,'condition':condition,'busdata':busdata,'linedata':linedata,'sequencev':sequencev,'sequencei':sequencei}
+                'zsource':zerozbussource,'condition':condition,'busdata':busdata,'linedata':linedata,'sequencev':sequencev,
+                'sequencei':sequencei,'outfile':outfile}
     return render(request, 'cal/fault_result.html',context=context)
 
 def initial(request):
@@ -362,7 +467,7 @@ def flow_y_bus(line_d):
     tb = line_d.iloc[:, 1]
     r = line_d.iloc[:, 2]
     x = line_d.iloc[:, 3]
-    half_b = j * line_d.iloc[:, 4]
+    b = j * line_d.iloc[:, 4]
     bus_size = max(max(fb), max(tb))
     con_num = len(fb)
     z = r + j * x
@@ -381,8 +486,8 @@ def flow_y_bus(line_d):
         else:
             bus[fb[i] - 1, tb[i] - 1] -= y[i]
             bus[tb[i] - 1, fb[i] - 1] -= y[i]
-            bus[fb[i] - 1, fb[i] - 1] += y[i] + half_b[i]
-            bus[tb[i] - 1, tb[i] - 1] += y[i] + half_b[i]
+            bus[fb[i] - 1, fb[i] - 1] += y[i] + b[i]/2
+            bus[tb[i] - 1, tb[i] - 1] += y[i] + b[i]/2
     return bus
 
 def gauss_flow(line_d, bus_d):
@@ -443,6 +548,7 @@ def gauss_flow(line_d, bus_d):
         prev_v = curr_v.copy()
     bus_d.iloc[:, 1] = np.abs(curr_v)
     bus_d.iloc[:, 2] = np.angle(curr_v, deg=True)
+    bus_d.iloc[:, 4] = q_power + q_load
     return bus_d, repeat
 
 def fault_line_data_scaling(line_df):
@@ -545,7 +651,7 @@ def y_bus(line_d):
     tb = line_d.iloc[:, 1]
     r = line_d.iloc[:, 2]
     x = line_d.iloc[:, 3]
-    half_b = j * line_d.iloc[:, 4]
+    b = j * line_d.iloc[:, 4]
     bus_size = max(max(fb), max(tb))
     con_num = len(fb)  # condition number
     z = r + j * x
@@ -564,8 +670,8 @@ def y_bus(line_d):
         else:
             bus[fb[i] - 1, tb[i] - 1] -= y[i]
             bus[tb[i] - 1, fb[i] - 1] -= y[i]
-            bus[fb[i] - 1, fb[i] - 1] += y[i] + half_b[i]
-            bus[tb[i] - 1, tb[i] - 1] += y[i] + half_b[i]
+            bus[fb[i] - 1, fb[i] - 1] += y[i] + b[i]/2
+            bus[tb[i] - 1, tb[i] - 1] += y[i] + b[i]/2
     return bus
 
 
@@ -591,18 +697,18 @@ def load_zbus(line_d, bus_d):
 
 
 def three_phase_fault(bus_voltage, line_d, bus_d, fault_location, fault_impedance,
-                        half_b_consider, is_bus_load):
+                        b_consider, is_bus_load):
     j = complex(0, 1)
     fb = line_d.iloc[:, 0]
     tb = line_d.iloc[:, 1]
     r = line_d.iloc[:, 2]
     x = line_d.iloc[:, 3]
-    half_b = line_d.iloc[:, 4]
+    b = line_d.iloc[:, 4]
 
-    if not half_b_consider:
-        half_b *= 0
+    if not b_consider:
+        b *= 0
 
-    three_phase_d = pd.concat([fb, tb, r, x, half_b], axis=1)
+    three_phase_d = pd.concat([fb, tb, r, x, b], axis=1)
     z = r + j * x
     con_num = len(fb)
     bus_size = max(max(fb), max(tb))
@@ -629,18 +735,18 @@ def three_phase_fault(bus_voltage, line_d, bus_d, fault_location, fault_impedanc
 
 
 def unbalanced_fault(bus_voltage, line_d, bus_d, fault_location, fault_impedance, fault_type,
-                    half_b_consider, is_bus_load):
+                    b_consider, is_bus_load):
     j = complex(0, 1)
     fb = line_d.iloc[:, 0]
     tb = line_d.iloc[:, 1]
     positive_r = line_d.iloc[:, 2]
     positive_x = line_d.iloc[:, 3]
-    half_b = line_d.iloc[:, 4]
+    b = line_d.iloc[:, 4]
     negative_r = line_d.iloc[:, 5]
     negative_x = line_d.iloc[:, 6]
     zero_r = line_d.iloc[:, 7]
     zero_x = line_d.iloc[:, 8]
-    zero_half_b = line_d.iloc[:, 10]
+    zero_b = line_d.iloc[:, 10]
 
     con_num = len(fb)
     bus_size = max(max(fb), max(tb))
@@ -649,16 +755,16 @@ def unbalanced_fault(bus_voltage, line_d, bus_d, fault_location, fault_impedance
     negative_z = negative_r + j * negative_x
     zero_z = zero_r + j * zero_x
 
-    if not half_b_consider:
-        half_b *= 0
+    if not b_consider:
+        b *= 0
     if is_bus_load:
-        positive_fault_bus, pybus = df_to_load_zbus(fb, tb, positive_r, positive_x, half_b, bus_d)
-        negative_fault_bus, nybus = df_to_load_zbus(fb, tb, negative_r, negative_x, half_b, bus_d)
-        zero_fault_bus, zybus = df_to_load_zbus(fb, tb, zero_r, zero_x, zero_half_b, bus_d)
+        positive_fault_bus, pybus = df_to_load_zbus(fb, tb, positive_r, positive_x, b, bus_d)
+        negative_fault_bus, nybus = df_to_load_zbus(fb, tb, negative_r, negative_x, b, bus_d)
+        zero_fault_bus, zybus = df_to_load_zbus(fb, tb, zero_r, zero_x, zero_b, bus_d)
     else:
-        positive_fault_bus, pybus = df_to_zbus(fb, tb, positive_r, positive_x, half_b)
-        negative_fault_bus, nybus = df_to_zbus(fb, tb, negative_r, negative_x, half_b)
-        zero_fault_bus, zybus = df_to_zbus(fb, tb, zero_r, zero_x, zero_half_b)
+        positive_fault_bus, pybus = df_to_zbus(fb, tb, positive_r, positive_x, b)
+        negative_fault_bus, nybus = df_to_zbus(fb, tb, negative_r, negative_x, b)
+        zero_fault_bus, zybus = df_to_zbus(fb, tb, zero_r, zero_x, zero_b)
     fl = fault_location - 1
     a_matrix = symmetrical_components_transformation_matrix()
 
@@ -717,13 +823,13 @@ def fault_current_calculation(fault_type, bus_v, fl, p_bus, n_bus, z_bus, z_f):
     return fault_current
 
 
-def df_to_zbus(fb, tb, r, x, half_b):
-    df = pd.concat([fb, tb, r, x, half_b], axis=1)
+def df_to_zbus(fb, tb, r, x, b):
+    df = pd.concat([fb, tb, r, x, b], axis=1)
     return zbus(df)
 
 
-def df_to_load_zbus(fb, tb, r, x, half_b, bus_d):
-    df = pd.concat([fb, tb, r, x, half_b], axis=1)
+def df_to_load_zbus(fb, tb, r, x, b, bus_d):
+    df = pd.concat([fb, tb, r, x, b], axis=1)
     return load_zbus(df, bus_d)
 
 
