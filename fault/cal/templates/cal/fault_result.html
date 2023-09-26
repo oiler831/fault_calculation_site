@@ -1,6 +1,10 @@
 {% extends './base.html'%}
 {% load static %}
 
+{% block css %}
+<link rel="stylesheet" href="{% static 'cal/css/result.css'%}">
+{% endblock css %}
+
 {% block content %}
 {% if faultcon.fault_type == 0 %}
 <div class="main">
@@ -89,15 +93,15 @@
                 <tr>
                   <td>From Bus</td>
                   <td>To Bus</td>
-                  <td>R</td>
-                  <td>X</td>
-                  <td>B</td>
-                  <td>negative_R</td>
-                  <td>negative_X</td>
-                  <td>zero_R</td>
-                  <td>zero_X</td>
-                  <td>Xn</td>
-                  <td>zero_B</td>
+                  <td>R(pu)</td>
+                  <td>X(pu)</td>
+                  <td>B(pu)</td>
+                  <td>negative_R(pu)</td>
+                  <td>negative_X(pu)</td>
+                  <td>zero_R(pu)</td>
+                  <td>zero_X(pu)</td>
+                  <td>Xn(pu)</td>
+                  <td>zero_B(pu)</td>
                   <td>line_type</td>
                 </tr>
               </thead>
@@ -124,9 +128,9 @@
                 <tr>
                   <td>From Bus</td>
                   <td>To Bus</td>
-                  <td>R</td>
-                  <td>X</td>
-                  <td>B</td>
+                  <td>R(pu)</td>
+                  <td>X(pu)</td>
+                  <td>B(pu)</td>
                 </tr>
               </thead>
               <tbody>
@@ -471,15 +475,15 @@
                   <tr>
                     <td>From Bus</td>
                     <td>To Bus</td>
-                    <td>R</td>
-                    <td>X</td>
-                    <td>B</td>
-                    <td>negative_R</td>
-                    <td>negative_X</td>
-                    <td>zero_R</td>
-                    <td>zero_X</td>
-                    <td>Xn</td>
-                    <td>zero_B</td>
+                    <td>R(pu)</td>
+                    <td>X(pu)</td>
+                    <td>B(pu)</td>
+                    <td>negative_R(pu)</td>
+                    <td>negative_X(pu)</td>
+                    <td>zero_R(pu)</td>
+                    <td>zero_X(pu)</td>
+                    <td>Xn(pu)</td>
+                    <td>zero_B(pu)</td>
                     <td>line_type</td>
                   </tr>
                 </thead>
@@ -506,9 +510,9 @@
                   <tr>
                     <td>From Bus</td>
                     <td>To Bus</td>
-                    <td>R</td>
-                    <td>X</td>
-                    <td>B</td>
+                    <td>R(pu)</td>
+                    <td>X(pu)</td>
+                    <td>B(pu)</td>
                   </tr>
                 </thead>
                 <tbody>

@@ -31,11 +31,11 @@ def upload_excel_to_db(request):
     if request.method == 'POST':
         if request.POST['isexample'] == "True":
             if request.POST['exampleselect']=='1':
-                excel_file="/home/jin/graduation/fault/media/example/bus_9.9-2.xlsx"
+                excel_file="/home/jin/graduation/fault/media/example/Glover_9.8.xlsx"
             elif request.POST['exampleselect']=='2':
-                excel_file="/home/jin/graduation/fault/media/example/bus_10.8.xlsx"
+                excel_file="/home/jin/graduation/fault/media/example/Saadat9.8.xlsx"
             elif request.POST['exampleselect']=='3':
-                excel_file="/home/jin/graduation/fault/media/example/bus_9.9-2 - 복사본.xlsx"
+                excel_file="/home/jin/graduation/fault/media/example/Saadat10.7.xlsx"
         else:
             excel_file = request.FILES['excelFile']
             find_file = True
@@ -142,11 +142,11 @@ def fault_con(request):
         isexample = isExample.objects.get(find_ex=True)
         if isexample.isex:
             if isexample.exampleNumber==1:
-                file = "/home/jin/graduation/fault/media/example/bus_9.9-2.xlsx"
+                file = "/home/jin/graduation/fault/media/example/Glover_9.8.xlsx"
             elif isexample.exampleNumber==2:
-                file = "/home/jin/graduation/fault/media/example/bus_10.8.xlsx"
+                file = "/home/jin/graduation/fault/media/example/Saadat9.8.xlsx"
             elif isexample.exampleNumber==3:
-                file = "/home/jin/graduation/fault/media/example/bus_9.9-2 - 복사본.xlsx"
+                file = "/home/jin/graduation/fault/media/example/Saadat10.7.xlsx"
             bus_df = pd.read_excel(file,sheet_name=0, header=None) 
             line_df = pd.read_excel(file,sheet_name=1, header=None) 
         else:
@@ -581,7 +581,7 @@ def fault_line_data_scaling(line_df):
     line_df = line_df.astype({1: 'int'})
     return line_df
 
-def line_sliding_scaling(line_d,bus_d, voltage, fault_bus_1, fault_bus_2, percent, is_not_sym, is_flow):
+def line_sliding_scaling(line_d,bus_d, voltage, fault_bus_1, fault_bus_2, percent, is_flow, is_not_sym):
     fb = line_d.iloc[:, 0]
     tb = line_d.iloc[:, 1]
     con_num = len(fb)
@@ -602,7 +602,7 @@ def line_sliding_scaling(line_d,bus_d, voltage, fault_bus_1, fault_bus_2, percen
                                         temp_line[5] * (1-percent), temp_line[6] * (1-percent),
                                         temp_line[7] * (1-percent), temp_line[8] * (1-percent),
                                         temp_line[9] * (1-percent), temp_line[10] * (1-percent),
-                                            temp_line[11]]
+                                        temp_line[11]]
                     break
                 else:
                     line_d.loc[i] = [bus_size + 1, temp_line[1], temp_line[2] * percent,

@@ -76,15 +76,15 @@
                   <tr>
                     <td>From Bus</td>
                     <td>To Bus</td>
-                    <td>R</td>
-                    <td>X</td>
-                    <td>B</td>
-                    <td>negative R</td>
-                    <td>negative X</td>
-                    <td>zero R</td>
-                    <td>zero X</td>
-                    <td>Xn</td>
-                    <td>zero B</td>
+                    <td>R(pu)</td>
+                    <td>X(pu)</td>
+                    <td>B(pu)</td>
+                    <td>negative R(pu)</td>
+                    <td>negative X(pu)</td>
+                    <td>zero R(pu)</td>
+                    <td>zero X(pu)</td>
+                    <td>Xn(pu)</td>
+                    <td>zero B(pu)</td>
                     <td>line type</td>
                   </tr>
                 </thead>
@@ -111,9 +111,9 @@
                   <tr>
                     <td>From Bus</td>
                     <td>To Bus</td>
-                    <td>R</td>
-                    <td>X</td>
-                    <td>B</td>
+                    <td>R(pu)</td>
+                    <td>X(pu)</td>
+                    <td>B(pu)</td>
                   </tr>
                 </thead>
                 <tbody>
@@ -147,8 +147,8 @@
       <a class="btn btn-primary" href="{% url 'slider' %}">다음</a>
     {% endif %}
   {% endif %}
-  {% if fault_con.is_flow %}
-
+  {% if faultcon.is_flow %}
+    <img src="{% static 'cal/images/gaussflow.png'%}">
   {% else %}
     {% if faultcon.is_bus_fault %}
       {% if faultcon.fault_type == 0 %}
@@ -166,10 +166,10 @@
           {% endif %}
         {% endif%}
       {% else%}
-        <a class="btn btn-primary" href="{% url 'transformer' %}">다음</a>
+        <img src="{% static 'cal/images/zero-sequence.png'%}">
       {% endif %}
     {% else %}
-      <a class="btn btn-primary" href="{% url 'slider' %}">다음</a>
+    <img src="{% static 'cal/images/slider.png'%}">
     {% endif %}
   {% endif %}
 </div>

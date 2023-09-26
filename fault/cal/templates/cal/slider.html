@@ -70,15 +70,15 @@
                   <tr>
                     <td>From Bus</td>
                     <td>To Bus</td>
-                    <td>R</td>
-                    <td>X</td>
-                    <td>B</td>
-                    <td>negative_R</td>
-                    <td>negative_X</td>
-                    <td>zero_R</td>
-                    <td>zero_X</td>
-                    <td>Xn</td>
-                    <td>zero_B</td>
+                    <td>R(pu)</td>
+                    <td>X(pu)</td>
+                    <td>B(pu)</td>
+                    <td>negative_R(pu)</td>
+                    <td>negative_X(pu)</td>
+                    <td>zero_R(pu)</td>
+                    <td>zero_X(pu)</td>
+                    <td>Xn(pu)</td>
+                    <td>zero_B(pu)</td>
                     <td>line_type</td>
                   </tr>
                 </thead>
@@ -105,9 +105,9 @@
                   <tr>
                     <td>From Bus</td>
                     <td>To Bus</td>
-                    <td>R</td>
-                    <td>X</td>
-                    <td>B</td>
+                    <td>R(pu)</td>
+                    <td>X(pu)</td>
+                    <td>B(pu)</td>
                   </tr>
                 </thead>
                 <tbody>
@@ -137,6 +137,23 @@
     <a class="btn btn-primary" href="{% url 'ybus' %}">다음</a>
   {% else %}
     <a class="btn btn-primary" href="{% url 'transformer' %}">다음</a>
+  {% endif %}
+  {% if faultcon.fault_type == 0 %}
+    {% if fault_con.is_shunt %}
+      {% if fault_con.is_load_effect %}
+        <img src="{% static 'cal/images/ybusbload.png'%}">
+      {% else %}
+        <img src="{% static 'cal/images/ybusb.png'%}">
+      {% endif %}
+    {% else %}
+      {% if fault_con.is_load_effect %}
+        <img src="{% static 'cal/images/ybusload.png'%}">
+      {% else %}
+        <img src="{% static 'cal/images/ybus.png'%}">
+      {% endif %}
+    {% endif%}
+  {% else%}
+    <img src="{% static 'cal/images/zero-sequence.png'%}">
   {% endif %}
 </div>
 {% endblock content%}

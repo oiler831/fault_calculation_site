@@ -1,6 +1,10 @@
 {% extends './base.html'%}
 {% load static %}
 
+{% block css %}
+<link rel="stylesheet" href="{% static 'cal/css/bus.css'%}">
+{% endblock css %}
+
 {% block content %}
 {% if faultcon.fault_type == 0 %}
 <div class="main">

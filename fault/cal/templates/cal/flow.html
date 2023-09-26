@@ -4,7 +4,7 @@
 {% block content %}
 <div class="main">
   <input type="radio" id="tab-1" name="show" checked/>
-    <div class="tab other">
+    <div class="tab">
       <label for="tab-1">After Flow calculations</label>
     </div>
     <div class="content">
@@ -68,10 +68,10 @@
         {% endif %}
       {% endif%}
     {% else%}
-      <a class="btn btn-primary" href="{% url 'transformer' %}">다음</a>
+      <img src="{% static 'cal/images/zero-sequence.png'%}">
     {% endif %}
   {% else %}
-    <a class="btn btn-primary" href="{% url 'slider' %}">다음</a>
+    <img src="{% static 'cal/images/slider.png'%}">
   {% endif %}
 </div>
 {% endblock content%}

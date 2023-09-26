@@ -105,7 +105,7 @@
         <select class="form-select" aria-label="Default select example" name="fault_line" id="id_fault_line_1">
           <option selected>고장난 라인의 한 쪽 BUS 입력</option>
           {% for line in linedata %}
-          <option value={{line.id}}>{{line.from_bus}}--{{line.to_bus}}</option>
+          <option value={{line.id}}>{{line.from_bus}} --- {{line.to_bus}}</option>
           {% endfor %}
         </select>
         <input type="range" name ="line_percentage" required id="id_line_percentage" value="50" min="1" max="99" oninput="this.nextElementSibling.value = this.value">
@@ -113,11 +113,11 @@
       </fieldset>
     </div>
     <div class="mb-3 form-floating">
-      <input type="number" class="form-control" id="id_impedence_R" name="impedence_R" placeholder="0" value="0">
+      <input type="number" class="form-control" id="id_impedence_R" name="impedence_R" placeholder="0" value="0" step="0.0001">
       <label for="id_impedence_R" class="form-label">고장임피던스 R</label>
     </div>
     <div class="mb-3 form-floating">
-      <input type="number" class="form-control" id="id_impedence_X" name="impedence_X" placeholder="0" value="0">
+      <input type="number" class="form-control" id="id_impedence_X" name="impedence_X" placeholder="0" value="0" step="0.0001">
       <label for="id_impedence_X" class="form-label">고장임피던스 X</label>
     </div>
     <div class="form-check form-check-inline">
@@ -147,12 +147,12 @@
 </div>
 {% if isexample.isex %}
     {% if isexample.exampleNumber == 1 %}
-      <img src="{% static 'cal/images/lightning.svg'%}">
+      <img src="{% static 'cal/images/glover9.8.jpg'%}">
     {% else %}
       {% if isexample.exampleNumber == 2 %}
-        <img src="{% static 'cal/images/img.png'%}">
+        <img src="{% static 'cal/images/Saadat9.8.jpg'%}">
       {% else %}
-        <img src="{% static 'cal/images/img1.png'%}">
+        <img src="{% static 'cal/images/Saadat10.7.jpg'%}">
       {% endif %}
     {% endif %}
   {% endif %}
