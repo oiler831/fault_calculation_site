@@ -17,10 +17,10 @@
   <input type="radio" id="tab-7" name="show" />
   <input type="radio" id="tab-8" name="show" />
   <div class="tab zero">
-    <label for="tab-1">Inital Bus Data</label>
-    <label for="tab-2">Inital Line Data</label>
-    <label for="tab-3">Fault Bus Data</label>
-    <label for="tab-4">Fault Line Data</label>
+    <label for="tab-1">Initial Voltage Data</label>
+    <label for="tab-2">Equipment Data</label>
+    <label for="tab-3">Input Voltage Data</label>
+    <label for="tab-4">Impedence Data</label>
     <label for="tab-5">Ybus</label>
     <label for="tab-6">Zbus</label>
     <label for="tab-7">Fault Voltage</label>
@@ -35,8 +35,8 @@
               <thead>
                 <tr>
                   <td>Bus No</td>
-                  <td>Voltage Mag</td>
-                  <td>Voltage Deg</td>
+                  <td>Magnitude</td>
+                  <td>Angle(Deg)</td>
                   <td>Generator MW</td>
                   <td>Generator Mvar</td>
                   <td>Load MW</td>
@@ -66,8 +66,8 @@
               <thead>
                 <tr>
                   <td>Bus No</td>
-                  <td>Voltage Mag</td>
-                  <td>Voltage Deg</td>
+                  <td>Magnitude</td>
+                  <td>Angle(Deg)</td>
                 </tr>
               </thead>
               <tbody>
@@ -93,15 +93,15 @@
                 <tr>
                   <td>From Bus</td>
                   <td>To Bus</td>
-                  <td>R(pu)</td>
-                  <td>X(pu)</td>
-                  <td>B(pu)</td>
-                  <td>negative_R(pu)</td>
-                  <td>negative_X(pu)</td>
-                  <td>zero_R(pu)</td>
-                  <td>zero_X(pu)</td>
+                  <td>R+(pu)</td>
+                  <td>X+(pu)</td>
+                  <td>B+(pu)</td>
+                  <td>R-(pu)</td>
+                  <td>X-(pu)</td>
+                  <td>R<sub>0</sub>(pu)</td>
+                  <td>X<sub>0</sub>(pu)</td>
                   <td>Xn(pu)</td>
-                  <td>zero_B(pu)</td>
+                  <td>B<sub>0</sub>(pu)</td>
                   <td>line_type</td>
                 </tr>
               </thead>
@@ -157,8 +157,8 @@
               <thead>
                 <tr>
                   <td>Bus No</td>
-                  <td>Voltage Mag</td>
-                  <td>Voltage Deg</td>
+                  <td>Magnitude</td>
+                  <td>Angle(Deg)</td>
                   <td>Generator MW</td>
                   <td>Generator Mvar</td>
                   <td>Load MW</td>
@@ -182,8 +182,8 @@
             <thead>
               <tr>
                 <td>Bus No</td>
-                <td>Voltage Mag</td>
-                <td>Voltage Deg</td>
+                <td>Magnitude</td>
+                <td>Angle(Deg)</td>
               </tr>
             </thead>
             <tbody>
@@ -209,14 +209,14 @@
                 <tr>
                   <td>From Bus</td>
                   <td>To Bus</td>
-                  <td>R(pu)</td>
-                  <td>X(pu)</td>
-                  <td>B(pu)</td>
-                  <td>negative R(pu)</td>
-                  <td>negative X(pu)</td>
-                  <td>zero R(pu)</td>
-                  <td>zero X(pu)</td>
-                  <td>zero B(pu)</td>
+                  <td>R+(pu)</td>
+                  <td>X+(pu)</td>
+                  <td>B+(pu)</td>
+                  <td>R-(pu)</td>
+                  <td>X-(pu)</td>
+                  <td>R<sub>0</sub>(pu)</td>
+                  <td>X<sub>0</sub>(pu)</td>
+                  <td>B<sub>0</sub>(pu)</td>
                 </tr>
               </thead>
               <tbody>
@@ -331,7 +331,7 @@
               <tr>
                 <td>Bus No</td>
                 <td>Magnitude</td>
-                <td>Angle</td>
+                <td>Angle(Deg)</td>
               </tr>
             </thead>
             <tbody>
@@ -356,14 +356,18 @@
                   <td>From Bus</td>
                   <td>To Bus</td>
                   <td>Magnitude</td>
-                  <td>Angle</td>
+                  <td>Angle(Deg)</td>
                 </tr>
               </thead>
               <tbody>
                 {% for threefaulti in threefaulti %}
                 <tr>
                   <td>{{threefaulti.From_Bus}}</td>
-                  <td>{{threefaulti.To_Bus}}</td>
+                  {% if threefaulti.To_Bus == -1 %}
+                    <td>F</td>
+                  {% else%}
+                    <td>{{threefaulti.To_Bus}}</td>
+                  {% endif%}
                   <td>{{threefaulti.Current_Mag|floatformat:-4}}</td>
                   <td>{{threefaulti.Current_Deg|floatformat:-4}}</td>
                 </tr>
@@ -393,10 +397,10 @@
     <input type="radio" id="tab-13" name="show" />
     <input type="radio" id="tab-14" name="show" />
     <div class="tab other">
-      <label for="tab-1">Inital Bus Data</label>
-      <label for="tab-2">Inital Line Data</label>
-      <label for="tab-3">Fault Bus Data</label>
-      <label for="tab-4">Fault Line Data</label>
+      <label for="tab-1">Initial Voltage Data</label>
+      <label for="tab-2">Equipment Data</label>
+      <label for="tab-3">Input Voltage Data</label>
+      <label for="tab-4">Impedence Data</label>
       <label for="tab-5">Positive Ybus</label>
       <label for="tab-6">Negative Ybus</label>
       <label for="tab-7">Zero Ybus</label>
@@ -417,8 +421,8 @@
                 <thead>
                   <tr>
                     <td>Bus No</td>
-                    <td>Voltage Mag</td>
-                    <td>Voltage Deg</td>
+                    <td>Magnitude</td>
+                    <td>Angle(Deg)</td>
                     <td>Generator MW</td>
                     <td>Generator Mvar</td>
                     <td>Load MW</td>
@@ -448,8 +452,8 @@
                 <thead>
                   <tr>
                     <td>Bus No</td>
-                    <td>Voltage Mag</td>
-                    <td>Voltage Deg</td>
+                    <td>Magnitude</td>
+                    <td>Angle(Deg)</td>
                   </tr>
                 </thead>
                 <tbody>
@@ -475,15 +479,15 @@
                   <tr>
                     <td>From Bus</td>
                     <td>To Bus</td>
-                    <td>R(pu)</td>
-                    <td>X(pu)</td>
-                    <td>B(pu)</td>
-                    <td>negative_R(pu)</td>
-                    <td>negative_X(pu)</td>
-                    <td>zero_R(pu)</td>
-                    <td>zero_X(pu)</td>
+                    <td>R+(pu)</td>
+                    <td>X+(pu)</td>
+                    <td>B+(pu)</td>
+                    <td>R-(pu)</td>
+                    <td>X-(pu)</td>
+                    <td>R<sub>0</sub>(pu)</td>
+                    <td>X<sub>0</sub>(pu)</td>
                     <td>Xn(pu)</td>
-                    <td>zero_B(pu)</td>
+                    <td>B<sub>0</sub>(pu)</td>
                     <td>line_type</td>
                   </tr>
                 </thead>
@@ -539,8 +543,8 @@
                 <thead>
                   <tr>
                     <td>Bus No</td>
-                    <td>Voltage Mag</td>
-                    <td>Voltage Deg</td>
+                    <td>Magnitude</td>
+                    <td>Angle(Deg)</td>
                     <td>Generator MW</td>
                     <td>Generator Mvar</td>
                     <td>Load MW</td>
@@ -570,8 +574,8 @@
                 <thead>
                   <tr>
                     <td>Bus No</td>
-                    <td>Voltage Mag</td>
-                    <td>Voltage Deg</td>
+                    <td>Magnitude</td>
+                    <td>Angle(Deg)</td>
                   </tr>
                 </thead>
                 <tbody>
@@ -597,14 +601,14 @@
                 <tr>
                   <td>From Bus</td>
                   <td>To Bus</td>
-                  <td>R(pu)</td>
-                  <td>X(pu)</td>
-                  <td>B(pu)</td>
-                  <td>negative R(pu)</td>
-                  <td>negative X(pu)</td>
-                  <td>zero R(pu)</td>
-                  <td>zero X(pu)</td>
-                  <td>zero B(pu)</td>
+                  <td>R+(pu)</td>
+                  <td>X+(pu)</td>
+                  <td>B+(pu)</td>
+                  <td>R-(pu)</td>
+                  <td>X-(pu)</td>
+                  <td>R<sub>0</sub>(pu)</td>
+                  <td>X<sub>0</sub>(pu)</td>
+                  <td>B<sub>0</sub>(pu)</td>
                 </tr>
               </thead>
               <tbody>
@@ -887,7 +891,11 @@
                 {% for i in sequencei %}
                 <tr>
                   <td>{{i.From_Bus}}</td>
-                  <td>{{i.To_Bus}}</td>
+                  {% if i.To_Bus == -1%}
+                    <td>F</td>
+                  {% else%}
+                    <td>{{i.To_Bus}}</td>
+                  {% endif%}
                   <td>{{i.Phase_A_Mag|floatformat:-4}}</td>
                   <td>{{i.Phase_A_Deg|floatformat:-4}}</td>
                   <td>{{i.Phase_B_Mag|floatformat:-4}}</td>
@@ -953,7 +961,11 @@
                 {% for otherfaulti in otherfaulti %}
                 <tr>
                   <td>{{otherfaulti.From_Bus}}</td>
-                  <td>{{otherfaulti.To_Bus}}</td>
+                  {% if otherfaulti.To_Bus == -1%}
+                    <td>F</td>
+                  {% else%}
+                    <td>{{otherfaulti.To_Bus}}</td>
+                  {% endif%}
                   <td>{{otherfaulti.Phase_A_Mag|floatformat:-4}}</td>
                   <td>{{otherfaulti.Phase_A_Deg|floatformat:-4}}</td>
                   <td>{{otherfaulti.Phase_B_Mag|floatformat:-4}}</td>

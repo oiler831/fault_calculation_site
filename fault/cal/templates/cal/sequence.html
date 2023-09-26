@@ -64,7 +64,11 @@
                 {% for i in sequencei %}
                 <tr>
                   <td>{{i.From_Bus}}</td>
-                  <td>{{i.To_Bus}}</td>
+                  {% if i.To_Bus == -1%}
+                    <td>F</td>
+                  {% else%}
+                    <td>{{i.To_Bus}}</td>
+                  {% endif%}
                   <td>{{i.Phase_A_Mag|floatformat:-4}}</td>
                   <td>{{i.Phase_A_Deg|floatformat:-4}}</td>
                   <td>{{i.Phase_B_Mag|floatformat:-4}}</td>

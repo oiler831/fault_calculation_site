@@ -62,12 +62,20 @@ def upload_excel_to_db(request):
                 BusData.objects.create(bus_num = bus_df[0][i],Voltage_Mag=bus_df[1][i],Voltage_Deg=bus_df[2][i])
         if is_not_symmetry:
             for i in range(len(line_df)):
-                LineData.objects.create(from_bus = line_df[0][i],to_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],
+                if line_df[0][i] == 0:
+                    LineData.objects.create(from_bus = line_df[1][i],to_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],
+                                        B = line_df[4][i],negative_R = line_df[5][i],negative_X = line_df[6][i],zero_R = line_df[7][i],
+                                        zero_X = line_df[8][i],Xn = line_df[9][i],zero_B = line_df[10][i],line_type = line_df[11][i])
+                else:
+                    LineData.objects.create(from_bus = line_df[0][i],to_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],
                                         B = line_df[4][i],negative_R = line_df[5][i],negative_X = line_df[6][i],zero_R = line_df[7][i],
                                         zero_X = line_df[8][i],Xn = line_df[9][i],zero_B = line_df[10][i],line_type = line_df[11][i])
         else:
             for i in range(len(line_df)):
-                LineData.objects.create(from_bus = line_df[0][i],to_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i])
+                if line_df[0][i] == 0: 
+                    LineData.objects.create(from_bus = line_df[1][i],to_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i])
+                else:
+                    LineData.objects.create(from_bus = line_df[0][i],to_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i])
         conditionCheck.objects.create(is_flow=is_flow,is_not_symmetry=is_not_symmetry,find_con=True)
         return redirect('condition')
     return render(request,'cal/file.html')
@@ -557,7 +565,7 @@ def fault_line_data_scaling(line_df):
     line_df.iloc[:,8] += 3 * line_df.iloc[:, 9]
     append_count = 0
     for i in range(con_num):
-        if line_df[11][i] == 1:
+        if line_df[11][i] == 3:
             line_df.loc[con_num + append_count] = [line_df[0][i], 0, 0, 0, line_df[4][i], 0, 0,
                                                     line_df[7][i], line_df[8][i], line_df[9][i],
                                                     line_df[10][i], line_df[11][i]]
@@ -565,7 +573,7 @@ def fault_line_data_scaling(line_df):
             line_df[7][i] = 0
             line_df[8][i] = 0
             line_df[9][i] = 0
-        if line_df[11][i] == 2:
+        if line_df[11][i] == 4:
             line_df.loc[con_num + append_count] = [0, line_df[1][i], 0, 0, line_df[4][i], 0, 0,
                                                     line_df[7][i], line_df[8][i], line_df[9][i],
                                                     line_df[10][i], line_df[11][i]]
@@ -573,7 +581,7 @@ def fault_line_data_scaling(line_df):
             line_df[7][i] = 0
             line_df[8][i] = 0
             line_df[9][i] = 0
-        if line_df[11][i] >= 3:
+        if line_df[11][i] >= 5:
             line_df[7][i] = 0
             line_df[8][i] = 0
             line_df[9][i] = 0
