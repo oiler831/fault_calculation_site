@@ -59,6 +59,16 @@
               {% endif %}
             </table>
           </div>
+          {% if fault_con.is_flow %}
+            <a class="btn btn-primary" href="{% url 'flow' %}">이전</a>
+          {% else %}
+            <a class="btn btn-primary" href="{% url 'initial' %}">이전</a>
+          {% endif %}
+          {% if fault_con.fault_type == 0 %}
+            <a class="btn btn-primary" href="{% url 'ybus' %}">다음</a>
+          {% else %}
+            <a class="btn btn-primary" href="{% url 'transformer' %}">다음</a>
+          {% endif %}
         </div>
       </div>
       <div class="content-dis">
@@ -79,7 +89,7 @@
                     <td>X<sub>0</sub>(pu)</td>
                     <td>Xn(pu)</td>
                     <td>B<sub>0</sub>(pu)</td>
-                    <td>line_type</td>
+                    <td>line type</td>
                   </tr>
                 </thead>
                 <tbody>
@@ -96,7 +106,7 @@
                     <td>{{i.zero_X|floatformat:-4}}</td>
                     <td>{{i.Xn|floatformat:-4}}</td>
                     <td>{{i.zero_B|floatformat:-4}}</td>
-                    <td>{{i.line_type|floatformat:-4}}</td>
+                    <td>{{i.line_type}}</td>
                   </tr>
                   {% endfor %}
                 </tbody>
@@ -124,20 +134,21 @@
               {% endif %}
             </table>
           </div>
+          {% if fault_con.is_flow %}
+            <a class="btn btn-primary" href="{% url 'flow' %}">이전</a>
+          {% else %}
+            <a class="btn btn-primary" href="{% url 'initial' %}">이전</a>
+          {% endif %}
+          {% if fault_con.fault_type == 0 %}
+            <a class="btn btn-primary" href="{% url 'ybus' %}">다음</a>
+          {% else %}
+            <a class="btn btn-primary" href="{% url 'transformer' %}">다음</a>
+          {% endif %}
         </div>
       </div>
     </div>
   </div>
-  {% if fault_con.is_flow %}
-    <a class="btn btn-primary" href="{% url 'flow' %}">이전</a>
-  {% else %}
-    <a class="btn btn-primary" href="{% url 'initial' %}">이전</a>
-  {% endif %}
-  {% if fault_con.fault_type == 0 %}
-    <a class="btn btn-primary" href="{% url 'ybus' %}">다음</a>
-  {% else %}
-    <a class="btn btn-primary" href="{% url 'transformer' %}">다음</a>
-  {% endif %}
+  
   {% if faultcon.fault_type == 0 %}
     {% if fault_con.is_shunt %}
       {% if fault_con.is_load_effect %}

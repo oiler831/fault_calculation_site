@@ -16,7 +16,7 @@
             </div>
             <div class="mb-3">
               <label for="formFile" class="form-label">CIRCUIT DATA</label>
-              <input class="form-control" type="file" name="excelFile" id="formFile">
+              <input class="form-control" type="file" name="excelFile" id="formFile" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
             </div>
             <div class="form-check">
               <input class="form-check-input" type="radio" name="isexample" value="True" id="example" onclick="selectActive(),fileDisable(),Reveal()">
@@ -28,24 +28,34 @@
               <select class="form-select" id="exampleselect" name="exampleselect" onchange="Change()">
                 <option value="1">Glover,Sarma, POWER SYSTEM Analysis & Design ex 9.8</option>
                 <option value="2">Saadat, Power System Analysis ex 9.8</option>
+                <option value="4">Saadat, Power System Analysis ex 9.9-1</option>
+                <option value="5">Saadat, Power System Analysis ex 9.9-2</option>
                 <option value="3">Saadat, Power System Analysis ex 10.7</option>
+                <option value="6">Saadat, Power System Analysis ex 10.8</option>
               </select>
             </fieldset>
             <br>
-            <button type="submit" class="btn btn-primary">입력</button>
+            <button type="submit" class="btn btn-primary next">입력</button>
           </form>
+          <div id="d1" style="display:none">
+            <img src="{% static 'cal/images/glover9.8.jpg'%}">
+          </div>
+          <div id="d2" style="display:none">
+            <img src="{% static 'cal/images/Saadat9.8.jpg'%}">
+          </div>
+          <div id="d3" style="display:none">
+            <img src="{% static 'cal/images/Saadat10.7.jpg'%}">
+          </div>
+          <div id="d4" style="display:none">
+            <img src="{% static 'cal/images/Saadat9.9.jpg'%}">
+          </div>
+          <div id="d5" style="display:none">
+            <img src="{% static 'cal/images/Saadat10.8.jpg'%}">
+          </div>
         </div>
       </div>
     </div>
-    <div id="d1" style="display:none">
-      <img src="{% static 'cal/images/glover9.8.jpg'%}">
-    </div>
-    <div id="d2" style="display:none">
-      <img src="{% static 'cal/images/Saadat9.8.jpg'%}">
-    </div>
-    <div id="d3" style="display:none">
-      <img src="{% static 'cal/images/Saadat10.7.jpg'%}">
-    </div>
+    
   </div>
 {% endblock content %}
 

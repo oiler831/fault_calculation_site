@@ -36,6 +36,12 @@ def upload_excel_to_db(request):
                 excel_file="/home/jin/graduation/fault/media/example/Saadat9.8.xlsx"
             elif request.POST['exampleselect']=='3':
                 excel_file="/home/jin/graduation/fault/media/example/Saadat10.7.xlsx"
+            elif request.POST['exampleselect']=='4':
+                excel_file = "/home/jin/graduation/fault/media/example/Saadat9.9-1.xlsx"
+            elif request.POST['exampleselect']=='5':
+                excel_file = "/home/jin/graduation/fault/media/example/Saadat9.9-2.xlsx"
+            elif request.POST['exampleselect']=='6':
+                excel_file = "/home/jin/graduation/fault/media/example/Saadat10.8.xlsx"
         else:
             excel_file = request.FILES['excelFile']
             find_file = True
@@ -44,7 +50,7 @@ def upload_excel_to_db(request):
         isExample.objects.create(isex=request.POST['isexample'],exampleNumber=request.POST.get('exampleselect'),find_ex=True)
         bus_df = pd.read_excel(excel_file,header=None,sheet_name=0)
         line_df = pd.read_excel(excel_file,header=None,sheet_name=1)
-        if len(bus_df.columns) != 10:
+        if len(bus_df.columns) != 10  :
             is_flow = False
         else:
             is_flow = True
@@ -73,9 +79,9 @@ def upload_excel_to_db(request):
         else:
             for i in range(len(line_df)):
                 if line_df[0][i] == 0: 
-                    LineData.objects.create(from_bus = line_df[1][i],to_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i])
+                    LineData.objects.create(from_bus = line_df[1][i],to_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i],line_type=line_df[5][i])
                 else:
-                    LineData.objects.create(from_bus = line_df[0][i],to_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i])
+                    LineData.objects.create(from_bus = line_df[0][i],to_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i],line_type=line_df[5][i])
         conditionCheck.objects.create(is_flow=is_flow,is_not_symmetry=is_not_symmetry,find_con=True)
         return redirect('condition')
     return render(request,'cal/file.html')
@@ -155,6 +161,12 @@ def fault_con(request):
                 file = "/home/jin/graduation/fault/media/example/Saadat9.8.xlsx"
             elif isexample.exampleNumber==3:
                 file = "/home/jin/graduation/fault/media/example/Saadat10.7.xlsx"
+            elif isexample.exampleNumber==4:
+                file = "/home/jin/graduation/fault/media/example/Saadat9.9-1.xlsx"
+            elif isexample.exampleNumber==5:
+                file = "/home/jin/graduation/fault/media/example/Saadat9.9-2.xlsx"
+            elif isexample.exampleNumber==6:
+                file = "/home/jin/graduation/fault/media/example/Saadat9.9-2.xlsx"
             bus_df = pd.read_excel(file,sheet_name=0, header=None) 
             line_df = pd.read_excel(file,sheet_name=1, header=None) 
         else:
@@ -224,17 +236,29 @@ def fault_con(request):
 
         for i in range(len(line_df)):
             if condition.is_not_symmetry:
-                FaultLineData.objects.create(From_Bus=line_df[0][i], To_Bus=line_df[1][i], R=line_df[2][i], X=line_df[3][i],
+                if(line_df[0][i]==0):
+                    FaultLineData.objects.create(From_Bus=line_df[1][i], To_Bus=line_df[0][i], R=line_df[2][i], X=line_df[3][i],
+                                        B=line_df[4][i],negative_R=line_df[5][i],negative_X=line_df[6][i],
+                                        zero_R=line_df[7][i],zero_X=line_df[8][i],zero_B=line_df[10][i])
+                else:
+                    FaultLineData.objects.create(From_Bus=line_df[0][i], To_Bus=line_df[1][i], R=line_df[2][i], X=line_df[3][i],
                                         B=line_df[4][i],negative_R=line_df[5][i],negative_X=line_df[6][i],
                                         zero_R=line_df[7][i],zero_X=line_df[8][i],zero_B=line_df[10][i])
             else:
-                FaultLineData.objects.create(From_Bus=line_df[0][i], To_Bus=line_df[1][i], R=line_df[2][i], X=line_df[3][i], B=line_df[4][i])
+                if(line_df[0][i]==0):
+                    FaultLineData.objects.create(From_Bus=line_df[1][i], To_Bus=line_df[0][i], R=line_df[2][i], X=line_df[3][i], B=line_df[4][i])
+                else:
+                    FaultLineData.objects.create(From_Bus=line_df[0][i], To_Bus=line_df[1][i], R=line_df[2][i], X=line_df[3][i], B=line_df[4][i])
         
         if fault_con.fault_type == 0:
             for i in range(len(result_v)):
                 ThreeFaultV.objects.create(Bus_No=result_v[0][i], Voltage_Mag=result_v[1][i], Voltage_Deg=result_v[2][i])
             for i in range(len(result_cur)):
-                ThreeFaultI.objects.create(From_Bus=result_cur[0][i], To_Bus=result_cur[1][i],
+                if(result_cur[0][i]==0):
+                    ThreeFaultI.objects.create(From_Bus=result_cur[1][i], To_Bus=result_cur[0][i],
+                                            Current_Mag=result_cur[2][i], Current_Deg=result_cur[3][i])
+                else:
+                    ThreeFaultI.objects.create(From_Bus=result_cur[0][i], To_Bus=result_cur[1][i],
                                             Current_Mag=result_cur[2][i], Current_Deg=result_cur[3][i])
             for i in range(len(result_v)):
                 ThreeZbus.objects.create(check = i)
@@ -249,9 +273,15 @@ def fault_con(request):
                 OthersequenceV.objects.create(Bus_No=sequencev[0][i], Phase_A_Mag=sequencev[1][i], Phase_A_Deg=sequencev[2][i],
                                             Phase_B_Mag=sequencev[3][i], Phase_B_Deg=sequencev[4][i],Phase_C_Mag=sequencev[5][i], Phase_C_Deg=sequencev[6][i])
             for i in range(len(result_cur)):
-                OtherFaultI.objects.create(From_Bus=result_cur[0][i], To_Bus=result_cur[1][i], Phase_A_Mag=result_cur[2][i], Phase_A_Deg=result_cur[3][i],
-                                            Phase_B_Mag=result_cur[4][i], Phase_B_Deg=result_cur[5][i],Phase_C_Mag=result_cur[6][i], Phase_C_Deg=result_cur[7][i])
-                OthersequenceI.objects.create(From_Bus=sequencei[0][i], To_Bus=sequencei[1][i], Phase_A_Mag=sequencei[2][i], Phase_A_Deg=sequencei[3][i],
+                if(result_cur[0][i]==0):
+                    OtherFaultI.objects.create(From_Bus=result_cur[1][i], To_Bus=result_cur[0][i], Phase_A_Mag=result_cur[2][i], Phase_A_Deg=result_cur[3][i],
+                                                Phase_B_Mag=result_cur[4][i], Phase_B_Deg=result_cur[5][i],Phase_C_Mag=result_cur[6][i], Phase_C_Deg=result_cur[7][i])
+                    OthersequenceI.objects.create(From_Bus=sequencei[1][i], To_Bus=sequencei[0][i], Phase_A_Mag=sequencei[2][i], Phase_A_Deg=sequencei[3][i],
+                                            Phase_B_Mag=sequencei[4][i], Phase_B_Deg=sequencei[5][i],Phase_C_Mag=sequencei[6][i], Phase_C_Deg=sequencei[7][i])
+                else:
+                    OtherFaultI.objects.create(From_Bus=result_cur[0][i], To_Bus=result_cur[1][i], Phase_A_Mag=result_cur[2][i], Phase_A_Deg=result_cur[3][i],
+                                                Phase_B_Mag=result_cur[4][i], Phase_B_Deg=result_cur[5][i],Phase_C_Mag=result_cur[6][i], Phase_C_Deg=result_cur[7][i])
+                    OthersequenceI.objects.create(From_Bus=sequencei[0][i], To_Bus=sequencei[1][i], Phase_A_Mag=sequencei[2][i], Phase_A_Deg=sequencei[3][i],
                                             Phase_B_Mag=sequencei[4][i], Phase_B_Deg=sequencei[5][i],Phase_C_Mag=sequencei[6][i], Phase_C_Deg=sequencei[7][i])
             for i in range(len(result_v)):
                 OtherZbus.objects.create(check = i)
@@ -265,7 +295,7 @@ def fault_con(request):
                                                     y_real_source = zybus[i][j].real, y_imag_source = zybus[i][j].imag)
         return redirect('initial')
     busdata = BusData.objects.all()
-    linedata = LineData.objects.all().exclude(from_bus=0).exclude(to_bus=0)
+    linedata = LineData.objects.filter(line_type=1)
     condition = conditionCheck.objects.get(find_con=True)
     isexample = isExample.objects.get(find_ex=True)
     context ={'busdata':busdata,'linedata':linedata,'condition':condition,'isexample':isexample}
@@ -632,15 +662,15 @@ def line_sliding_scaling(line_d,bus_d, voltage, fault_bus_1, fault_bus_2, percen
                 temp_line = line_d.loc[i, :]
                 if temp_line[0] == fault_bus_1:
                     line_d.loc[i] = [temp_line[0], bus_size + 1, temp_line[2] * percent,
-                                    temp_line[3] * percent, temp_line[4] * percent]
+                                    temp_line[3] * percent, temp_line[4] * percent, 1]
                     line_d.loc[con_num] = [bus_size + 1, temp_line[1], temp_line[2] * (1-percent),
-                                        temp_line[3] * (1-percent), temp_line[4] * (1-percent)]
+                                        temp_line[3] * (1-percent), temp_line[4] * (1-percent), 1]
                     break
                 else:
                     line_d.loc[i] = [bus_size + 1, temp_line[1], temp_line[2] * percent,
-                                    temp_line[3] * percent, temp_line[4] * percent]
+                                    temp_line[3] * percent, temp_line[4] * percent, 1]
                     line_d.loc[con_num] = [temp_line[0], bus_size + 1, temp_line[2] * (1-percent),
-                                        temp_line[3] * (1-percent), temp_line[4] * (1-percent)]
+                                        temp_line[3] * (1-percent), temp_line[4] * (1-percent), 1]
                     break
     voltage.loc[bus_size] = voltage[fault_bus_1 - 1] * percent + voltage[fault_bus_2 - 1] * (1-percent)
     if is_flow:
