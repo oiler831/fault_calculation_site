@@ -205,3 +205,7 @@ class SliderLine(models.Model):
 class resultfile(models.Model):
     rfile = models.FileField(upload_to='result')
     find_file = models.BooleanField(default=False,null=True,blank=True)
+
+class errorcheck(models.Model):
+    errornum = models.IntegerField(default=0)
+    find_check = models.BooleanField(default=False)

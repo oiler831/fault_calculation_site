@@ -2,15 +2,19 @@ from django.shortcuts import render, redirect
 from .models import (FaultCondition, BusData, LineData, ExcelFile,FaultLineData,FaultBusData,
                     ThreeFaultI,ThreeFaultV,OtherFaultI,OtherFaultV,conditionCheck,ThreeZbus,ThreeZbusSource,
                     OtherZbusSource,OtherZbus,negativeZbusSource,zeroZbusSource,isExample,OthersequenceI,OthersequenceV,
-                    Afterflow,SliderLine,Sliderbus,resultfile)
+                    Afterflow,SliderLine,Sliderbus,resultfile, errorcheck)
 import pandas as pd
 import numpy as np
 import math
 from pathlib import Path
 from django.core.files import File
+import os
 
 # Create your views here.
 def index(request):
+    clear = errorcheck.objects.all()
+    clear.delete()
+    errorcheck.objects.create(errornum=0,find_check=True)
     return render(request,'cal/main.html')
 
 def manual(request):
@@ -30,6 +34,10 @@ def upload_excel_to_db(request):
     clear.delete()
     if request.method == 'POST':
         if request.POST['isexample'] == "True":
+            check = request.FILES.get('exampleselect',False)
+            if check == False:
+                e_num = errorcheck.objects.get(find_check=True)
+                return render(request,'cal/file.html',context={'errornum':e_num})
             if request.POST['exampleselect']=='1':
                 excel_file="/home/jin/graduation/fault/media/example/Glover_9.8.xlsx"
             elif request.POST['exampleselect']=='2':
@@ -43,13 +51,34 @@ def upload_excel_to_db(request):
             elif request.POST['exampleselect']=='6':
                 excel_file = "/home/jin/graduation/fault/media/example/Saadat10.8.xlsx"
         else:
-            excel_file = request.FILES['excelFile']
+            excel_file = request.FILES.get('excelFile',False)
+            if excel_file == False:
+                e_num = errorcheck.objects.get(find_check=True)
+                e_num.errornum = 1
+                e_num.save()
+                return render(request,'cal/file.html',context={'errornum':e_num})
+            filename, fileExtension = os.path.splitext(str(excel_file))
+            if fileExtension != ".xlsx":
+                e_num = errorcheck.objects.get(find_check=True)
+                e_num.errornum = 2
+                e_num.save()
+                return render(request,'cal/file.html',context={'errornum':e_num})
             find_file = True
             new_file = ExcelFile(file = excel_file, find_file = find_file)
             new_file.save()
         isExample.objects.create(isex=request.POST['isexample'],exampleNumber=request.POST.get('exampleselect'),find_ex=True)
         bus_df = pd.read_excel(excel_file,header=None,sheet_name=0)
         line_df = pd.read_excel(excel_file,header=None,sheet_name=1)
+        if len(bus_df.columns) != 10 and len(bus_df.columns) !=3:
+            e_num = errorcheck.objects.get(find_check=True)
+            e_num.errornum = 3
+            e_num.save()
+            return render(request,'cal/file.html',context={'errornum':e_num})
+        if len(line_df.columns) != 12 and len(line_df.columns) !=6:
+            e_num = errorcheck.objects.get(find_check=True)
+            e_num.errornum = 4
+            e_num.save()
+            return render(request,'cal/file.html',context={'errornum':e_num})
         if len(bus_df.columns) != 10  :
             is_flow = False
         else:
@@ -83,8 +112,12 @@ def upload_excel_to_db(request):
                 else:
                     LineData.objects.create(from_bus = line_df[0][i],to_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i],line_type=line_df[5][i])
         conditionCheck.objects.create(is_flow=is_flow,is_not_symmetry=is_not_symmetry,find_con=True)
+        e_num = errorcheck.objects.get(find_check=True)
+        e_num.errornum = 0
+        e_num.save()
         return redirect('condition')
-    return render(request,'cal/file.html')
+    e_num = errorcheck.objects.get(find_check=True)
+    return render(request,'cal/file.html',context={'errornum':e_num})
 
 
 def fault_con(request):

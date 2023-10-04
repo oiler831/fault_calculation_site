@@ -108,7 +108,8 @@
           <option value={{line.id}}>{{line.from_bus}} --- {{line.to_bus}}</option>
           {% endfor %}
         </select>
-        <input type="range" name ="line_percentage" required id="id_line_percentage" value="50" min="1" max="99" oninput="this.nextElementSibling.value = this.value">
+        <label for="line_percentage" class="form-label">고장난 지점의 위치</label>
+        <input type="range" name ="line_percentage" class="range-form" required id="id_line_percentage" value="50" min="1" max="99" oninput="this.nextElementSibling.value = this.value">
         <output>50</output>
       </fieldset>
     </div>

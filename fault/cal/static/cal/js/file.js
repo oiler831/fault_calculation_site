@@ -98,3 +98,12 @@ function fileDisable()  {
   const target = document.getElementById('formFile');
   target.disabled = true;
 }
+
+function fileCheck(){
+    var inputfile = document.getElementById('direct');
+    var filecheck = document.getElementById('formFile');
+    if(inputfile==False && !filecheck){
+        alert("파일을 첨부해 주세요");
+        return;
+    }
+}
