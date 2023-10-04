@@ -65,9 +65,9 @@
             <a class="btn btn-primary" href="{% url 'initial' %}">이전</a>
           {% endif %}
           {% if fault_con.fault_type == 0 %}
-            <a class="btn btn-primary" href="{% url 'ybus' %}">다음</a>
+            <a class="btn btn-primary next" href="{% url 'ybus' %}">다음</a>
           {% else %}
-            <a class="btn btn-primary" href="{% url 'transformer' %}">다음</a>
+            <a class="btn btn-primary next" href="{% url 'transformer' %}">다음</a>
           {% endif %}
         </div>
       </div>
@@ -140,9 +140,9 @@
             <a class="btn btn-primary" href="{% url 'initial' %}">이전</a>
           {% endif %}
           {% if fault_con.fault_type == 0 %}
-            <a class="btn btn-primary" href="{% url 'ybus' %}">다음</a>
+            <a class="btn btn-primary next" href="{% url 'ybus' %}">다음</a>
           {% else %}
-            <a class="btn btn-primary" href="{% url 'transformer' %}">다음</a>
+            <a class="btn btn-primary next" href="{% url 'transformer' %}">다음</a>
           {% endif %}
         </div>
       </div>

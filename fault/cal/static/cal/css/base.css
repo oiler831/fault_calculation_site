@@ -110,4 +110,11 @@ thead{
 .next{
     position:absolute;
     right:50px;
+    bottom:70px;
+}
+
+.prev{
+    position:absolute;
+    left:50px;
+    bottom:70px;
 }
