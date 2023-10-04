@@ -90,7 +90,7 @@ label{
 }
 .fault{
     overflow:auto;
-    height:500px;
+    height:450px;
 }
 
 .table{
@@ -109,12 +109,12 @@ thead{
 
 .next{
     position:absolute;
-    right:50px;
-    bottom:70px;
+    right:100px;
+    bottom:50px;
 }
 
 .prev{
     position:absolute;
-    left:50px;
-    bottom:70px;
+    left:100px;
+    bottom:50px;
 }
