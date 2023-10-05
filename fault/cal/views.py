@@ -34,22 +34,23 @@ def upload_excel_to_db(request):
     clear.delete()
     if request.method == 'POST':
         if request.POST['isexample'] == "True":
-            check = request.FILES.get('exampleselect',False)
+            check = request.POST.get('exampleselect',False)
             if check == False:
                 e_num = errorcheck.objects.get(find_check=True)
                 return render(request,'cal/file.html',context={'errornum':e_num})
-            if request.POST['exampleselect']=='1':
-                excel_file="/home/jin/graduation/fault/media/example/Glover_9.8.xlsx"
-            elif request.POST['exampleselect']=='2':
-                excel_file="/home/jin/graduation/fault/media/example/Saadat9.8.xlsx"
-            elif request.POST['exampleselect']=='3':
-                excel_file="/home/jin/graduation/fault/media/example/Saadat10.7.xlsx"
-            elif request.POST['exampleselect']=='4':
-                excel_file = "/home/jin/graduation/fault/media/example/Saadat9.9-1.xlsx"
-            elif request.POST['exampleselect']=='5':
-                excel_file = "/home/jin/graduation/fault/media/example/Saadat9.9-2.xlsx"
-            elif request.POST['exampleselect']=='6':
-                excel_file = "/home/jin/graduation/fault/media/example/Saadat10.8.xlsx"
+            else:
+                if request.POST['exampleselect']=='1':
+                    excel_file="/home/jin/graduation/fault/media/example/Glover_9.8.xlsx"
+                elif request.POST['exampleselect']=='2':
+                    excel_file="/home/jin/graduation/fault/media/example/Saadat9.8.xlsx"
+                elif request.POST['exampleselect']=='3':
+                    excel_file="/home/jin/graduation/fault/media/example/Saadat10.7.xlsx"
+                elif request.POST['exampleselect']=='4':
+                    excel_file = "/home/jin/graduation/fault/media/example/Saadat9.9-1.xlsx"
+                elif request.POST['exampleselect']=='5':
+                    excel_file = "/home/jin/graduation/fault/media/example/Saadat9.9-2.xlsx"
+                elif request.POST['exampleselect']=='6':
+                    excel_file = "/home/jin/graduation/fault/media/example/Saadat10.8.xlsx"
         else:
             excel_file = request.FILES.get('excelFile',False)
             if excel_file == False:
@@ -57,15 +58,16 @@ def upload_excel_to_db(request):
                 e_num.errornum = 1
                 e_num.save()
                 return render(request,'cal/file.html',context={'errornum':e_num})
-            filename, fileExtension = os.path.splitext(str(excel_file))
-            if fileExtension != ".xlsx":
-                e_num = errorcheck.objects.get(find_check=True)
-                e_num.errornum = 2
-                e_num.save()
-                return render(request,'cal/file.html',context={'errornum':e_num})
-            find_file = True
-            new_file = ExcelFile(file = excel_file, find_file = find_file)
-            new_file.save()
+            else:
+                filename, fileExtension = os.path.splitext(str(excel_file))
+                if fileExtension != ".xlsx":
+                    e_num = errorcheck.objects.get(find_check=True)
+                    e_num.errornum = 2
+                    e_num.save()
+                    return render(request,'cal/file.html',context={'errornum':e_num})
+                find_file = True
+                new_file = ExcelFile(file = excel_file, find_file = find_file)
+                new_file.save()
         isExample.objects.create(isex=request.POST['isexample'],exampleNumber=request.POST.get('exampleselect'),find_ex=True)
         bus_df = pd.read_excel(excel_file,header=None,sheet_name=0)
         line_df = pd.read_excel(excel_file,header=None,sheet_name=1)
@@ -156,6 +158,13 @@ def fault_con(request):
         is_bus_fault = request.POST['is_bus_fault']
         fault_bus = request.POST.get('fault_bus',0)
         fault_line_id = request.POST.get('fault_line',0)
+        if fault_bus == '-1' or fault_line_id == '-1':
+            e_num = errorcheck.objects.get(find_check=True)
+            e_num.errornum = 1
+            e_num.save()
+            return redirect('condition')
+        if is_bus_fault == 'False' and fault_line_id == 0:
+            return redirect('condition')
         if fault_line_id != 0:
             fault_line = LineData.objects.get(id=fault_line_id)
             fault_line_1 = fault_line.from_bus
@@ -210,128 +219,140 @@ def fault_con(request):
         condition = conditionCheck.objects.get(find_con = True)
         fault_con = FaultCondition.objects.get(to_find=True)
         if condition.is_flow:
-            bus_df = bus_scaling(bus_df, fault_con.basemva)
-            if fault_con.is_flow:
-                bus_df, repeat_count = gauss_flow(line_df, bus_df)
-                for i in range(len(bus_df)):
-                    Afterflow.objects.create(Bus_No=bus_df[0][i],Voltage_Mag=bus_df[1][i],Voltage_Deg=bus_df[2][i],
-                                            Generator_MW=bus_df[3][i]*fault_con.basemva, Generator_Mvar=bus_df[4][i]*fault_con.basemva,
-                                            Load_MW=bus_df[5][i]*fault_con.basemva,Load_Mvar=bus_df[6][i]*fault_con.basemva)
+            try:
+                bus_df = bus_scaling(bus_df, fault_con.basemva)
+                if fault_con.is_flow:
+                    bus_df, repeat_count = gauss_flow(line_df, bus_df)
+                    for i in range(len(bus_df)):
+                        Afterflow.objects.create(Bus_No=bus_df[0][i],Voltage_Mag=bus_df[1][i],Voltage_Deg=bus_df[2][i],
+                                                Generator_MW=bus_df[3][i]*fault_con.basemva, Generator_Mvar=bus_df[4][i]*fault_con.basemva,
+                                                Load_MW=bus_df[5][i]*fault_con.basemva,Load_Mvar=bus_df[6][i]*fault_con.basemva)
+            except:
+                e_num = errorcheck.objects.get(find_check=True)
+                e_num.errornum = 2
+                e_num.save()
+                return redirect('condition')
 
-        initial_bus_voltage = bus_df.iloc[:, 1] * np.exp(j * np.deg2rad(bus_df.iloc[:, 2]))
+        try:
+            initial_bus_voltage = bus_df.iloc[:, 1] * np.exp(j * np.deg2rad(bus_df.iloc[:, 2]))
+            
+            fault_impedence = fault_con.impedence_R + j * fault_con.impedence_X
 
-        
-        fault_impedence = fault_con.impedence_R + j * fault_con.impedence_X
+            if fault_con.is_bus_fault:
+                fault_loc = fault_con.fault_bus
+            else:
+                line_df, bus_df, initial_bus_voltage, fault_loc = \
+                    line_sliding_scaling(line_df,bus_df, initial_bus_voltage, fault_con.fault_line_1, fault_con.fault_line_2,
+                                        fault_con.line_percentage/100, condition.is_flow, condition.is_not_symmetry)
+                if condition.is_flow:
+                    for i in range(len(bus_df)):
+                        Sliderbus.objects.create(Bus_No=bus_df[0][i],Voltage_Mag=bus_df[1][i],Voltage_Deg=bus_df[2][i],
+                                                Generator_MW=bus_df[3][i]*fault_con.basemva, Generator_Mvar=bus_df[4][i]*fault_con.basemva,
+                                                Load_MW=bus_df[5][i]*fault_con.basemva,Load_Mvar=bus_df[6][i]*fault_con.basemva)
+                else:
+                    for i in range(len(bus_df)):
+                        Sliderbus.objects.create(Bus_No=bus_df[0][i],Voltage_Mag=bus_df[1][i],Voltage_Deg=bus_df[2][i])
+                if condition.is_not_symmetry:
+                    for i in range(len(line_df)):
+                        SliderLine.objects.create(From_bus = line_df[0][i],To_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],
+                                                B = line_df[4][i],negative_R = line_df[5][i],negative_X = line_df[6][i],zero_R = line_df[7][i],
+                                                zero_X = line_df[8][i],Xn = line_df[9][i],zero_B = line_df[10][i],line_type = line_df[11][i])
+                else:
+                    for i in range(len(line_df)):
+                        SliderLine.objects.create(From_bus = line_df[0][i],To_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i])
+            
+            if fault_con.fault_type > 0: 
+                line_df = fault_line_data_scaling(line_df) 
 
-        if fault_con.is_bus_fault:
-            fault_loc = fault_con.fault_bus
-        else:
-            line_df, bus_df, initial_bus_voltage, fault_loc = \
-                line_sliding_scaling(line_df,bus_df, initial_bus_voltage, fault_con.fault_line_1, fault_con.fault_line_2,
-                                    fault_con.line_percentage/100, condition.is_flow, condition.is_not_symmetry)
+            if fault_con.fault_type == 0:
+                result_v, result_cur, threebus, tybus = three_phase_fault(initial_bus_voltage, line_df, bus_df, fault_loc, fault_impedence,
+                                                                    fault_con.is_shunt, fault_con.is_load_effect)
+            else:
+                result_v, result_cur, bus, negativebus, zerobus, pybus, nybus, zybus, sequencev, sequencei = unbalanced_fault(initial_bus_voltage, line_df, bus_df, fault_loc, fault_impedence,
+                                                                    fault_con.fault_type,fault_con.is_shunt, fault_con.is_load_effect)
+            result_v, result_cur = after_fault_scaling(line_df, bus_df, result_v, result_cur, fault_loc, fault_con.fault_type)
+            if fault_con.fault_type > 0:
+                sequencev,sequencei = after_fault_scaling(line_df, bus_df, sequencev, sequencei, fault_loc, fault_con.fault_type)
             if condition.is_flow:
-                for i in range(len(bus_df)):
-                    Sliderbus.objects.create(Bus_No=bus_df[0][i],Voltage_Mag=bus_df[1][i],Voltage_Deg=bus_df[2][i],
-                                            Generator_MW=bus_df[3][i]*fault_con.basemva, Generator_Mvar=bus_df[4][i]*fault_con.basemva,
-                                            Load_MW=bus_df[5][i]*fault_con.basemva,Load_Mvar=bus_df[6][i]*fault_con.basemva)
-            else:
-                for i in range(len(bus_df)):
-                    Sliderbus.objects.create(Bus_No=bus_df[0][i],Voltage_Mag=bus_df[1][i],Voltage_Deg=bus_df[2][i])
-            if condition.is_not_symmetry:
-                for i in range(len(line_df)):
-                    SliderLine.objects.create(From_bus = line_df[0][i],To_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],
-                                            B = line_df[4][i],negative_R = line_df[5][i],negative_X = line_df[6][i],zero_R = line_df[7][i],
-                                            zero_X = line_df[8][i],Xn = line_df[9][i],zero_B = line_df[10][i],line_type = line_df[11][i])
-            else:
-                for i in range(len(line_df)):
-                    SliderLine.objects.create(From_bus = line_df[0][i],To_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i])
-        
-        if fault_con.fault_type > 0: 
-            line_df = fault_line_data_scaling(line_df) 
+                bus_df = after_flow_scaling(bus_df, fault_con.basemva)
+            for i in range(len(bus_df)):
+                if condition.is_flow:
+                    FaultBusData.objects.create(Bus_No=bus_df[0][i], Voltage_Mag=bus_df[1][i], Voltage_Deg=bus_df[2][i],
+                                            Generator_MW=bus_df[3][i],Generator_Mvar=bus_df[4][i],Load_MW=bus_df[5][i],Load_Mvar=bus_df[6][i])
+                else:
+                    FaultBusData.objects.create(Bus_No=bus_df[0][i], Voltage_Mag=bus_df[1][i], Voltage_Deg=bus_df[2][i])
 
-        if fault_con.fault_type == 0:
-            result_v, result_cur, threebus, tybus = three_phase_fault(initial_bus_voltage, line_df, bus_df, fault_loc, fault_impedence,
-                                                                fault_con.is_shunt, fault_con.is_load_effect)
-        else:
-            result_v, result_cur, bus, negativebus, zerobus, pybus, nybus, zybus, sequencev, sequencei = unbalanced_fault(initial_bus_voltage, line_df, bus_df, fault_loc, fault_impedence,
-                                                                fault_con.fault_type,fault_con.is_shunt, fault_con.is_load_effect)
-        result_v, result_cur = after_fault_scaling(line_df, bus_df, result_v, result_cur, fault_loc, fault_con.fault_type)
-        if fault_con.fault_type > 0:
-            sequencev,sequencei = after_fault_scaling(line_df, bus_df, sequencev, sequencei, fault_loc, fault_con.fault_type)
-        if condition.is_flow:
-            bus_df = after_flow_scaling(bus_df, fault_con.basemva)
-        for i in range(len(bus_df)):
-            if condition.is_flow:
-                FaultBusData.objects.create(Bus_No=bus_df[0][i], Voltage_Mag=bus_df[1][i], Voltage_Deg=bus_df[2][i],
-                                        Generator_MW=bus_df[3][i],Generator_Mvar=bus_df[4][i],Load_MW=bus_df[5][i],Load_Mvar=bus_df[6][i])
+            for i in range(len(line_df)):
+                if condition.is_not_symmetry:
+                    if(line_df[0][i]==0):
+                        FaultLineData.objects.create(From_Bus=line_df[1][i], To_Bus=line_df[0][i], R=line_df[2][i], X=line_df[3][i],
+                                            B=line_df[4][i],negative_R=line_df[5][i],negative_X=line_df[6][i],
+                                            zero_R=line_df[7][i],zero_X=line_df[8][i],zero_B=line_df[10][i])
+                    else:
+                        FaultLineData.objects.create(From_Bus=line_df[0][i], To_Bus=line_df[1][i], R=line_df[2][i], X=line_df[3][i],
+                                            B=line_df[4][i],negative_R=line_df[5][i],negative_X=line_df[6][i],
+                                            zero_R=line_df[7][i],zero_X=line_df[8][i],zero_B=line_df[10][i])
+                else:
+                    if(line_df[0][i]==0):
+                        FaultLineData.objects.create(From_Bus=line_df[1][i], To_Bus=line_df[0][i], R=line_df[2][i], X=line_df[3][i], B=line_df[4][i])
+                    else:
+                        FaultLineData.objects.create(From_Bus=line_df[0][i], To_Bus=line_df[1][i], R=line_df[2][i], X=line_df[3][i], B=line_df[4][i])
+            
+            if fault_con.fault_type == 0:
+                for i in range(len(result_v)):
+                    ThreeFaultV.objects.create(Bus_No=result_v[0][i], Voltage_Mag=result_v[1][i], Voltage_Deg=result_v[2][i])
+                for i in range(len(result_cur)):
+                    if(result_cur[0][i]==0):
+                        ThreeFaultI.objects.create(From_Bus=result_cur[1][i], To_Bus=result_cur[0][i],
+                                                Current_Mag=result_cur[2][i], Current_Deg=result_cur[3][i])
+                    else:
+                        ThreeFaultI.objects.create(From_Bus=result_cur[0][i], To_Bus=result_cur[1][i],
+                                                Current_Mag=result_cur[2][i], Current_Deg=result_cur[3][i])
+                for i in range(len(result_v)):
+                    ThreeZbus.objects.create(check = i)
+                    row = ThreeZbus.objects.get(check=i)
+                    for j in range(len(result_v)):
+                        ThreeZbusSource.objects.create(row = row, real_source=threebus[i][j].real, imag_source=threebus[i][j].imag,
+                                                        y_real_source = tybus[i][j].real, y_imag_source = tybus[i][j].imag)
             else:
-                FaultBusData.objects.create(Bus_No=bus_df[0][i], Voltage_Mag=bus_df[1][i], Voltage_Deg=bus_df[2][i])
-
-        for i in range(len(line_df)):
-            if condition.is_not_symmetry:
-                if(line_df[0][i]==0):
-                    FaultLineData.objects.create(From_Bus=line_df[1][i], To_Bus=line_df[0][i], R=line_df[2][i], X=line_df[3][i],
-                                        B=line_df[4][i],negative_R=line_df[5][i],negative_X=line_df[6][i],
-                                        zero_R=line_df[7][i],zero_X=line_df[8][i],zero_B=line_df[10][i])
-                else:
-                    FaultLineData.objects.create(From_Bus=line_df[0][i], To_Bus=line_df[1][i], R=line_df[2][i], X=line_df[3][i],
-                                        B=line_df[4][i],negative_R=line_df[5][i],negative_X=line_df[6][i],
-                                        zero_R=line_df[7][i],zero_X=line_df[8][i],zero_B=line_df[10][i])
-            else:
-                if(line_df[0][i]==0):
-                    FaultLineData.objects.create(From_Bus=line_df[1][i], To_Bus=line_df[0][i], R=line_df[2][i], X=line_df[3][i], B=line_df[4][i])
-                else:
-                    FaultLineData.objects.create(From_Bus=line_df[0][i], To_Bus=line_df[1][i], R=line_df[2][i], X=line_df[3][i], B=line_df[4][i])
-        
-        if fault_con.fault_type == 0:
-            for i in range(len(result_v)):
-                ThreeFaultV.objects.create(Bus_No=result_v[0][i], Voltage_Mag=result_v[1][i], Voltage_Deg=result_v[2][i])
-            for i in range(len(result_cur)):
-                if(result_cur[0][i]==0):
-                    ThreeFaultI.objects.create(From_Bus=result_cur[1][i], To_Bus=result_cur[0][i],
-                                            Current_Mag=result_cur[2][i], Current_Deg=result_cur[3][i])
-                else:
-                    ThreeFaultI.objects.create(From_Bus=result_cur[0][i], To_Bus=result_cur[1][i],
-                                            Current_Mag=result_cur[2][i], Current_Deg=result_cur[3][i])
-            for i in range(len(result_v)):
-                ThreeZbus.objects.create(check = i)
-                row = ThreeZbus.objects.get(check=i)
-                for j in range(len(result_v)):
-                    ThreeZbusSource.objects.create(row = row, real_source=threebus[i][j].real, imag_source=threebus[i][j].imag,
-                                                    y_real_source = tybus[i][j].real, y_imag_source = tybus[i][j].imag)
-        else:
-            for i in range(len(result_v)):
-                OtherFaultV.objects.create(Bus_No=result_v[0][i], Phase_A_Mag=result_v[1][i], Phase_A_Deg=result_v[2][i],
-                                            Phase_B_Mag=result_v[3][i], Phase_B_Deg=result_v[4][i],Phase_C_Mag=result_v[5][i], Phase_C_Deg=result_v[6][i])
-                OthersequenceV.objects.create(Bus_No=sequencev[0][i], Phase_A_Mag=sequencev[1][i], Phase_A_Deg=sequencev[2][i],
-                                            Phase_B_Mag=sequencev[3][i], Phase_B_Deg=sequencev[4][i],Phase_C_Mag=sequencev[5][i], Phase_C_Deg=sequencev[6][i])
-            for i in range(len(result_cur)):
-                if(result_cur[0][i]==0):
-                    OtherFaultI.objects.create(From_Bus=result_cur[1][i], To_Bus=result_cur[0][i], Phase_A_Mag=result_cur[2][i], Phase_A_Deg=result_cur[3][i],
-                                                Phase_B_Mag=result_cur[4][i], Phase_B_Deg=result_cur[5][i],Phase_C_Mag=result_cur[6][i], Phase_C_Deg=result_cur[7][i])
-                    OthersequenceI.objects.create(From_Bus=sequencei[1][i], To_Bus=sequencei[0][i], Phase_A_Mag=sequencei[2][i], Phase_A_Deg=sequencei[3][i],
-                                            Phase_B_Mag=sequencei[4][i], Phase_B_Deg=sequencei[5][i],Phase_C_Mag=sequencei[6][i], Phase_C_Deg=sequencei[7][i])
-                else:
-                    OtherFaultI.objects.create(From_Bus=result_cur[0][i], To_Bus=result_cur[1][i], Phase_A_Mag=result_cur[2][i], Phase_A_Deg=result_cur[3][i],
-                                                Phase_B_Mag=result_cur[4][i], Phase_B_Deg=result_cur[5][i],Phase_C_Mag=result_cur[6][i], Phase_C_Deg=result_cur[7][i])
-                    OthersequenceI.objects.create(From_Bus=sequencei[0][i], To_Bus=sequencei[1][i], Phase_A_Mag=sequencei[2][i], Phase_A_Deg=sequencei[3][i],
-                                            Phase_B_Mag=sequencei[4][i], Phase_B_Deg=sequencei[5][i],Phase_C_Mag=sequencei[6][i], Phase_C_Deg=sequencei[7][i])
-            for i in range(len(result_v)):
-                OtherZbus.objects.create(check = i)
-                row = OtherZbus.objects.get(check=i)
-                for j in range(len(result_v)):
-                    OtherZbusSource.objects.create(row = row,real_source=bus[i][j].real, imag_source=bus[i][j].imag,
-                                                    y_real_source = pybus[i][j].real, y_imag_source = pybus[i][j].imag)
-                    negativeZbusSource.objects.create(row = row,real_source=negativebus[i][j].real, imag_source=negativebus[i][j].imag,
-                                                        y_real_source = nybus[i][j].real, y_imag_source = nybus[i][j].imag)
-                    zeroZbusSource.objects.create(row = row,real_source=zerobus[i][j].real, imag_source=zerobus[i][j].imag,
-                                                    y_real_source = zybus[i][j].real, y_imag_source = zybus[i][j].imag)
+                for i in range(len(result_v)):
+                    OtherFaultV.objects.create(Bus_No=result_v[0][i], Phase_A_Mag=result_v[1][i], Phase_A_Deg=result_v[2][i],
+                                                Phase_B_Mag=result_v[3][i], Phase_B_Deg=result_v[4][i],Phase_C_Mag=result_v[5][i], Phase_C_Deg=result_v[6][i])
+                    OthersequenceV.objects.create(Bus_No=sequencev[0][i], Phase_A_Mag=sequencev[1][i], Phase_A_Deg=sequencev[2][i],
+                                                Phase_B_Mag=sequencev[3][i], Phase_B_Deg=sequencev[4][i],Phase_C_Mag=sequencev[5][i], Phase_C_Deg=sequencev[6][i])
+                for i in range(len(result_cur)):
+                    if(result_cur[0][i]==0):
+                        OtherFaultI.objects.create(From_Bus=result_cur[1][i], To_Bus=result_cur[0][i], Phase_A_Mag=result_cur[2][i], Phase_A_Deg=result_cur[3][i],
+                                                    Phase_B_Mag=result_cur[4][i], Phase_B_Deg=result_cur[5][i],Phase_C_Mag=result_cur[6][i], Phase_C_Deg=result_cur[7][i])
+                        OthersequenceI.objects.create(From_Bus=sequencei[1][i], To_Bus=sequencei[0][i], Phase_A_Mag=sequencei[2][i], Phase_A_Deg=sequencei[3][i],
+                                                Phase_B_Mag=sequencei[4][i], Phase_B_Deg=sequencei[5][i],Phase_C_Mag=sequencei[6][i], Phase_C_Deg=sequencei[7][i])
+                    else:
+                        OtherFaultI.objects.create(From_Bus=result_cur[0][i], To_Bus=result_cur[1][i], Phase_A_Mag=result_cur[2][i], Phase_A_Deg=result_cur[3][i],
+                                                    Phase_B_Mag=result_cur[4][i], Phase_B_Deg=result_cur[5][i],Phase_C_Mag=result_cur[6][i], Phase_C_Deg=result_cur[7][i])
+                        OthersequenceI.objects.create(From_Bus=sequencei[0][i], To_Bus=sequencei[1][i], Phase_A_Mag=sequencei[2][i], Phase_A_Deg=sequencei[3][i],
+                                                Phase_B_Mag=sequencei[4][i], Phase_B_Deg=sequencei[5][i],Phase_C_Mag=sequencei[6][i], Phase_C_Deg=sequencei[7][i])
+                for i in range(len(result_v)):
+                    OtherZbus.objects.create(check = i)
+                    row = OtherZbus.objects.get(check=i)
+                    for j in range(len(result_v)):
+                        OtherZbusSource.objects.create(row = row,real_source=bus[i][j].real, imag_source=bus[i][j].imag,
+                                                        y_real_source = pybus[i][j].real, y_imag_source = pybus[i][j].imag)
+                        negativeZbusSource.objects.create(row = row,real_source=negativebus[i][j].real, imag_source=negativebus[i][j].imag,
+                                                            y_real_source = nybus[i][j].real, y_imag_source = nybus[i][j].imag)
+                        zeroZbusSource.objects.create(row = row,real_source=zerobus[i][j].real, imag_source=zerobus[i][j].imag,
+                                                        y_real_source = zybus[i][j].real, y_imag_source = zybus[i][j].imag)
+        except:
+            e_num = errorcheck.objects.get(find_check=True)
+            e_num.errornum = 3
+            e_num.save()
+            return redirect('condition')
         return redirect('initial')
     busdata = BusData.objects.all()
     linedata = LineData.objects.filter(line_type=1)
     condition = conditionCheck.objects.get(find_con=True)
     isexample = isExample.objects.get(find_ex=True)
-    context ={'busdata':busdata,'linedata':linedata,'condition':condition,'isexample':isexample}
+    e_num = errorcheck.objects.get(find_check=True)
+    context ={'busdata':busdata,'linedata':linedata,'condition':condition,'isexample':isexample,'errornum':e_num}
     return render(request, 'cal/fault_con.html', context=context)
 
 def result(request):

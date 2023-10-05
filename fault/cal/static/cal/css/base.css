@@ -123,3 +123,17 @@ thead{
     width:100%;
 }
 
+form{
+    position: relative;
+}
+
+.form-next{
+    position:absolute;
+    right:0;
+    bottom:-30px;
+}
+.form-prev{
+    position:absolute;
+    left:0;
+    bottom:-30px;
+}

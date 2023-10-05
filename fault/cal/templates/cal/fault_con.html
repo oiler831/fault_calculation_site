@@ -4,166 +4,188 @@
 
 {% block content %}
 <div class ="container">
-  <form method="POST" class ="condition">
-    {% csrf_token %}
-    <div class="form-floating">
-      <input type="number" name="basemva" class="form-control" id="id_basemva" placeholder="100" value="100" min="1">
-      <label for="id_basemva" class="form-label">Basemva</label>
-    </div>
-    <div>
-      <label>초기 전압 설정 방식</label>
-      <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="is_flow" id="id_is_flow2" value="False" checked>
-        <label class="form-check-label" for="id_is_flow2">
-          사용자 입력
-        </label>
-      </div>
-      {% if condition.is_flow %}
-        <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" name="is_flow" id="id_is_flow1" value="True">
-          <label class="form-check-label" for="id_is_flow1">
-            조류 계산
-          </label>
-        </div>
-      {% else %}
-        <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" name="is_flow" id="id_is_flow1" value="True" disabled>
-          <label class="form-check-label" for="id_is_flow1">
-            조류 계산
-          </label>
+  <div class="condition">
+    <form method="POST">
+      {% if errornum.errornum == 1%}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          고장 위치를 선택하세요.
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
       {% endif %}
-    </div>
-    <div>
-    <label>고장 종류 선택</label>
-    <div class="form-check form-check-inline">
-      <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_0" value="0" checked>
-      <label class="form-check-label" for="id_fault_type_0">
-        3상 고장(balanced fault)
-      </label>
-    </div>
-    {% if condition.is_not_symmetry %}
-    <div class="form-check form-check-inline">
-      <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_1" value="1">
-      <label class="form-check-label" for="id_fault_type_1">
-        1선 지락(single line to ground fault)
-      </label>
-    </div>
-    <div class="form-check form-check-inline">
-      <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_2" value="2">
-      <label class="form-check-label" for="id_fault_type_2">
-        선간 단락(line to line fault)
-      </label>
-    </div>
-    <div class="form-check form-check-inline">
-      <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_3" value="3">
-      <label class="form-check-label" for="id_fault_type_3">
-        2선 지락(double line to ground fault)
-      </label>
-    </div>
-    {% else %}
+      {% if errornum.errornum == 2%}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          flow calculation을 실패했습니다. 값 입력을 정확히 했는지 확인해주세요.
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endif %}
+      {% if errornum.errornum == 3%}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          fault calculation을 실패했습니다. 값 입력을 정확히 했는지 확인해주세요.
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endif %}
+      {% csrf_token %}
+      <div class="form-floating">
+        <input type="number" name="basemva" class="form-control" id="id_basemva" placeholder="100" value="100" min="1">
+        <label for="id_basemva" class="form-label">Basemva</label>
+      </div>
+      <div>
+        <label>초기 전압 설정 방식</label>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="is_flow" id="id_is_flow2" value="False" checked>
+          <label class="form-check-label" for="id_is_flow2">
+            사용자 입력
+          </label>
+        </div>
+        {% if condition.is_flow %}
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="is_flow" id="id_is_flow1" value="True">
+            <label class="form-check-label" for="id_is_flow1">
+              조류 계산
+            </label>
+          </div>
+        {% else %}
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="is_flow" id="id_is_flow1" value="True" disabled>
+            <label class="form-check-label" for="id_is_flow1">
+              조류 계산
+            </label>
+          </div>
+        {% endif %}
+      </div>
+      <div>
+      <label>고장 종류 선택</label>
       <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_1" value="1" disabled>
+        <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_0" value="0" checked>
+        <label class="form-check-label" for="id_fault_type_0">
+          3상 고장(balanced fault)
+        </label>
+      </div>
+      {% if condition.is_not_symmetry %}
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_1" value="1">
         <label class="form-check-label" for="id_fault_type_1">
           1선 지락(single line to ground fault)
         </label>
       </div>
       <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_2" value="2" disabled>
+        <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_2" value="2">
         <label class="form-check-label" for="id_fault_type_2">
           선간 단락(line to line fault)
         </label>
       </div>
       <div class="form-check form-check-inline">
-        <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_3" value="3" disabled>
+        <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_3" value="3">
         <label class="form-check-label" for="id_fault_type_3">
           2선 지락(double line to ground fault)
         </label>
       </div>
-    {% endif %}
-    <div>
-      <label>고장 위치 선택</label>
-      <div class="form-check">
-        <input class="form-check-input" value="True" type="radio" name="is_bus_fault" id="id_is_bus_fault_0" checked  onclick="linefieldsetDisable(), busActive()">
-        <label class="form-check-label" for="id_is_bus_fault_0">
-          Bus에서 고장
-        </label>
-      </div>
-      <select class="form-select" aria-label="Default select example" name="fault_bus" id='bus1'>
-        <option selected>고장 BUS 선택</option>
-        {% for bus in busdata %}
-        <option value={{bus.bus_num}}>{{bus.bus_num}}</option>
-        {% endfor %}
-      </select>
-      <div class="form-check">
-        <input class="form-check-input" value="False" type="radio" name="is_bus_fault" id="id_is_bus_fault_1" onclick="linefieldsetActive() ,busDisable()">
-        <label class="form-check-label" for="id_is_bus_fault_1">
-          Line에서 고장
-        </label>
-      </div>
-      <fieldset id = 'linefieldset' disabled="disabled">
-        <select class="form-select" aria-label="Default select example" name="fault_line" id="id_fault_line_1">
-          <option selected>고장난 LINE의 선택</option>
-          {% for line in linedata %}
-          <option value={{line.id}}>{{line.from_bus}} --- {{line.to_bus}}</option>
+      {% else %}
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_1" value="1" disabled>
+          <label class="form-check-label" for="id_fault_type_1">
+            1선 지락(single line to ground fault)
+          </label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_2" value="2" disabled>
+          <label class="form-check-label" for="id_fault_type_2">
+            선간 단락(line to line fault)
+          </label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_3" value="3" disabled>
+          <label class="form-check-label" for="id_fault_type_3">
+            2선 지락(double line to ground fault)
+          </label>
+        </div>
+      {% endif %}
+      <div>
+        <label>고장 위치 선택</label>
+        <div class="form-check">
+          <input class="form-check-input" value="True" type="radio" name="is_bus_fault" id="id_is_bus_fault_0" checked  onclick="linefieldsetDisable(), busActive()">
+          <label class="form-check-label" for="id_is_bus_fault_0">
+            Bus에서 고장
+          </label>
+        </div>
+        <select class="form-select" aria-label="Default select example" name="fault_bus" id='bus1'>
+          <option value="-1" selected>고장 BUS 선택</option>
+          {% for bus in busdata %}
+          <option value={{bus.bus_num}}>{{bus.bus_num}}</option>
           {% endfor %}
         </select>
-        <label for="line_percentage" class="form-label">고장난 지점의 위치</label>
-        <input type="range" name ="line_percentage" class="range-form" required id="id_line_percentage" value="50" min="1" max="99" oninput="this.nextElementSibling.value = this.value">
-        <output>50</output>
-      </fieldset>
-    </div>
-    <div class="mb-3 form-floating">
-      <input type="number" class="form-control" id="id_impedence_R" name="impedence_R" placeholder="0" value="0" step="0.0001" min="0">
-      <label for="id_impedence_R" class="form-label">고장임피던스 R (pu)</label>
-    </div>
-    <div class="mb-3 form-floating">
-      <input type="number" class="form-control" id="id_impedence_X" name="impedence_X" placeholder="0" value="0" step="0.0001" min="0">
-      <label for="id_impedence_X" class="form-label">고장임피던스 X (pu)</label>
-    </div>
-    <div class="form-check form-check-inline">
-      <input class="form-check-input" name="is_shunt" type="checkbox" value="True" id="id_is_shunt">
-      <label class="form-check-label" for="id_is_shunt">
-        선로 Shunt 어드미턴스 고려
-      </label>
-    </div>
-    {% if condition.is_flow %}
+        <div class="form-check">
+          <input class="form-check-input" value="False" type="radio" name="is_bus_fault" id="id_is_bus_fault_1" onclick="linefieldsetActive() ,busDisable()">
+          <label class="form-check-label" for="id_is_bus_fault_1">
+            Line에서 고장
+          </label>
+        </div>
+        <fieldset id = 'linefieldset' disabled="disabled">
+          <select class="form-select" aria-label="Default select example" name="fault_line" id="id_fault_line_1">
+            <option value="-1" selected>고장난 LINE의 선택</option>
+            {% for line in linedata %}
+            <option value={{line.id}}>{{line.from_bus}} --- {{line.to_bus}}</option>
+            {% endfor %}
+          </select>
+          <label for="line_percentage" class="form-label">고장난 지점의 위치</label>
+          <input type="range" name ="line_percentage" class="range-form" required id="id_line_percentage" value="50" min="1" max="99" oninput="this.nextElementSibling.value = this.value">
+          <output>50</output>
+        </fieldset>
+      </div>
+      <div class="mb-3 form-floating">
+        <input type="number" class="form-control" id="id_impedence_R" name="impedence_R" placeholder="0" value="0" step="0.0001" min="0">
+        <label for="id_impedence_R" class="form-label">고장임피던스 R (pu)</label>
+      </div>
+      <div class="mb-3 form-floating">
+        <input type="number" class="form-control" id="id_impedence_X" name="impedence_X" placeholder="0" value="0" step="0.0001" min="0">
+        <label for="id_impedence_X" class="form-label">고장임피던스 X (pu)</label>
+      </div>
       <div class="form-check form-check-inline">
-        <input class="form-check-input" name="is_load_effect" type="checkbox" value="True" id="id_is_load_effect">
-        <label class="form-check-label" for="id_is_load_effect">
-          부하 효과 고려
+        <input class="form-check-input" name="is_shunt" type="checkbox" value="True" id="id_is_shunt">
+        <label class="form-check-label" for="id_is_shunt">
+          선로 Shunt 어드미턴스 고려
         </label>
       </div>
-    {% else %}
-      <div class="form-check form-check-inline">
-        <input class="form-check-input" name="is_load_effect" type="checkbox" value="True" id="id_is_load_effect" disabled>
-        <label class="form-check-label" for="id_is_load_effect">
-          부하 효과 고려
-        </label>
-      </div>
-    {% endif %}
-    <br>
-    <button type="submit" class="btn btn-primary">입력</button>
-  </form>
-  {% if isexample.isex %}
-    {% if isexample.exampleNumber == 1 %}
-      <img src="{% static 'cal/images/glover9.8.jpg'%}">
-    {% else %}
-      {% if isexample.exampleNumber == 2 %}
-        <img src="{% static 'cal/images/Saadat9.8.jpg'%}">
+      {% if condition.is_flow %}
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" name="is_load_effect" type="checkbox" value="True" id="id_is_load_effect">
+          <label class="form-check-label" for="id_is_load_effect">
+            부하 효과 고려
+          </label>
+        </div>
       {% else %}
-        {% if isexample.exampleNumber == 3 %}
-          <img src="{% static 'cal/images/Saadat10.7.jpg'%}">
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" name="is_load_effect" type="checkbox" value="True" id="id_is_load_effect" disabled>
+          <label class="form-check-label" for="id_is_load_effect">
+            부하 효과 고려
+          </label>
+        </div>
+      {% endif %}
+      <br>
+      <br>
+      <a class="btn btn-primary form-prev" href="{% url 'excel' %}">이전</a>
+      <button type="submit" class="btn btn-primary form-next">입력</button>
+    </form>
+  </div>
+    {% if isexample.isex %}
+      {% if isexample.exampleNumber == 1 %}
+        <img src="{% static 'cal/images/glover9.8.jpg'%}">
+      {% else %}
+        {% if isexample.exampleNumber == 2 %}
+          <img src="{% static 'cal/images/Saadat9.8.jpg'%}">
         {% else %}
-          {% if isexample.exampleNumber == 6 %}
-            <img src="{% static 'cal/images/Saadat10.8.jpg'%}">
+          {% if isexample.exampleNumber == 3 %}
+            <img src="{% static 'cal/images/Saadat10.7.jpg'%}">
           {% else %}
-            <img src="{% static 'cal/images/Saadat9.9.jpg'%}">
+            {% if isexample.exampleNumber == 6 %}
+              <img src="{% static 'cal/images/Saadat10.8.jpg'%}">
+            {% else %}
+              <img src="{% static 'cal/images/Saadat9.9.jpg'%}">
+            {% endif %}
           {% endif %}
         {% endif %}
       {% endif %}
     {% endif %}
-  {% endif %}
 </div>
 {% endblock content %}
 
