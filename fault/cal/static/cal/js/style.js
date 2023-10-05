@@ -23,8 +23,8 @@ function slideValuesee()  {
     target.style.display = "block";
   }
   
-  function sliderValuenosee()  {
+function sliderValuenosee()  {
     const target = document.getElementById('slider-value');
     target.style.display = "none";
-  }
+}
   

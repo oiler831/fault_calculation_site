@@ -1,6 +1,26 @@
 {% extends './base.html'%}
 {% load static %}
-
+{% block css %}
+<link rel="stylesheet" href="{% static 'cal/css/manual.css'%}">
+{% endblock css %}
 {% block content %}
-  <p>메뉴얼 사용</p>
+<div class="container">
+  <div class="condition">
+    <h1>Step 1</h1>
+    <img src="{% static 'cal/images/manual-1.png'%}">
+    <img src="{% static 'cal/images/manual-2.png'%}">
+    <img src="{% static 'cal/images/manual-excel-bus.png'%}">
+    <img src="{% static 'cal/images/manual-excel-bus2.png'%}">
+    <img src="{% static 'cal/images/manual-excel-line.png'%}">
+    <img src="{% static 'cal/images/manual-excel-line2.png'%}">
+    <h1>Step 2</h1>
+    <img src="{% static 'cal/images/manual-3.png'%}">
+    <img src="{% static 'cal/images/manual-4.png'%}">
+    <h1>Step 3</h1>
+    <img src="{% static 'cal/images/manual-5.png'%}">
+    <img src="{% static 'cal/images/manual-6.png'%}">
+    <h1>Step 4</h1>
+    <img src="{% static 'cal/images/manual-7.png'%}">
+  </div>
+</div>
 {% endblock content %}
