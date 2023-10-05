@@ -30,7 +30,7 @@
         <label for="id_basemva" class="form-label">Basemva</label>
       </div>
       <div>
-        <label>초기 전압 설정 방식</label>
+        <label class="label-big">초기 전압 설정 방식</label>
         <div class="form-check form-check-inline">
           <input class="form-check-input" type="radio" name="is_flow" id="id_is_flow2" value="False" checked>
           <label class="form-check-label" for="id_is_flow2">
@@ -54,7 +54,7 @@
         {% endif %}
       </div>
       <div>
-      <label>고장 종류 선택</label>
+      <label class="label-big">고장 종류 선택</label>
       <div class="form-check form-check-inline">
         <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_0" value="0" checked>
         <label class="form-check-label" for="id_fault_type_0">
@@ -101,9 +101,9 @@
         </div>
       {% endif %}
       <div>
-        <label>고장 위치 선택</label>
+        <label class="label-big">고장 위치 선택</label>
         <div class="form-check">
-          <input class="form-check-input" value="True" type="radio" name="is_bus_fault" id="id_is_bus_fault_0" checked  onclick="linefieldsetDisable(), busActive()">
+          <input class="form-check-input" value="True" type="radio" name="is_bus_fault" id="id_is_bus_fault_0" checked  onclick="linefieldsetDisable(), busActive(), sliderValuenosee()">
           <label class="form-check-label" for="id_is_bus_fault_0">
             Bus에서 고장
           </label>
@@ -115,7 +115,7 @@
           {% endfor %}
         </select>
         <div class="form-check">
-          <input class="form-check-input" value="False" type="radio" name="is_bus_fault" id="id_is_bus_fault_1" onclick="linefieldsetActive() ,busDisable()">
+          <input class="form-check-input" value="False" type="radio" name="is_bus_fault" id="id_is_bus_fault_1" onclick="linefieldsetActive() ,busDisable(), slideValuesee()">
           <label class="form-check-label" for="id_is_bus_fault_1">
             Line에서 고장
           </label>
@@ -127,9 +127,9 @@
             <option value={{line.id}}>{{line.from_bus}} --- {{line.to_bus}}</option>
             {% endfor %}
           </select>
-          <label for="line_percentage" class="form-label">고장난 지점의 위치</label>
+          <label for="line_percentage" class="form-label">고장난 지점의 위치 </label> 
           <input type="range" name ="line_percentage" class="range-form" required id="id_line_percentage" value="50" min="1" max="99" oninput="this.nextElementSibling.value = this.value">
-          <output>50</output>
+          <output id="slider-value" style="display:none">50</output>
         </fieldset>
       </div>
       <div class="mb-3 form-floating">
@@ -161,8 +161,7 @@
           </label>
         </div>
       {% endif %}
-      <br>
-      <br>
+      <br><br>
       <a class="btn btn-primary form-prev" href="{% url 'excel' %}">이전</a>
       <button type="submit" class="btn btn-primary form-next">입력</button>
     </form>

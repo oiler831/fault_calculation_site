@@ -18,3 +18,13 @@ function busDisable()  {
   target.disabled = true;
 }
 
+function slideValuesee()  {
+    const target = document.getElementById('slider-value');
+    target.style.display = "block";
+  }
+  
+  function sliderValuenosee()  {
+    const target = document.getElementById('slider-value');
+    target.style.display = "none";
+  }
+  

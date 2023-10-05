@@ -137,3 +137,19 @@ form{
     left:0;
     bottom:-30px;
 }
+
+.label-big{
+    font-size: 20px;
+    font-weight: 500;
+    line-height:2;
+}
+input,
+select{
+    margin-top:15px;
+    margin-bottom:15px;
+}
+
+#slider-value{
+    display:block;
+    text-align: center;
+}

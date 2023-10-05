@@ -208,7 +208,7 @@ def fault_con(request):
             elif isexample.exampleNumber==5:
                 file = "/home/jin/graduation/fault/media/example/Saadat9.9-2.xlsx"
             elif isexample.exampleNumber==6:
-                file = "/home/jin/graduation/fault/media/example/Saadat9.9-2.xlsx"
+                file = "/home/jin/graduation/fault/media/example/Saadat10.8.xlsx"
             bus_df = pd.read_excel(file,sheet_name=0, header=None) 
             line_df = pd.read_excel(file,sheet_name=1, header=None) 
         else:
