@@ -2,4 +2,10 @@ img{
     width:75%;
     height:100%;
     padding-top:50px;
+    display:block;
+    margin:auto;
+}
+
+#manual{
+    font-weight: 700;
 }

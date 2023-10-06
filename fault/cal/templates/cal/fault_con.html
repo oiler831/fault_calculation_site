@@ -162,24 +162,25 @@
         </div>
       {% endif %}
       <br><br>
-      <a class="btn btn-primary form-prev" href="{% url 'excel' %}">이전</a>
+      <a class="btn btn-secondary form-prev" href="{% url 'excel' %}">이전</a>
       <button type="submit" class="btn btn-primary form-next">입력</button>
     </form>
   </div>
     {% if isexample.isex %}
       {% if isexample.exampleNumber == 1 %}
         <img src="{% static 'cal/images/glover9.8.jpg'%}">
+        <img src="{% static 'cal/images/glover-con-test.png'%}">
       {% else %}
         {% if isexample.exampleNumber == 2 %}
-          <img src="{% static 'cal/images/Saadat9.8.jpg'%}">
+          <img src="{% static 'cal/images/Saadat9.8.png'%}">
         {% else %}
           {% if isexample.exampleNumber == 3 %}
-            <img src="{% static 'cal/images/Saadat10.7.jpg'%}">
+            <img src="{% static 'cal/images/Saadat10.7.png'%}">
           {% else %}
             {% if isexample.exampleNumber == 6 %}
-              <img src="{% static 'cal/images/Saadat10.8.jpg'%}">
+              <img src="{% static 'cal/images/Saadat10.8.png'%}">
             {% else %}
-              <img src="{% static 'cal/images/Saadat9.9.jpg'%}">
+              <img src="{% static 'cal/images/Saadat9.9.png'%}">
             {% endif %}
           {% endif %}
         {% endif %}

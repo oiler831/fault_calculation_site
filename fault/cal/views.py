@@ -254,12 +254,20 @@ def fault_con(request):
                         Sliderbus.objects.create(Bus_No=bus_df[0][i],Voltage_Mag=bus_df[1][i],Voltage_Deg=bus_df[2][i])
                 if condition.is_not_symmetry:
                     for i in range(len(line_df)):
-                        SliderLine.objects.create(From_bus = line_df[0][i],To_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],
+                        if line_df[0][i]==0:
+                            SliderLine.objects.create(From_bus = line_df[1][i],To_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],
+                                                B = line_df[4][i],negative_R = line_df[5][i],negative_X = line_df[6][i],zero_R = line_df[7][i],
+                                                zero_X = line_df[8][i],Xn = line_df[9][i],zero_B = line_df[10][i],line_type = line_df[11][i])
+                        else:
+                            SliderLine.objects.create(From_bus = line_df[0][i],To_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],
                                                 B = line_df[4][i],negative_R = line_df[5][i],negative_X = line_df[6][i],zero_R = line_df[7][i],
                                                 zero_X = line_df[8][i],Xn = line_df[9][i],zero_B = line_df[10][i],line_type = line_df[11][i])
                 else:
                     for i in range(len(line_df)):
-                        SliderLine.objects.create(From_bus = line_df[0][i],To_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i])
+                        if line_df[0][i] ==0:
+                            SliderLine.objects.create(From_bus = line_df[1][i],To_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i])
+                        else:
+                            SliderLine.objects.create(From_bus = line_df[0][i],To_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i])
             
             if fault_con.fault_type > 0: 
                 line_df = fault_line_data_scaling(line_df) 
