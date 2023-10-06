@@ -91,6 +91,7 @@ label{
 .fault{
     overflow:auto;
     height:450px;
+    border:#EEEEEE solid 3px;
 }
 
 .table{

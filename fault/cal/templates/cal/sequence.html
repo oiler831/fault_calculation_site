@@ -1,6 +1,10 @@
 {% extends './base.html'%}
 {% load static %}
 
+{% block css %}
+<link rel="stylesheet" href="{% static 'cal/css/solution_img.css'%}">
+{% endblock css %}
+
 {% block content %}
 <div class="main">
   <input type="radio" id="tab-1" name="show" checked/>
@@ -42,6 +46,8 @@
           </div>
           <a class="btn btn-secondary prev" href="{% url 'zbus' %}">이전</a>
           <a class="btn btn-primary next" href="{% url 'phase' %}">다음</a>
+          <hr>
+          <img src="{% static 'cal/images/Phase.png'%}">
         </div>
       </div>
       <div class="content-dis">
@@ -82,10 +88,11 @@
           </div>
           <a class="btn btn-secondary prev" href="{% url 'zbus' %}">이전</a>
           <a class="btn btn-primary next" href="{% url 'phase' %}">다음</a>
+          <hr>
+          <img src="{% static 'cal/images/Phase.png'%}">
         </div>
       </div>
     </div>
   <div>
-  <img src="{% static 'cal/images/Phase.png'%}">
 </div>
 {% endblock content%}

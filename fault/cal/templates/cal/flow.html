@@ -3,6 +3,7 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'cal/css/table_label.css'%}">
+<link rel="stylesheet" href="{% static 'cal/css/solution_img.css'%}">
 {% endblock css %}
 {% block content %}
 <div class="main">
@@ -51,30 +52,31 @@
           {% else %}
             <a class="btn btn-primary next" href="{% url 'slider' %}">다음</a>
           {% endif %}
+          <hr>
+          {% if fault_con.is_bus_fault %}
+            {% if fault_con.fault_type == 0 %}
+              {% if fault_con.is_shunt %}
+                {% if fault_con.is_load_effect %}
+                  <img src="{% static 'cal/images/ybusbload.png'%}">
+                {% else %}
+                  <img src="{% static 'cal/images/ybusb.png'%}">
+                {% endif %}
+              {% else %}
+                {% if fault_con.is_load_effect %}
+                  <img src="{% static 'cal/images/ybusload.png'%}">
+                {% else %}
+                  <img src="{% static 'cal/images/ybus.png'%}">
+                {% endif %}
+              {% endif%}
+            {% else%}
+              <img src="{% static 'cal/images/zero-sequence.png'%}">
+            {% endif %}
+          {% else %}
+            <img src="{% static 'cal/images/slider.png'%}">
+          {% endif %}
         </div>
       </div>
     </div>
   </div>
-  {% if fault_con.is_bus_fault %}
-    {% if fault_con.fault_type == 0 %}
-      {% if fault_con.is_shunt %}
-        {% if fault_con.is_load_effect %}
-          <img src="{% static 'cal/images/ybusbload.png'%}">
-        {% else %}
-          <img src="{% static 'cal/images/ybusb.png'%}">
-        {% endif %}
-      {% else %}
-        {% if fault_con.is_load_effect %}
-          <img src="{% static 'cal/images/ybusload.png'%}">
-        {% else %}
-          <img src="{% static 'cal/images/ybus.png'%}">
-        {% endif %}
-      {% endif%}
-    {% else%}
-      <img src="{% static 'cal/images/zero-sequence.png'%}">
-    {% endif %}
-  {% else %}
-    <img src="{% static 'cal/images/slider.png'%}">
-  {% endif %}
 </div>
 {% endblock content%}

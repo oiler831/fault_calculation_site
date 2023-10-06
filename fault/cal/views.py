@@ -100,7 +100,12 @@ def upload_excel_to_db(request):
         if is_not_symmetry:
             for i in range(len(line_df)):
                 if line_df[0][i] == 0:
-                    LineData.objects.create(from_bus = line_df[1][i],to_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],
+                    if line_df[11][i] == 4:
+                        LineData.objects.create(from_bus = line_df[1][i],to_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],
+                                        B = line_df[4][i],negative_R = line_df[5][i],negative_X = line_df[6][i],zero_R = line_df[7][i],
+                                        zero_X = line_df[8][i],Xn = line_df[9][i],zero_B = line_df[10][i],line_type = 3)
+                    else:
+                        LineData.objects.create(from_bus = line_df[1][i],to_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],
                                         B = line_df[4][i],negative_R = line_df[5][i],negative_X = line_df[6][i],zero_R = line_df[7][i],
                                         zero_X = line_df[8][i],Xn = line_df[9][i],zero_B = line_df[10][i],line_type = line_df[11][i])
                 else:
@@ -109,8 +114,11 @@ def upload_excel_to_db(request):
                                         zero_X = line_df[8][i],Xn = line_df[9][i],zero_B = line_df[10][i],line_type = line_df[11][i])
         else:
             for i in range(len(line_df)):
-                if line_df[0][i] == 0: 
-                    LineData.objects.create(from_bus = line_df[1][i],to_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i],line_type=line_df[5][i])
+                if line_df[0][i] == 0:
+                    if line_df[5][i] == 4:
+                        LineData.objects.create(from_bus = line_df[1][i],to_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i],line_type=3)
+                    else: 
+                        LineData.objects.create(from_bus = line_df[1][i],to_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i],line_type=line_df[5][i])
                 else:
                     LineData.objects.create(from_bus = line_df[0][i],to_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i],line_type=line_df[5][i])
         conditionCheck.objects.create(is_flow=is_flow,is_not_symmetry=is_not_symmetry,find_con=True)
@@ -255,7 +263,12 @@ def fault_con(request):
                 if condition.is_not_symmetry:
                     for i in range(len(line_df)):
                         if line_df[0][i]==0:
-                            SliderLine.objects.create(From_bus = line_df[1][i],To_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],
+                            if line_df[11][i] == 4:
+                                SliderLine.objects.create(From_bus = line_df[1][i],To_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],
+                                                B = line_df[4][i],negative_R = line_df[5][i],negative_X = line_df[6][i],zero_R = line_df[7][i],
+                                                zero_X = line_df[8][i],Xn = line_df[9][i],zero_B = line_df[10][i],line_type = 3)
+                            else:
+                                SliderLine.objects.create(From_bus = line_df[1][i],To_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],
                                                 B = line_df[4][i],negative_R = line_df[5][i],negative_X = line_df[6][i],zero_R = line_df[7][i],
                                                 zero_X = line_df[8][i],Xn = line_df[9][i],zero_B = line_df[10][i],line_type = line_df[11][i])
                         else:
@@ -265,9 +278,12 @@ def fault_con(request):
                 else:
                     for i in range(len(line_df)):
                         if line_df[0][i] ==0:
-                            SliderLine.objects.create(From_bus = line_df[1][i],To_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i])
+                            if line_df[5][i]==4:
+                                SliderLine.objects.create(From_bus = line_df[1][i],To_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i], line_type=3)
+                            else:
+                                SliderLine.objects.create(From_bus = line_df[1][i],To_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i],line_type= line_df[5][i])
                         else:
-                            SliderLine.objects.create(From_bus = line_df[0][i],To_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i])
+                            SliderLine.objects.create(From_bus = line_df[0][i],To_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i], line_type = line_df[5][i])
             
             if fault_con.fault_type > 0: 
                 line_df = fault_line_data_scaling(line_df) 
@@ -365,7 +381,7 @@ def fault_con(request):
 
 def result(request):
     busdata = BusData.objects.all()
-    linedata = LineData.objects.all()
+    linedata = LineData.objects.all().order_by('line_type')
     faultcon = FaultCondition.objects.get(to_find=True)
     faultbusdata=FaultBusData.objects.all()
     faultlinedata=FaultLineData.objects.all()
@@ -393,7 +409,7 @@ def result(request):
         initial_bus.drop(['Generator_MW','Generator_Mvar','Load_MW','Load_Mvar','Qmax','Qmin','Bus_Code'],axis=1,inplace=True)
         fault_bus.drop(['Generator_MW','Generator_Mvar','Load_MW','Load_Mvar'],axis=1,inplace=True)
     if condition.is_not_symmetry == False:
-        initial_line.drop(['negative_R','negative_X','zero_R','zero_X','Xn','zero_B','line_type'],axis=1,inplace=True)
+        initial_line.drop(['negative_R','negative_X','zero_R','zero_X','Xn','zero_B'],axis=1,inplace=True)
         fault_line.drop(['negative_R','negative_X','zero_R','zero_X','zero_B'],axis=1,inplace=True)
     bus_size = max(fault_bus.iloc[:,0])
     if faultcon.fault_type==0:
@@ -494,7 +510,7 @@ def result(request):
 def initial(request):
     faultcon = FaultCondition.objects.get(to_find=True)
     busdata = BusData.objects.all()
-    linedata = LineData.objects.all()
+    linedata = LineData.objects.all().order_by('line_type')
     condition = conditionCheck.objects.get(find_con=True)
     context ={'busdata':busdata,'linedata':linedata,'condition':condition,'faultcon':faultcon}
     return render(request, 'cal/initial_circuit.html', context=context)
@@ -507,7 +523,7 @@ def flow(request):
 
 def slider(request):
     sliderbus = Sliderbus.objects.all()
-    sliderline = SliderLine.objects.all()
+    sliderline = SliderLine.objects.all().order_by('line_type')
     condition = conditionCheck.objects.get(find_con=True)
     fault_con = FaultCondition.objects.get(to_find=True)
     context={'sliderbus':sliderbus, 'sliderline':sliderline,'fault_con':fault_con,'condition':condition}

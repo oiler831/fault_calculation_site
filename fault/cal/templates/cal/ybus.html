@@ -3,6 +3,7 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'cal/css/bus.css'%}">
+<link rel="stylesheet" href="{% static 'cal/css/solution_img.css'%}">
 {% endblock css %}
 
 {% block content %}
@@ -52,10 +53,11 @@
           <a class="btn btn-secondary prev" href="{% url 'slider' %}">이전</a>
         {% endif %}
         <a class="btn btn-primary next" href="{% url 'zbus' %}">다음</a>
+        <hr>
+        <img src="{% static 'cal/images/zbus.png'%}">
       </div>
     </div>
   </div>
-  <img src="{% static 'cal/images/zbus.png'%}">
 </div>
 {% else %}
 <div class="main">
@@ -99,6 +101,8 @@
           </div>
           <a class="btn btn-secondary prev" href="{% url 'transformer' %}">이전</a>
           <a class="btn btn-primary next" href="{% url 'zbus' %}">다음</a>
+          <hr>
+          <img src="{% static 'cal/images/zbus.png'%}">
         </div>
       </div>
       <div class="content-dis">
@@ -132,6 +136,8 @@
           </div>
           <a class="btn btn-secondary prev" href="{% url 'transformer' %}">이전</a>
           <a class="btn btn-primary next" href="{% url 'zbus' %}">다음</a>
+          <hr>
+          <img src="{% static 'cal/images/zbus.png'%}">
         </div>
       </div>
       <div class="content-dis">
@@ -165,11 +171,12 @@
           </div>
           <a class="btn btn-secondary prev" href="{% url 'transformer' %}">이전</a>
           <a class="btn btn-primary next" href="{% url 'zbus' %}">다음</a>
+          <hr>
+          <img src="{% static 'cal/images/zbus.png'%}">
         </div>
       </div>
     </div>
   </div>
-  <img src="{% static 'cal/images/zbus.png'%}">
 </div>
 {% endif %}
 {% endblock content %}

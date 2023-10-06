@@ -92,6 +92,7 @@
             {% if condition.is_not_symmetry %}
               <thead>
                 <tr>
+                  <td>Line Type</td>
                   <td>From Bus</td>
                   <td>To Bus</td>
                   <td>R+(pu)</td>
@@ -103,12 +104,40 @@
                   <td>X<sub>0</sub>(pu)</td>
                   <td>Xn(pu)</td>
                   <td>B<sub>0</sub>(pu)</td>
-                  <td>line_type</td>
                 </tr>
               </thead>
               <tbody>
                 {% for i in linedata %}
                 <tr>
+                {% if i.line_type == 0 %}
+                    <td>G</td>
+                  {% else %}
+                    {% if i.line_type == 1 %}
+                      <td>T/L</td>
+                    {% else %}
+                      {% if i.line_type == 2 %}
+                        <td>T(1)</td>
+                      {% else %}
+                        {% if i.line_type == 3%}
+                          <td>T(2)</td>
+                        {% else %}
+                          {% if i.line_type == 4%}
+                            <td>T(3)</td>
+                          {% else %}
+                            {% if i.line_type == 5%}
+                              <td>T(4)</td>
+                            {% else %}
+                              {% if i.line_type == 6%}
+                                <td>T(5)</td>
+                              {% else %}
+                                <td>T(6)</td>
+                              {% endif %}
+                            {% endif %}
+                          {% endif %}
+                        {% endif %}
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
                   <td>{{i.from_bus}}</td>
                   <td>{{i.to_bus}}</td>
                   <td>{{i.R|floatformat:-4}}</td>
@@ -120,13 +149,13 @@
                   <td>{{i.zero_X|floatformat:-4}}</td>
                   <td>{{i.Xn|floatformat:-4}}</td>
                   <td>{{i.zero_B|floatformat:-4}}</td>
-                  <td>{{i.line_type|floatformat:-4}}</td>
                 </tr>
                 {% endfor %}
               </tbody>
             {% else %}
               <thead>
                 <tr>
+                  <td>Line Type</td>
                   <td>From Bus</td>
                   <td>To Bus</td>
                   <td>R(pu)</td>
@@ -137,6 +166,35 @@
               <tbody>
                 {% for i in linedata %}
                 <tr>
+                  {% if i.line_type == 0 %}
+                    <td>G</td>
+                  {% else %}
+                    {% if i.line_type == 1 %}
+                      <td>T/L</td>
+                    {% else %}
+                      {% if i.line_type == 2 %}
+                        <td>T(1)</td>
+                      {% else %}
+                        {% if i.line_type == 3%}
+                          <td>T(2)</td>
+                        {% else %}
+                          {% if i.line_type == 4%}
+                            <td>T(3)</td>
+                          {% else %}
+                            {% if i.line_type == 5%}
+                              <td>T(4)</td>
+                            {% else %}
+                              {% if i.line_type == 6%}
+                                <td>T(5)</td>
+                              {% else %}
+                                <td>T(6)</td>
+                              {% endif %}
+                            {% endif %}
+                          {% endif %}
+                        {% endif %}
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
                   <td>{{i.from_bus}}</td>
                   <td>{{i.to_bus}}</td>
                   <td>{{i.R|floatformat:-4}}</td>

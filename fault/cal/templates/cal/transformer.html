@@ -3,6 +3,7 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'cal/css/table_label.css'%}">
+<link rel="stylesheet" href="{% static 'cal/css/solution_img.css'%}">
 {% endblock css %}
 {% block content %}
 <div class="main">
@@ -57,23 +58,23 @@
             <a class="btn btn-secondary prev" href="{% url 'slider' %}">이전</a>
           {% endif %}
           <a class="btn btn-primary next" href="{% url 'ybus' %}">다음</a>
+          <hr>
+          {% if faultcon.is_shunt %}
+            {% if faultcon.is_load_effect %}
+              <img src="{% static 'cal/images/ybusbload.png'%}">
+            {% else %}
+              <img src="{% static 'cal/images/ybusb.png'%}">
+            {% endif %}
+          {% else %}
+            {% if faultcon.is_load_effect %}
+              <img src="{% static 'cal/images/ybusload.png'%}">
+            {% else %}
+              <img src="{% static 'cal/images/ybus.png'%}">
+            {% endif %}
+          {% endif%}
         </div>
       </div>
     </div>
   </div>
-  
-  {% if faultcon.is_shunt %}
-    {% if faultcon.is_load_effect %}
-      <img src="{% static 'cal/images/ybusbload.png'%}">
-    {% else %}
-      <img src="{% static 'cal/images/ybusb.png'%}">
-    {% endif %}
-  {% else %}
-    {% if faultcon.is_load_effect %}
-      <img src="{% static 'cal/images/ybusload.png'%}">
-    {% else %}
-      <img src="{% static 'cal/images/ybus.png'%}">
-    {% endif %}
-  {% endif%}
 </div>
 {% endblock content%}

@@ -1,6 +1,10 @@
 {% extends './base.html'%}
 {% load static %}
 
+{% block css %}
+<link rel="stylesheet" href="{% static 'cal/css/solution_img.css'%}">
+{% endblock css %}
+
 {% block content %}
 <div class="main">
   <input type="radio" id="tab-1" name="show" checked/>
@@ -78,6 +82,32 @@
               <a class="btn btn-primary next" href="{% url 'slider' %}">다음</a>
             {% endif %}
           {% endif %}
+          <hr>
+          {% if faultcon.is_flow %}
+            <img src="{% static 'cal/images/gaussflow.png'%}">
+          {% else %}
+            {% if faultcon.is_bus_fault %}
+              {% if faultcon.fault_type == 0 %}
+                {% if fault_con.is_shunt %}
+                  {% if fault_con.is_load_effect %}
+                    <img src="{% static 'cal/images/ybusbload.png'%}">
+                  {% else %}
+                    <img src="{% static 'cal/images/ybusb.png'%}">
+                  {% endif %}
+                {% else %}
+                  {% if fault_con.is_load_effect %}
+                    <img src="{% static 'cal/images/ybusload.png'%}">
+                  {% else %}
+                    <img src="{% static 'cal/images/ybus.png'%}">
+                  {% endif %}
+                {% endif%}
+              {% else%}
+                <img src="{% static 'cal/images/zero-sequence.png'%}">
+              {% endif %}
+            {% else %}
+            <img src="{% static 'cal/images/slider.png'%}">
+            {% endif %}
+          {% endif %}
         </div>
       </div>
       <div class="content-dis">
@@ -105,27 +135,27 @@
                   {% for i in linedata %}
                   <tr>
                     {% if i.line_type == 0 %}
-                      <td>Generator</td>
+                      <td>G</td>
                     {% else %}
                       {% if i.line_type == 1 %}
-                        <td>Line</td>
+                        <td>T/L</td>
                       {% else %}
                         {% if i.line_type == 2 %}
-                          <td>transformer(1)</td>
+                          <td>T(1)</td>
                         {% else %}
                           {% if i.line_type == 3%}
-                            <td>transformer(2)</td>
+                            <td>T(2)</td>
                           {% else %}
                             {% if i.line_type == 4%}
-                              <td>transformer(3)</td>
+                              <td>T(3)</td>
                             {% else %}
                               {% if i.line_type == 5%}
-                                <td>transformer(4)</td>
+                                <td>T(4)</td>
                               {% else %}
                                 {% if i.line_type == 6%}
-                                  <td>transformer(5)</td>
+                                  <td>T(5)</td>
                                 {% else %}
-                                  <td>transformer(6)</td>
+                                  <td>T(6)</td>
                                 {% endif %}
                               {% endif %}
                             {% endif %}
@@ -150,6 +180,7 @@
               {% else %}
                 <thead>
                   <tr>
+                    <td>Line type</td>
                     <td>From Bus</td>
                     <td>To Bus</td>
                     <td>R(pu)</td>
@@ -160,6 +191,35 @@
                 <tbody>
                   {% for i in linedata %}
                   <tr>
+                    {% if i.line_type == 0 %}
+                      <td>G</td>
+                    {% else %}
+                      {% if i.line_type == 1 %}
+                        <td>T/L</td>
+                      {% else %}
+                        {% if i.line_type == 2 %}
+                          <td>T(1)</td>
+                        {% else %}
+                          {% if i.line_type == 3%}
+                            <td>T(2)</td>
+                          {% else %}
+                            {% if i.line_type == 4%}
+                              <td>T(3)</td>
+                            {% else %}
+                              {% if i.line_type == 5%}
+                                <td>T(4)</td>
+                              {% else %}
+                                {% if i.line_type == 6%}
+                                  <td>T(5)</td>
+                                {% else %}
+                                  <td>T(6)</td>
+                                {% endif %}
+                              {% endif %}
+                            {% endif %}
+                          {% endif %}
+                        {% endif %}
+                      {% endif %}
+                    {% endif %}
                     <td>{{i.from_bus}}</td>
                     <td>{{i.to_bus}}</td>
                     <td>{{i.R|floatformat:-4}}</td>
@@ -184,34 +244,35 @@
               <a class="btn btn-primary next" href="{% url 'slider' %}">다음</a>
             {% endif %}
           {% endif %}
+          <hr>
+          {% if faultcon.is_flow %}
+            <img src="{% static 'cal/images/gaussflow.png'%}">
+          {% else %}
+            {% if faultcon.is_bus_fault %}
+              {% if faultcon.fault_type == 0 %}
+                {% if fault_con.is_shunt %}
+                  {% if fault_con.is_load_effect %}
+                    <img src="{% static 'cal/images/ybusbload.png'%}">
+                  {% else %}
+                    <img src="{% static 'cal/images/ybusb.png'%}">
+                  {% endif %}
+                {% else %}
+                  {% if fault_con.is_load_effect %}
+                    <img src="{% static 'cal/images/ybusload.png'%}">
+                  {% else %}
+                    <img src="{% static 'cal/images/ybus.png'%}">
+                  {% endif %}
+                {% endif%}
+              {% else%}
+                <img src="{% static 'cal/images/zero-sequence.png'%}">
+              {% endif %}
+            {% else %}
+              <img src="{% static 'cal/images/slider.png'%}">
+            {% endif %}
+          {% endif %}
         </div>
       </div>
     </div>
   </div>
-  {% if faultcon.is_flow %}
-    <img src="{% static 'cal/images/gaussflow.png'%}">
-  {% else %}
-    {% if faultcon.is_bus_fault %}
-      {% if faultcon.fault_type == 0 %}
-        {% if fault_con.is_shunt %}
-          {% if fault_con.is_load_effect %}
-            <img src="{% static 'cal/images/ybusbload.png'%}">
-          {% else %}
-            <img src="{% static 'cal/images/ybusb.png'%}">
-          {% endif %}
-        {% else %}
-          {% if fault_con.is_load_effect %}
-            <img src="{% static 'cal/images/ybusload.png'%}">
-          {% else %}
-            <img src="{% static 'cal/images/ybus.png'%}">
-          {% endif %}
-        {% endif%}
-      {% else%}
-        <img src="{% static 'cal/images/zero-sequence.png'%}">
-      {% endif %}
-    {% else %}
-    <img src="{% static 'cal/images/slider.png'%}">
-    {% endif %}
-  {% endif %}
 </div>
 {% endblock content%}
