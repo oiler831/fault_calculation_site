@@ -163,3 +163,9 @@ select{
     right:100px;
     bottom:30px;
 }
+
+.git-icon{
+    width: 20px;
+    display:unset;
+    margin:unset;
+}

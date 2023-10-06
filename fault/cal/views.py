@@ -40,17 +40,17 @@ def upload_excel_to_db(request):
                 return render(request,'cal/file.html',context={'errornum':e_num})
             else:
                 if request.POST['exampleselect']=='1':
-                    excel_file="/home/jin/graduation/fault/media/example/Glover_9.8.xlsx"
+                    excel_file="/home/jin/fault_calculation_site/fault/media/example/Glover_9.8.xlsx"
                 elif request.POST['exampleselect']=='2':
-                    excel_file="/home/jin/graduation/fault/media/example/Saadat9.8.xlsx"
+                    excel_file="/home/jin/fault_calculation_site/fault/media/example/Saadat9.8.xlsx"
                 elif request.POST['exampleselect']=='3':
-                    excel_file="/home/jin/graduation/fault/media/example/Saadat10.7.xlsx"
+                    excel_file="/home/jin/fault_calculation_site/fault/media/example/Saadat10.7.xlsx"
                 elif request.POST['exampleselect']=='4':
-                    excel_file = "/home/jin/graduation/fault/media/example/Saadat9.9-1.xlsx"
+                    excel_file = "/home/jin/fault_calculation_site/fault/media/example/Saadat9.9-1.xlsx"
                 elif request.POST['exampleselect']=='5':
-                    excel_file = "/home/jin/graduation/fault/media/example/Saadat9.9-2.xlsx"
+                    excel_file = "/home/jin/fault_calculation_site/fault/media/example/Saadat9.9-2.xlsx"
                 elif request.POST['exampleselect']=='6':
-                    excel_file = "/home/jin/graduation/fault/media/example/Saadat10.8.xlsx"
+                    excel_file = "/home/jin/fault_calculation_site/fault/media/example/Saadat10.8.xlsx"
         else:
             excel_file = request.FILES.get('excelFile',False)
             if excel_file == False:
@@ -206,17 +206,17 @@ def fault_con(request):
         isexample = isExample.objects.get(find_ex=True)
         if isexample.isex:
             if isexample.exampleNumber==1:
-                file = "/home/jin/graduation/fault/media/example/Glover_9.8.xlsx"
+                file = "/home/jin/fault_calculation_site/fault/media/example/Glover_9.8.xlsx"
             elif isexample.exampleNumber==2:
-                file = "/home/jin/graduation/fault/media/example/Saadat9.8.xlsx"
+                file = "/home/jin/fault_calculation_site/fault/media/example/Saadat9.8.xlsx"
             elif isexample.exampleNumber==3:
-                file = "/home/jin/graduation/fault/media/example/Saadat10.7.xlsx"
+                file = "/home/jin/fault_calculation_site/fault/media/example/Saadat10.7.xlsx"
             elif isexample.exampleNumber==4:
-                file = "/home/jin/graduation/fault/media/example/Saadat9.9-1.xlsx"
+                file = "/home/jin/fault_calculation_site/fault/media/example/Saadat9.9-1.xlsx"
             elif isexample.exampleNumber==5:
-                file = "/home/jin/graduation/fault/media/example/Saadat9.9-2.xlsx"
+                file = "/home/jin/fault_calculation_site/fault/media/example/Saadat9.9-2.xlsx"
             elif isexample.exampleNumber==6:
-                file = "/home/jin/graduation/fault/media/example/Saadat10.8.xlsx"
+                file = "/home/jin/fault_calculation_site/fault/media/example/Saadat10.8.xlsx"
             bus_df = pd.read_excel(file,sheet_name=0, header=None) 
             line_df = pd.read_excel(file,sheet_name=1, header=None) 
         else:
