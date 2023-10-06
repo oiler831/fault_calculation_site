@@ -41,10 +41,10 @@
               </tbody>
             </table>
           </div>
-          <a class="btn btn-primary prev" href="{% url 'initial' %}">이전</a>
+          <a class="btn btn-secondary prev" href="{% url 'initial' %}">이전</a>
           {% if fault_con.is_bus_fault %}
             {% if fault_con.fault_type == 0 %}
-              <a class="btn btn-primary" href="{% url 'ybus' %}">다음</a>
+              <a class="btn btn-primary next" href="{% url 'ybus' %}">다음</a>
             {% else%}
               <a class="btn btn-primary next" href="{% url 'transformer' %}">다음</a>
             {% endif %}

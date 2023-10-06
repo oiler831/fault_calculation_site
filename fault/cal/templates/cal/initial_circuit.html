@@ -110,8 +110,26 @@
                       {% if i.line_type == 1 %}
                         <td>Line</td>
                       {% else %}
-                        {% if i.line_type >= 2 %}
+                        {% if i.line_type == 2 %}
                           <td>transformer(1)</td>
+                        {% else %}
+                          {% if i.line_type == 3%}
+                            <td>transformer(2)</td>
+                          {% else %}
+                            {% if i.line_type == 4%}
+                              <td>transformer(3)</td>
+                            {% else %}
+                              {% if i.line_type == 5%}
+                                <td>transformer(4)</td>
+                              {% else %}
+                                {% if i.line_type == 6%}
+                                  <td>transformer(5)</td>
+                                {% else %}
+                                  <td>transformer(6)</td>
+                                {% endif %}
+                              {% endif %}
+                            {% endif %}
+                          {% endif %}
                         {% endif %}
                       {% endif %}
                     {% endif %}

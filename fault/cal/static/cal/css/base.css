@@ -100,10 +100,9 @@ label{
 img{
     width:75%;
     height:75%;
-    margin-top:50px;
     display: block;
     margin: auto;
-    border:#000000 solid 3px;
+    margin-top:50px;
 }
 
 thead{
@@ -156,4 +155,10 @@ select{
 #slider-value{
     display:block;
     text-align: center;
+}
+
+.go_total{
+    position:absolute;
+    right:100px;
+    bottom:30px;
 }

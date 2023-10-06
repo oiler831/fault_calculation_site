@@ -24,3 +24,10 @@
 .other label:nth-child(14){
     width:25%
 }
+
+.excel-img-small{
+    display:unset;
+    margin:unset;
+    margin-bottom:3px;
+    width: 20px;
+}

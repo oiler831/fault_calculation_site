@@ -44,12 +44,12 @@
         </div>
         {% if faultcon.is_bus_fault %}
           {% if faultcon.is_flow %}
-            <a class="btn btn-primary prev" href="{% url 'flow' %}">이전</a>
+            <a class="btn btn-secondary prev" href="{% url 'flow' %}">이전</a>
           {% else %}
-            <a class="btn btn-primary prev" href="{% url 'initial' %}">이전</a>
+            <a class="btn btn-secondary prev" href="{% url 'initial' %}">이전</a>
           {% endif %}
         {% else %}
-          <a class="btn btn-primary prev" href="{% url 'slider' %}">이전</a>
+          <a class="btn btn-secondary prev" href="{% url 'slider' %}">이전</a>
         {% endif %}
         <a class="btn btn-primary next" href="{% url 'zbus' %}">다음</a>
       </div>
@@ -97,7 +97,7 @@
               </tbody>
             </table>
           </div>
-          <a class="btn btn-primary prev" href="{% url 'transformer' %}">이전</a>
+          <a class="btn btn-secondary prev" href="{% url 'transformer' %}">이전</a>
           <a class="btn btn-primary next" href="{% url 'zbus' %}">다음</a>
         </div>
       </div>
@@ -130,7 +130,7 @@
               </tbody>
             </table>
           </div>
-          <a class="btn btn-primary prev" href="{% url 'transformer' %}">이전</a>
+          <a class="btn btn-secondary prev" href="{% url 'transformer' %}">이전</a>
           <a class="btn btn-primary next" href="{% url 'zbus' %}">다음</a>
         </div>
       </div>
@@ -163,7 +163,7 @@
               </tbody>
             </table>
           </div>
-          <a class="btn btn-primary prev" href="{% url 'transformer' %}">이전</a>
+          <a class="btn btn-secondary prev" href="{% url 'transformer' %}">이전</a>
           <a class="btn btn-primary next" href="{% url 'zbus' %}">다음</a>
         </div>
       </div>
