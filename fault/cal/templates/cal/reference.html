@@ -1,0 +1,17 @@
+{% extends './base.html'%}
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'cal/css/reference.css'%}">
+{% endblock css %}
+{% block content %}
+<div class="container">
+  <div class="condition">
+    <h2>참조</h2>
+    <img class="explain" src="{% static 'cal/images/glover-main.png'%}">
+    <p>J. Duncan Glover, Thomas Overbye, Mulukutla S. Sarma,<br>
+    Power System Analysis and Design 6th Edition, 2016, chapter 6, 7, 8, 9</p>
+    <img class="explain" src="{% static 'cal/images/Saadat-main.png'%}">
+    <p>Hadi Saadat, Power System Analysis 2th Edition, 2002, chapter 6, 9, 10</p>
+  </div>
+</div>
+{% endblock content %}

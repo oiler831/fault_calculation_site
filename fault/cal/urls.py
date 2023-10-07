@@ -16,4 +16,5 @@ urlpatterns = [
     path('result/', views.result,name='result'),
     path('manual/', views.manual, name='manual'),
     path('manual/fileform/', views.fileform, name='fileform'),
+    path('reference',views.reference, name='reference'),
 ]

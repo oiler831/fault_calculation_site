@@ -94,39 +94,45 @@ def upload_excel_to_db(request):
             is_not_symmetry = False
         else:
             is_not_symmetry = True
-        if is_flow:
-            for i in range(len(bus_df)):
-                BusData.objects.create(bus_num = bus_df[0][i],Voltage_Mag=bus_df[1][i],Voltage_Deg=bus_df[2][i],Generator_MW=bus_df[3][i],
-                                    Generator_Mvar = bus_df[4][i],Load_MW=bus_df[5][i],Load_Mvar=bus_df[6][i],Qmax=bus_df[7][i],
-                                    Qmin=bus_df[8][i], Bus_Code=bus_df[9][i])
-        else:
-            for i in range(len(bus_df)):
-                BusData.objects.create(bus_num = bus_df[0][i],Voltage_Mag=bus_df[1][i],Voltage_Deg=bus_df[2][i])
-        if is_not_symmetry:
-            for i in range(len(line_df)):
-                if line_df[0][i] == 0:
-                    if line_df[11][i] == 4:
-                        LineData.objects.create(from_bus = line_df[1][i],to_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],
-                                        B = line_df[4][i],negative_R = line_df[5][i],negative_X = line_df[6][i],zero_R = line_df[7][i],
-                                        zero_X = line_df[8][i],Xn = line_df[9][i],zero_B = line_df[10][i],line_type = 3)
+        try:
+            if is_flow:
+                for i in range(len(bus_df)):
+                    BusData.objects.create(bus_num = bus_df[0][i],Voltage_Mag=bus_df[1][i],Voltage_Deg=bus_df[2][i],Generator_MW=bus_df[3][i],
+                                        Generator_Mvar = bus_df[4][i],Load_MW=bus_df[5][i],Load_Mvar=bus_df[6][i],Qmax=bus_df[7][i],
+                                        Qmin=bus_df[8][i], Bus_Code=bus_df[9][i])
+            else:
+                for i in range(len(bus_df)):
+                    BusData.objects.create(bus_num = bus_df[0][i],Voltage_Mag=bus_df[1][i],Voltage_Deg=bus_df[2][i])
+            if is_not_symmetry:
+                for i in range(len(line_df)):
+                    if line_df[0][i] == 0:
+                        if line_df[11][i] == 4:
+                            LineData.objects.create(from_bus = line_df[1][i],to_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],
+                                            B = line_df[4][i],negative_R = line_df[5][i],negative_X = line_df[6][i],zero_R = line_df[7][i],
+                                            zero_X = line_df[8][i],Xn = line_df[9][i],zero_B = line_df[10][i],line_type = 3)
+                        else:
+                            LineData.objects.create(from_bus = line_df[1][i],to_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],
+                                            B = line_df[4][i],negative_R = line_df[5][i],negative_X = line_df[6][i],zero_R = line_df[7][i],
+                                            zero_X = line_df[8][i],Xn = line_df[9][i],zero_B = line_df[10][i],line_type = line_df[11][i])
                     else:
-                        LineData.objects.create(from_bus = line_df[1][i],to_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],
-                                        B = line_df[4][i],negative_R = line_df[5][i],negative_X = line_df[6][i],zero_R = line_df[7][i],
-                                        zero_X = line_df[8][i],Xn = line_df[9][i],zero_B = line_df[10][i],line_type = line_df[11][i])
-                else:
-                    LineData.objects.create(from_bus = line_df[0][i],to_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],
-                                        B = line_df[4][i],negative_R = line_df[5][i],negative_X = line_df[6][i],zero_R = line_df[7][i],
-                                        zero_X = line_df[8][i],Xn = line_df[9][i],zero_B = line_df[10][i],line_type = line_df[11][i])
-        else:
-            for i in range(len(line_df)):
-                if line_df[0][i] == 0:
-                    if line_df[5][i] == 4:
-                        LineData.objects.create(from_bus = line_df[1][i],to_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i],line_type=3)
-                    else: 
-                        LineData.objects.create(from_bus = line_df[1][i],to_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i],line_type=line_df[5][i])
-                else:
-                    LineData.objects.create(from_bus = line_df[0][i],to_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i],line_type=line_df[5][i])
-        conditionCheck.objects.create(is_flow=is_flow,is_not_symmetry=is_not_symmetry,find_con=True)
+                        LineData.objects.create(from_bus = line_df[0][i],to_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],
+                                            B = line_df[4][i],negative_R = line_df[5][i],negative_X = line_df[6][i],zero_R = line_df[7][i],
+                                            zero_X = line_df[8][i],Xn = line_df[9][i],zero_B = line_df[10][i],line_type = line_df[11][i])
+            else:
+                for i in range(len(line_df)):
+                    if line_df[0][i] == 0:
+                        if line_df[5][i] == 4:
+                            LineData.objects.create(from_bus = line_df[1][i],to_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i],line_type=3)
+                        else: 
+                            LineData.objects.create(from_bus = line_df[1][i],to_bus = line_df[0][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i],line_type=line_df[5][i])
+                    else:
+                        LineData.objects.create(from_bus = line_df[0][i],to_bus = line_df[1][i],R = line_df[2][i],X = line_df[3][i],B = line_df[4][i],line_type=line_df[5][i])
+            conditionCheck.objects.create(is_flow=is_flow,is_not_symmetry=is_not_symmetry,find_con=True)
+        except:
+            e_num = errorcheck.objects.get(find_check=True)
+            e_num.errornum = 5
+            e_num.save()
+            return render(request,'cal/file.html',context={'errornum':e_num})
         e_num = errorcheck.objects.get(find_check=True)
         e_num.errornum = 0
         e_num.save()
@@ -596,6 +602,8 @@ def phase(request):
     context={'threefaultv':threefaultv,'threefaulti':threefaulti,'otherfaultv':otherfaultv,'otherfaulti':otherfaulti,'faultcon':faultcon}
     return render(request, 'cal/phase.html',context=context)
 
+def reference(request):
+    return render(request, 'cal/reference.html')
 
 def bus_scaling(bus_df, basemva):
     bus_df.iloc[:, 3:9] /= basemva
