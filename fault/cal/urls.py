@@ -15,4 +15,5 @@ urlpatterns = [
     path('phase/',views.phase,name='phase'),
     path('result/', views.result,name='result'),
     path('manual/', views.manual, name='manual'),
+    path('manual/fileform/', views.fileform, name='fileform'),
 ]

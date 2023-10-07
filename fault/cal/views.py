@@ -20,6 +20,9 @@ def index(request):
 def manual(request):
     return render(request,'cal/manual.html')
 
+def fileform(request):
+    return render(request,'cal/input_data.html')
+
 
 def upload_excel_to_db(request):
     clear = BusData.objects.all()
@@ -51,6 +54,8 @@ def upload_excel_to_db(request):
                     excel_file = "/home/jin/fault_calculation_site/fault/media/example/Saadat9.9-2.xlsx"
                 elif request.POST['exampleselect']=='6':
                     excel_file = "/home/jin/fault_calculation_site/fault/media/example/Saadat10.8.xlsx"
+                elif request.POST['exampleselect']=='7':
+                    excel_file = "/home/jin/fault_calculation_site/fault/media/example/contest.xlsx"
         else:
             excel_file = request.FILES.get('excelFile',False)
             if excel_file == False:
@@ -217,6 +222,8 @@ def fault_con(request):
                 file = "/home/jin/fault_calculation_site/fault/media/example/Saadat9.9-2.xlsx"
             elif isexample.exampleNumber==6:
                 file = "/home/jin/fault_calculation_site/fault/media/example/Saadat10.8.xlsx"
+            elif isexample.exampleNumber==7:
+                file = "/home/jin/fault_calculation_site/fault/media/example/contest.xlsx"
             bus_df = pd.read_excel(file,sheet_name=0, header=None) 
             line_df = pd.read_excel(file,sheet_name=1, header=None) 
         else:
@@ -308,19 +315,24 @@ def fault_con(request):
 
             for i in range(len(line_df)):
                 if condition.is_not_symmetry:
-                    if(line_df[0][i]==0):
-                        FaultLineData.objects.create(From_Bus=line_df[1][i], To_Bus=line_df[0][i], R=line_df[2][i], X=line_df[3][i],
+                    if line_df[0][i]==0:
+                        if line_df[11][i]==4:
+                            FaultLineData.objects.create(From_Bus=line_df[1][i], To_Bus=line_df[0][i], R=line_df[2][i], X=line_df[3][i],
                                             B=line_df[4][i],negative_R=line_df[5][i],negative_X=line_df[6][i],
-                                            zero_R=line_df[7][i],zero_X=line_df[8][i],zero_B=line_df[10][i])
+                                            zero_R=line_df[7][i],zero_X=line_df[8][i],zero_B=line_df[10][i],line_type=3)
+                        else:
+                            FaultLineData.objects.create(From_Bus=line_df[1][i], To_Bus=line_df[0][i], R=line_df[2][i], X=line_df[3][i],
+                                            B=line_df[4][i],negative_R=line_df[5][i],negative_X=line_df[6][i],
+                                            zero_R=line_df[7][i],zero_X=line_df[8][i],zero_B=line_df[10][i],line_type=line_df[11][i])
                     else:
                         FaultLineData.objects.create(From_Bus=line_df[0][i], To_Bus=line_df[1][i], R=line_df[2][i], X=line_df[3][i],
                                             B=line_df[4][i],negative_R=line_df[5][i],negative_X=line_df[6][i],
-                                            zero_R=line_df[7][i],zero_X=line_df[8][i],zero_B=line_df[10][i])
+                                            zero_R=line_df[7][i],zero_X=line_df[8][i],zero_B=line_df[10][i],line_type=line_df[11][i])
                 else:
-                    if(line_df[0][i]==0):
-                        FaultLineData.objects.create(From_Bus=line_df[1][i], To_Bus=line_df[0][i], R=line_df[2][i], X=line_df[3][i], B=line_df[4][i])
+                    if line_df[0][i]==0:
+                        FaultLineData.objects.create(From_Bus=line_df[1][i], To_Bus=line_df[0][i], R=line_df[2][i], X=line_df[3][i], B=line_df[4][i],line_type=line_df[5][i])
                     else:
-                        FaultLineData.objects.create(From_Bus=line_df[0][i], To_Bus=line_df[1][i], R=line_df[2][i], X=line_df[3][i], B=line_df[4][i])
+                        FaultLineData.objects.create(From_Bus=line_df[0][i], To_Bus=line_df[1][i], R=line_df[2][i], X=line_df[3][i], B=line_df[4][i],line_type=line_df[5][i])
             
             if fault_con.fault_type == 0:
                 for i in range(len(result_v)):
@@ -429,7 +441,7 @@ def result(request):
         zbus = pd.DataFrame(zbus)
         threev = pd.DataFrame(ThreeFaultV.objects.all().values()).drop('id',axis=1)
         threei = pd.DataFrame(ThreeFaultI.objects.all().values()).drop('id',axis=1)
-        with pd.ExcelWriter('/home/jin/graduation/fault/media/result/result.xlsx') as writer:
+        with pd.ExcelWriter('/home/jin/fault_calculation_site/fault/media/result/result.xlsx') as writer:
             initial_bus.to_excel(writer, sheet_name='Initial Voltage Data',index=False)
             initial_line.to_excel(writer, sheet_name='Equipment Data',index=False)
             fault_bus.to_excel(writer, sheet_name='Input Voltage Data',index=False)
@@ -479,7 +491,7 @@ def result(request):
         sequence_i = pd.DataFrame(OthersequenceI.objects.all().values()).drop('id',axis=1)
         otherv = pd.DataFrame(OtherFaultV.objects.all().values()).drop('id',axis=1)
         otheri = pd.DataFrame(OtherFaultI.objects.all().values()).drop('id',axis=1)
-        with pd.ExcelWriter('/home/jin/graduation/fault/media/result/result.xlsx') as writer:
+        with pd.ExcelWriter('/home/jin/fault_calculation_site/fault/media/result/result.xlsx') as writer:
             initial_bus.to_excel(writer, sheet_name='Initial Voltage Data',index=False)
             initial_line.to_excel(writer, sheet_name='Equipment Data',index=False)
             fault_bus.to_excel(writer, sheet_name='Input Voltage Data',index=False)
@@ -496,7 +508,7 @@ def result(request):
             otheri.to_excel(writer, sheet_name='Fault Phase Current',index=False)
     resultfile.objects.create(find_file=True)
     outfile = resultfile.objects.get(find_file=True)
-    path = Path('/home/jin/graduation/fault/media/result/result.xlsx')
+    path = Path('/home/jin/fault_calculation_site/fault/media/result/result.xlsx')
     with path.open(mode='rb') as f:
         outfile.rfile = File(f, name=path.name)
         outfile.save()

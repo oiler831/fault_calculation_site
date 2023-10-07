@@ -99,11 +99,10 @@ label{
     text-align: center;
 }
 img{
-    width:75%;
+    width:60%;
     height:75%;
     display: block;
     margin: auto;
-    margin-top:50px;
 }
 
 thead{
@@ -133,12 +132,12 @@ form{
 .form-next{
     position:absolute;
     right:0;
-    bottom:-30px;
+    bottom:-50px;
 }
 .form-prev{
     position:absolute;
     left:0;
-    bottom:-30px;
+    bottom:-50px;
 }
 
 .label-big{
@@ -168,4 +167,9 @@ select{
     width: 20px;
     display:unset;
     margin:unset;
+    border:unset;
+    margin-top:-3px;
+}
+.main-name{
+    font-weight: 700;
 }

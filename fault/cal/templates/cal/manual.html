@@ -6,21 +6,26 @@
 {% block content %}
 <div class="container">
   <div class="condition">
-    <h1>Step 1</h1>
-    <img src="{% static 'cal/images/manual-1.png'%}">
-    <img src="{% static 'cal/images/manual-2.png'%}">
-    <img src="{% static 'cal/images/manual-excel-bus.png'%}">
-    <img src="{% static 'cal/images/manual-excel-bus2.png'%}">
-    <img src="{% static 'cal/images/manual-excel-line.png'%}">
-    <img src="{% static 'cal/images/manual-excel-line2.png'%}">
-    <h1>Step 2</h1>
-    <img src="{% static 'cal/images/manual-3.png'%}">
-    <img src="{% static 'cal/images/manual-4.png'%}">
-    <h1>Step 3</h1>
-    <img src="{% static 'cal/images/manual-5.png'%}">
-    <img src="{% static 'cal/images/manual-6.png'%}">
-    <h1>Step 4</h1>
-    <img src="{% static 'cal/images/manual-7.png'%}">
+    <h1>고장 계산 프로그램 메뉴얼</h1>
+    <h2>1. Circuit Data를 입력</h2>
+    <img class="explain" src="{% static 'cal/images/manual-1.png'%}">
+    <p>Circuit Data 파일을 입력하고 입력을 누릅니다.(파일 입력 형식은 <a href="fileform">여기</a>를 클릭)</p>
+    <img class="explain" src="{% static 'cal/images/manual-2.png'%}">
+    <p>예제의 경우, 예제에 맞는 회로도가 나옵니다.</p>
+    <h2>2. 고장 조건을 입력</h2>
+    <img class="explain" src="{% static 'cal/images/manual-3.png'%}">
+    <p>위 화면에서 고장에 맞는 조건을 선택 후 입력을 누릅니다.</p>
+    <img class="explain" src="{% static 'cal/images/manual-4.png'%}">
+    <p>예제를 선택할 경우, 아래 회로도와 고장조건이 나옵니다.</p>
+    <h2>3. 결과값 확인</h2>
+    <img class="explain" src="{% static 'cal/images/manual-5.png'%}">
+    <p>계산 결과값을 확인할 수 있습니다.</p>
+    <img class="explain" src="{% static 'cal/images/manual-6.png'%}">
+    <p>다음 계산을 위한 계산식을 아래에서 확인 가능합니다.</p>
+    <h2>4. 전체 결과 확인</h2>
+    <img class="explain" src="{% static 'cal/images/manual-7.png'%}">
+    <p>모든 계산의 결과값을 한 눈에 확인가능합니다.<br>
+    아래 Download 버튼을 누르면 결과값을 엑셀파일로 다운받을 수 있습니다.</p>
   </div>
 </div>
 {% endblock content %}

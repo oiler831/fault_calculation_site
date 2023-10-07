@@ -1,0 +1,37 @@
+{% extends './base.html'%}
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'cal/css/manual.css'%}">
+{% endblock css %}
+{% block content %}
+<div class="container">
+  <div class="condition">
+    <h1>파일 입력 형식</h1>
+    <div>
+      <p class="explain-about">파일의 형태는 .xlsx 형식이어야 합니다.<br>
+      Sheet1에는 Initial Voltage Data, Sheet2에는 Equipment Data가 들어가야 합니다.</p>
+    </div>
+    <h2>Initial Voltage Data</h2>
+    <img class="explain" src="{% static 'cal/images/manual-excel-bus.png'%}">
+    <p>간소화된 Initial Voltage Data입니다. 단, 이 경우 조류 계산 및 부하효과 고려는 할 수 없습니다.</p>
+    <img class="explain" src="{% static 'cal/images/manual-excel-bus2.png'%}">
+    <p>일반적인 Initial Voltage Data입니다.<br>
+      Bus Code는 Slack 1, PQ 2, PV 3입니다.</p>
+    <h2>Equipment Data</h2>
+    <img class="explain" src="{% static 'cal/images/manual-excel-line.png'%}">
+    <p>간소화된 Equipment Data입니다. 단, 이 경우 평형 3상을 제외한 고장을 선택할 수 없습니다.</p>
+    <img class="explain" src="{% static 'cal/images/manual-excel-line2.png'%}">
+    <p>일반적인 Equiment Data입니다.</p>
+    <h4>Line Type은 아래 조건을 맞춰주십시오.</h4>
+    <img class="explain" src="{% static 'cal/images/line-type-manaul.png'%}">
+    <h2> 예시 </h2>
+    <p>Saadat ex 10.8</p>
+    <img src="{% static 'cal/images/Saadat10.8.png'%}">
+    <p>회로도</p>
+    <img src="{% static 'cal/images/example-bus.png'%}">
+    <p> Initial Voltage Data(Sheet1)</p>
+    <img src="{% static 'cal/images/example-line.png'%}">
+    <p> Equiment Data(Sheet2)</p>
+  </div>
+</div>
+{% endblock content %}

@@ -5,12 +5,14 @@ function Change() {
     var d3 = document.getElementById("d3");
     var d4 = document.getElementById("d4");
     var d5 = document.getElementById("d5");
+    var d6 = document.getElementById("d6");
     if(key==1){
       d1.style.display="block";
       d2.style.display="none";
       d3.style.display="none";
       d4.style.display="none";
       d5.style.display="none";
+      d6.style.display="none";
     }
     if(key==2){
       d1.style.display="none";
@@ -18,6 +20,7 @@ function Change() {
       d3.style.display="none";
       d4.style.display="none";
       d5.style.display="none";
+      d6.style.display="none";
     }
     if(key==3){
       d1.style.display="none";
@@ -25,6 +28,7 @@ function Change() {
       d3.style.display="block";
       d4.style.display="none";
       d5.style.display="none";
+      d6.style.display="none";
     }
     if(key==4||key==5){
         d1.style.display="none";
@@ -32,6 +36,7 @@ function Change() {
         d3.style.display="none";
         d4.style.display="block";
         d5.style.display="none";
+        d6.style.display="none";
     }
     if(key==6){
         d1.style.display="none";
@@ -39,6 +44,15 @@ function Change() {
         d3.style.display="none";
         d4.style.display="none";
         d5.style.display="block";
+        d6.style.display="none";
+    }
+    if(key==7){
+        d1.style.display="none";
+        d2.style.display="none";
+        d3.style.display="none";
+        d4.style.display="none";
+        d5.style.display="none";
+        d6.style.display="block";
     }
 }
 
@@ -48,11 +62,13 @@ function Hide(){
     var d3 = document.getElementById("d3");
     var d4 = document.getElementById("d4");
     var d5 = document.getElementById("d5");
+    var d6 = document.getElementById("d6");
     d1.style.display="none";
     d2.style.display="none";
     d3.style.display="none";
     d4.style.display="none";
     d5.style.display="none";
+    d6.style.display="none";
 }
 
 function Reveal(){
@@ -62,6 +78,7 @@ function Reveal(){
   var d3 = document.getElementById("d3");
   var d4 = document.getElementById("d4");
   var d5 = document.getElementById("d5");
+  var d6 = document.getElementById("d6");
   if(key==1){
     d1.style.display="block";
   }
@@ -76,6 +93,9 @@ function Reveal(){
   }
   if(key==6){
     d5.style.display="block";
+  }
+  if(key==7){
+    d6.style.display="block";
   }
 }
 
@@ -97,13 +117,4 @@ function fileActive()  {
 function fileDisable()  {
   const target = document.getElementById('formFile');
   target.disabled = true;
-}
-
-function fileCheck(){
-    var inputfile = document.getElementById('direct');
-    var filecheck = document.getElementById('formFile');
-    if(inputfile==False && !filecheck){
-        alert("파일을 첨부해 주세요");
-        return;
-    }
 }

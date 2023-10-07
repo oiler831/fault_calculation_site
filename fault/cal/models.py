@@ -79,6 +79,7 @@ class FaultLineData(models.Model):
     zero_R = models.FloatField(default=0,null=True,blank=True)
     zero_X = models.FloatField(default=0,null=True,blank=True)
     zero_B = models.FloatField(default=0,null=True,blank=True)
+    line_type = models.SmallIntegerField(default=0)
 
 
 class ThreeFaultV(models.Model):

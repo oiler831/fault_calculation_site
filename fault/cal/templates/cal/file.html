@@ -49,6 +49,7 @@
             </div>
             <fieldset id = 'fileex' disabled="disabled">
               <select class="form-select" id="exampleselect" name="exampleselect" onchange="Change()">
+                <option value="7">14회 전력산업 소프트웨어 경진대회, AC 전력망의 고장계산 문제</option>
                 <option value="1">Glover,Sarma, POWER SYSTEM Analysis & Design ex 9.8</option>
                 <option value="2">Saadat, Power System Analysis ex 9.8</option>
                 <option value="4">Saadat, Power System Analysis ex 9.9-1</option>
@@ -58,23 +59,26 @@
               </select>
             </fieldset>
             <br>
-            <button type="submit" class="btn btn-primary form-next" onclick="fileCheck()">입력</button>
+            <button type="submit" class="btn btn-primary form-next">입력</button>
+            <div id="d1" style="display:none">
+              <img src="{% static 'cal/images/glover9.8.jpg'%}">
+            </div>
+            <div id="d2" style="display:none">
+              <img src="{% static 'cal/images/Saadat9.8.png'%}">
+            </div>
+            <div id="d3" style="display:none">
+              <img src="{% static 'cal/images/Saadat10.7.png'%}">
+            </div>
+            <div id="d4" style="display:none">
+              <img src="{% static 'cal/images/Saadat9.9.png'%}">
+            </div>
+            <div id="d5" style="display:none">
+              <img src="{% static 'cal/images/Saadat10.8.png'%}">
+            </div>
+            <div id="d6" style="display:none">
+              <img src="{% static 'cal/images/contest.png'%}">
+            </div>
           </form>
-          <div id="d1" style="display:none">
-            <img src="{% static 'cal/images/glover9.8.jpg'%}">
-          </div>
-          <div id="d2" style="display:none">
-            <img src="{% static 'cal/images/Saadat9.8.png'%}">
-          </div>
-          <div id="d3" style="display:none">
-            <img src="{% static 'cal/images/Saadat10.7.png'%}">
-          </div>
-          <div id="d4" style="display:none">
-            <img src="{% static 'cal/images/Saadat9.9.png'%}">
-          </div>
-          <div id="d5" style="display:none">
-            <img src="{% static 'cal/images/Saadat10.8.png'%}">
-          </div>
         </div>
       </div>
     </div>

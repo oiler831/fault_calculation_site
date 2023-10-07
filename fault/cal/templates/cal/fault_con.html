@@ -58,7 +58,7 @@
       <div class="form-check form-check-inline">
         <input class="form-check-input" type="radio" name="fault_type" id="id_fault_type_0" value="0" checked>
         <label class="form-check-label" for="id_fault_type_0">
-          3상 고장(balanced fault)
+          평형 3상(balanced fault)
         </label>
       </div>
       {% if condition.is_not_symmetry %}
@@ -164,28 +164,41 @@
       <br><br>
       <a class="btn btn-secondary form-prev" href="{% url 'excel' %}">이전</a>
       <button type="submit" class="btn btn-primary form-next">입력</button>
-    </form>
-  </div>
-    {% if isexample.isex %}
+      {% if isexample.isex %}
       {% if isexample.exampleNumber == 1 %}
         <img src="{% static 'cal/images/glover9.8.jpg'%}">
-        <img src="{% static 'cal/images/glover-con-test.png'%}">
+        <img src="{% static 'cal/images/glover-con.png'%}">
       {% else %}
         {% if isexample.exampleNumber == 2 %}
           <img src="{% static 'cal/images/Saadat9.8.png'%}">
+          <img src="{% static 'cal/images/Saadat-con9.8.png'%}">
         {% else %}
           {% if isexample.exampleNumber == 3 %}
             <img src="{% static 'cal/images/Saadat10.7.png'%}">
+            <img src="{% static 'cal/images/Saadat-con10.7.png'%}">
           {% else %}
             {% if isexample.exampleNumber == 6 %}
               <img src="{% static 'cal/images/Saadat10.8.png'%}">
+              <img src="{% static 'cal/images/Saadat-con10.8.png'%}">
             {% else %}
-              <img src="{% static 'cal/images/Saadat9.9.png'%}">
+              {% if isexample.exampleNumber == 7%}
+                <img src="{% static 'cal/images/contest.png'%}">
+                <img src="{% static 'cal/images/contest-con.png'%}">
+              {% else%}
+                <img src="{% static 'cal/images/Saadat9.9.png'%}">
+                {% if isexample.exampleNumber == 4 %}
+                  <img src="{% static 'cal/images/Saadat-con9.9-1.png'%}">
+                {% else %}
+                  <img src="{% static 'cal/images/Saadat-con9.9-2.png'%}">
+                {% endif%}
+              {% endif%}
             {% endif %}
           {% endif %}
         {% endif %}
       {% endif %}
     {% endif %}
+    </form>
+  </div>
 </div>
 {% endblock content %}
 
