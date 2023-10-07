@@ -268,6 +268,7 @@
             {% if condition.is_not_symmetry %}
               <thead>
                 <tr>
+                  <td>Line Type</td>
                   <td>From Bus</td>
                   <td>To Bus</td>
                   <td>R+(pu)</td>
@@ -281,24 +282,54 @@
                 </tr>
               </thead>
               <tbody>
-                {% for linedata in faultlinedata %}
+                {% for i in faultlinedata %}
                 <tr>
-                  <td>{{linedata.From_Bus}}</td>
-                  <td>{{linedata.To_Bus}}</td>
-                  <td>{{linedata.R|floatformat:-4}}</td>
-                  <td>{{linedata.X|floatformat:-4}}</td>
-                  <td>{{linedata.B|floatformat:-4}}</td>
-                  <td>{{linedata.negative_R|floatformat:-4}}</td>
-                  <td>{{linedata.negative_X|floatformat:-4}}</td>
-                  <td>{{linedata.zero_R|floatformat:-4}}</td>
-                  <td>{{linedata.zero_X|floatformat:-4}}</td>
-                  <td>{{linedata.zero_B|floatformat:-4}}</td>
+                  {% if i.line_type == 0 %}
+                    <td>G</td>
+                  {% else %}
+                    {% if i.line_type == 1 %}
+                      <td>T/L</td>
+                    {% else %}
+                      {% if i.line_type == 2 %}
+                        <td>T(1)</td>
+                      {% else %}
+                        {% if i.line_type == 3%}
+                          <td>T(2)</td>
+                        {% else %}
+                          {% if i.line_type == 4%}
+                            <td>T(3)</td>
+                          {% else %}
+                            {% if i.line_type == 5%}
+                              <td>T(4)</td>
+                            {% else %}
+                              {% if i.line_type == 6%}
+                                <td>T(5)</td>
+                              {% else %}
+                                <td>T(6)</td>
+                              {% endif %}
+                            {% endif %}
+                          {% endif %}
+                        {% endif %}
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
+                  <td>{{i.From_Bus}}</td>
+                  <td>{{i.To_Bus}}</td>
+                  <td>{{i.R|floatformat:-4}}</td>
+                  <td>{{i.X|floatformat:-4}}</td>
+                  <td>{{i.B|floatformat:-4}}</td>
+                  <td>{{i.negative_R|floatformat:-4}}</td>
+                  <td>{{i.negative_X|floatformat:-4}}</td>
+                  <td>{{i.zero_R|floatformat:-4}}</td>
+                  <td>{{i.zero_X|floatformat:-4}}</td>
+                  <td>{{i.zero_B|floatformat:-4}}</td>
                 </tr>
                 {% endfor %}
               </tbody>
             {% else %}
               <thead>
                 <tr>
+                  <td>Line Type</td>
                   <td>From Bus</td>
                   <td>To Bus</td>
                   <td>R(pu)</td>
@@ -307,13 +338,42 @@
                 </tr>
               </thead>
               <tbody>
-                {% for linedata in faultlinedata %}
+                {% for i in faultlinedata %}
                 <tr>
-                  <td>{{linedata.From_Bus}}</td>
-                  <td>{{linedata.To_Bus}}</td>
-                  <td>{{linedata.R|floatformat:-4}}</td>
-                  <td>{{linedata.X|floatformat:-4}}</td>
-                  <td>{{linedata.B|floatformat:-4}}</td>
+                  {% if i.line_type == 0 %}
+                    <td>G</td>
+                  {% else %}
+                    {% if i.line_type == 1 %}
+                      <td>T/L</td>
+                    {% else %}
+                      {% if i.line_type == 2 %}
+                        <td>T(1)</td>
+                      {% else %}
+                        {% if i.line_type == 3%}
+                          <td>T(2)</td>
+                        {% else %}
+                          {% if i.line_type == 4%}
+                            <td>T(3)</td>
+                          {% else %}
+                            {% if i.line_type == 5%}
+                              <td>T(4)</td>
+                            {% else %}
+                              {% if i.line_type == 6%}
+                                <td>T(5)</td>
+                              {% else %}
+                                <td>T(6)</td>
+                              {% endif %}
+                            {% endif %}
+                          {% endif %}
+                        {% endif %}
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
+                  <td>{{i.From_Bus}}</td>
+                  <td>{{i.To_Bus}}</td>
+                  <td>{{i.R|floatformat:-4}}</td>
+                  <td>{{i.X|floatformat:-4}}</td>
+                  <td>{{i.B|floatformat:-4}}</td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -418,6 +478,7 @@
             <table class="table table-striped">
               <thead>
                 <tr>
+                  <td>Line Type</td>
                   <td>From Bus</td>
                   <td>To Bus</td>
                   <td>Magnitude</td>
@@ -425,16 +486,49 @@
                 </tr>
               </thead>
               <tbody>
-                {% for threefaulti in threefaulti %}
+                {% for i in threefaulti %}
                 <tr>
-                  <td>{{threefaulti.From_Bus}}</td>
-                  {% if threefaulti.To_Bus == -1 %}
+                  {% if i.line_type == 0 %}
+                    <td>G</td>
+                  {% else %}
+                    {% if i.line_type == 1 %}
+                      <td>T/L</td>
+                    {% else %}
+                      {% if i.line_type == 2 %}
+                        <td>T(1)</td>
+                      {% else %}
+                        {% if i.line_type == 3%}
+                          <td>T(2)</td>
+                        {% else %}
+                          {% if i.line_type == 4%}
+                            <td>T(3)</td>
+                          {% else %}
+                            {% if i.line_type == 5%}
+                              <td>T(4)</td>
+                            {% else %}
+                              {% if i.line_type == 6%}
+                                <td>T(5)</td>
+                              {% else %}
+                                {% if i.line_type == 8%}
+                                  <td>Fault</td>
+                                {% else %}
+                                  <td>T(6)</td>
+                                {% endif %}
+                              {% endif %}
+                            {% endif %}
+                          {% endif %}
+                        {% endif %}
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
+                  <td>{{i.From_Bus}}</td>
+                  {% if i.To_Bus == -1 %}
                     <td>F</td>
                   {% else%}
-                    <td>{{threefaulti.To_Bus}}</td>
+                    <td>{{i.To_Bus}}</td>
                   {% endif%}
-                  <td>{{threefaulti.Current_Mag|floatformat:-4}}</td>
-                  <td>{{threefaulti.Current_Deg|floatformat:-4}}</td>
+                  <td>{{i.Current_Mag|floatformat:-4}}</td>
+                  <td>{{i.Current_Deg|floatformat:-4}}</td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -540,63 +634,68 @@
         <div class="border">
           <div class="container  fault">
             <table class="table table-striped">
-              {% if condition.is_not_symmetry %}
-                <thead>
-                  <tr>
-                    <td>From Bus</td>
-                    <td>To Bus</td>
-                    <td>R+(pu)</td>
-                    <td>X+(pu)</td>
-                    <td>B+(pu)</td>
-                    <td>R-(pu)</td>
-                    <td>X-(pu)</td>
-                    <td>R<sub>0</sub>(pu)</td>
-                    <td>X<sub>0</sub>(pu)</td>
-                    <td>Xn(pu)</td>
-                    <td>B<sub>0</sub>(pu)</td>
-                    <td>line_type</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for i in linedata %}
-                  <tr>
-                    <td>{{i.from_bus}}</td>
-                    <td>{{i.to_bus}}</td>
-                    <td>{{i.R|floatformat:-4}}</td>
-                    <td>{{i.X|floatformat:-4}}</td>
-                    <td>{{i.B|floatformat:-4}}</td>
-                    <td>{{i.negative_R|floatformat:-4}}</td>
-                    <td>{{i.negative_X|floatformat:-4}}</td>
-                    <td>{{i.zero_R|floatformat:-4}}</td>
-                    <td>{{i.zero_X|floatformat:-4}}</td>
-                    <td>{{i.Xn|floatformat:-4}}</td>
-                    <td>{{i.zero_B|floatformat:-4}}</td>
-                    <td>{{i.line_type|floatformat:-4}}</td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              {% else %}
-                <thead>
-                  <tr>
-                    <td>From Bus</td>
-                    <td>To Bus</td>
-                    <td>R(pu)</td>
-                    <td>X(pu)</td>
-                    <td>B(pu)</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for i in linedata %}
-                  <tr>
-                    <td>{{i.from_bus}}</td>
-                    <td>{{i.to_bus}}</td>
-                    <td>{{i.R|floatformat:-4}}</td>
-                    <td>{{i.X|floatformat:-4}}</td>
-                    <td>{{i.B|floatformat:-4}}</td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              {% endif %}
+              <thead>
+                <tr>
+                  <td>Line Type</td>
+                  <td>From Bus</td>
+                  <td>To Bus</td>
+                  <td>R+(pu)</td>
+                  <td>X+(pu)</td>
+                  <td>B+(pu)</td>
+                  <td>R-(pu)</td>
+                  <td>X-(pu)</td>
+                  <td>R<sub>0</sub>(pu)</td>
+                  <td>X<sub>0</sub>(pu)</td>
+                  <td>Xn(pu)</td>
+                  <td>B<sub>0</sub>(pu)</td>
+                </tr>
+              </thead>
+              <tbody>
+                {% for i in linedata %}
+                <tr>
+                  {% if i.line_type == 0 %}
+                    <td>G</td>
+                  {% else %}
+                    {% if i.line_type == 1 %}
+                      <td>T/L</td>
+                    {% else %}
+                      {% if i.line_type == 2 %}
+                        <td>T(1)</td>
+                      {% else %}
+                        {% if i.line_type == 3%}
+                          <td>T(2)</td>
+                        {% else %}
+                          {% if i.line_type == 4%}
+                            <td>T(3)</td>
+                          {% else %}
+                            {% if i.line_type == 5%}
+                              <td>T(4)</td>
+                            {% else %}
+                              {% if i.line_type == 6%}
+                                <td>T(5)</td>
+                              {% else %}
+                                <td>T(6)</td>
+                              {% endif %}
+                            {% endif %}
+                          {% endif %}
+                        {% endif %}
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
+                  <td>{{i.from_bus}}</td>
+                  <td>{{i.to_bus}}</td>
+                  <td>{{i.R|floatformat:-4}}</td>
+                  <td>{{i.X|floatformat:-4}}</td>
+                  <td>{{i.B|floatformat:-4}}</td>
+                  <td>{{i.negative_R|floatformat:-4}}</td>
+                  <td>{{i.negative_X|floatformat:-4}}</td>
+                  <td>{{i.zero_R|floatformat:-4}}</td>
+                  <td>{{i.zero_X|floatformat:-4}}</td>
+                  <td>{{i.Xn|floatformat:-4}}</td>
+                  <td>{{i.zero_B|floatformat:-4}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
             </table>
           </div>
           <a href="{{ outfile.rfile.url}}" class="btn btn-outline-success next" role="button" download="fault_calculation_result.xlsx"><img class="excel-img-small" src="{% static 'cal/images/excel.png'%}"/> Download</a>
@@ -664,9 +763,9 @@
         <div class="border">
           <div class="container  fault">
             <table class="table table-striped">
-              {% if condition.is_not_symmetry %}
               <thead>
                 <tr>
+                  <td>Line Data</td>
                   <td>From Bus</td>
                   <td>To Bus</td>
                   <td>R+(pu)</td>
@@ -680,43 +779,50 @@
                 </tr>
               </thead>
               <tbody>
-                {% for linedata in faultlinedata %}
+                {% for i in faultlinedata %}
                 <tr>
-                  <td>{{linedata.From_Bus}}</td>
-                  <td>{{linedata.To_Bus}}</td>
-                  <td>{{linedata.R|floatformat:-4}}</td>
-                  <td>{{linedata.X|floatformat:-4}}</td>
-                  <td>{{linedata.B|floatformat:-4}}</td>
-                  <td>{{linedata.negative_R|floatformat:-4}}</td>
-                  <td>{{linedata.negative_X|floatformat:-4}}</td>
-                  <td>{{linedata.zero_R|floatformat:-4}}</td>
-                  <td>{{linedata.zero_X|floatformat:-4}}</td>
-                  <td>{{linedata.zero_B|floatformat:-4}}</td>
+                  {% if i.line_type == 0 %}
+                    <td>G</td>
+                  {% else %}
+                    {% if i.line_type == 1 %}
+                      <td>T/L</td>
+                    {% else %}
+                      {% if i.line_type == 2 %}
+                        <td>T(1)</td>
+                      {% else %}
+                        {% if i.line_type == 3%}
+                          <td>T(2)</td>
+                        {% else %}
+                          {% if i.line_type == 4%}
+                            <td>T(3)</td>
+                          {% else %}
+                            {% if i.line_type == 5%}
+                              <td>T(4)</td>
+                            {% else %}
+                              {% if i.line_type == 6%}
+                                <td>T(5)</td>
+                              {% else %}
+                                <td>T(6)</td>
+                              {% endif %}
+                            {% endif %}
+                          {% endif %}
+                        {% endif %}
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
+                  <td>{{i.From_Bus}}</td>
+                  <td>{{i.To_Bus}}</td>
+                  <td>{{i.R|floatformat:-4}}</td>
+                  <td>{{i.X|floatformat:-4}}</td>
+                  <td>{{i.B|floatformat:-4}}</td>
+                  <td>{{i.negative_R|floatformat:-4}}</td>
+                  <td>{{i.negative_X|floatformat:-4}}</td>
+                  <td>{{i.zero_R|floatformat:-4}}</td>
+                  <td>{{i.zero_X|floatformat:-4}}</td>
+                  <td>{{i.zero_B|floatformat:-4}}</td>
                 </tr>
                 {% endfor %}
               </tbody>
-            {% else %}
-              <thead>
-                <tr>
-                  <td>From Bus</td>
-                  <td>To Bus</td>
-                  <td>R(pu)</td>
-                  <td>X(pu)</td>
-                  <td>B(pu)</td>
-                </tr>
-              </thead>
-              <tbody>
-                {% for linedata in faultlinedata %}
-                <tr>
-                  <td>{{linedata.From_Bus}}</td>
-                  <td>{{linedata.To_Bus}}</td>
-                  <td>{{linedata.R|floatformat:-4}}</td>
-                  <td>{{linedata.X|floatformat:-4}}</td>
-                  <td>{{linedata.B|floatformat:-4}}</td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            {% endif %}
             </table>
           </div>
           <a href="{{ outfile.rfile.url}}" class="btn btn-outline-success next" role="button" download="fault_calculation_result.xlsx"><img class="excel-img-small" src="{% static 'cal/images/excel.png'%}"/> Download</a>
@@ -953,6 +1059,7 @@
             <table class="table table-striped">
               <thead>
                 <tr>
+                  <td>Line Type</td>
                   <td>From Bus</td>
                   <td>To Bus</td>
                   <td>Zero Mag</td>
@@ -966,6 +1073,39 @@
               <tbody>
                 {% for i in sequencei %}
                 <tr>
+                  {% if i.line_type == 0 %}
+                    <td>G</td>
+                  {% else %}
+                    {% if i.line_type == 1 %}
+                      <td>T/L</td>
+                    {% else %}
+                      {% if i.line_type == 2 %}
+                        <td>T(1)</td>
+                      {% else %}
+                        {% if i.line_type == 3%}
+                          <td>T(2)</td>
+                        {% else %}
+                          {% if i.line_type == 4%}
+                            <td>T(3)</td>
+                          {% else %}
+                            {% if i.line_type == 5%}
+                              <td>T(4)</td>
+                            {% else %}
+                              {% if i.line_type == 6%}
+                                <td>T(5)</td>
+                              {% else %}
+                                {% if i.line_type == 8%}
+                                  <td>Fault</td>
+                                {% else %}
+                                  <td>T(6)</td>
+                                {% endif %}
+                              {% endif %}
+                            {% endif %}
+                          {% endif %}
+                        {% endif %}
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
                   <td>{{i.From_Bus}}</td>
                   {% if i.To_Bus == -1%}
                     <td>F</td>
@@ -1025,6 +1165,7 @@
             <table class="table table-striped">
               <thead>
                 <tr>
+                  <td>Line Type</td>
                   <td>From Bus</td>
                   <td>To Bus</td>
                   <td>Phase A Mag</td>
@@ -1036,20 +1177,53 @@
                 </tr>
               </thead>
               <tbody>
-                {% for otherfaulti in otherfaulti %}
+                {% for i in otherfaulti %}
                 <tr>
-                  <td>{{otherfaulti.From_Bus}}</td>
-                  {% if otherfaulti.To_Bus == -1%}
+                  {% if i.line_type == 0 %}
+                    <td>G</td>
+                  {% else %}
+                    {% if i.line_type == 1 %}
+                      <td>T/L</td>
+                    {% else %}
+                      {% if i.line_type == 2 %}
+                        <td>T(1)</td>
+                      {% else %}
+                        {% if i.line_type == 3%}
+                          <td>T(2)</td>
+                        {% else %}
+                          {% if i.line_type == 4%}
+                            <td>T(3)</td>
+                          {% else %}
+                            {% if i.line_type == 5%}
+                              <td>T(4)</td>
+                            {% else %}
+                              {% if i.line_type == 6%}
+                                <td>T(5)</td>
+                              {% else %}
+                                {% if i.line_type == 8%}
+                                  <td>Fault</td>
+                                {% else %}
+                                  <td>T(6)</td>
+                                {% endif %}
+                              {% endif %}
+                            {% endif %}
+                          {% endif %}
+                        {% endif %}
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
+                  <td>{{i.From_Bus}}</td>
+                  {% if i.To_Bus == -1%}
                     <td>F</td>
                   {% else%}
-                    <td>{{otherfaulti.To_Bus}}</td>
+                    <td>{{i.To_Bus}}</td>
                   {% endif%}
-                  <td>{{otherfaulti.Phase_A_Mag|floatformat:-4}}</td>
-                  <td>{{otherfaulti.Phase_A_Deg|floatformat:-4}}</td>
-                  <td>{{otherfaulti.Phase_B_Mag|floatformat:-4}}</td>
-                  <td>{{otherfaulti.Phase_B_Deg|floatformat:-4}}</td>
-                  <td>{{otherfaulti.Phase_C_Mag|floatformat:-4}}</td>
-                  <td>{{otherfaulti.Phase_C_Deg|floatformat:-4}}</td>
+                  <td>{{i.Phase_A_Mag|floatformat:-4}}</td>
+                  <td>{{i.Phase_A_Deg|floatformat:-4}}</td>
+                  <td>{{i.Phase_B_Mag|floatformat:-4}}</td>
+                  <td>{{i.Phase_B_Deg|floatformat:-4}}</td>
+                  <td>{{i.Phase_C_Mag|floatformat:-4}}</td>
+                  <td>{{i.Phase_C_Deg|floatformat:-4}}</td>
                 </tr>
                 {% endfor %}
               </tbody>

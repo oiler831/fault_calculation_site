@@ -56,6 +56,7 @@
             <table class="table table-striped">
               <thead>
                 <tr>
+                  <td>Line Type</td>
                   <td>From Bus</td>
                   <td>To Bus</td>
                   <td>Zero Mag</td>
@@ -69,6 +70,39 @@
               <tbody>
                 {% for i in sequencei %}
                 <tr>
+                  {% if i.line_type == 0 %}
+                    <td>G</td>
+                  {% else %}
+                    {% if i.line_type == 1 %}
+                      <td>T/L</td>
+                    {% else %}
+                      {% if i.line_type == 2 %}
+                        <td>T(1)</td>
+                      {% else %}
+                        {% if i.line_type == 3%}
+                          <td>T(2)</td>
+                        {% else %}
+                          {% if i.line_type == 4%}
+                            <td>T(3)</td>
+                          {% else %}
+                            {% if i.line_type == 5%}
+                              <td>T(4)</td>
+                            {% else %}
+                              {% if i.line_type == 6%}
+                                <td>T(5)</td>
+                              {% else %}
+                                {% if i.line_type == 8 %}
+                                  <td>Fault</td>
+                                {% else%}
+                                  <td>T(6)</td>
+                                {% endif %}
+                              {% endif %}
+                            {% endif %}
+                          {% endif %}
+                        {% endif %}
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
                   <td>{{i.From_Bus}}</td>
                   {% if i.To_Bus == -1%}
                     <td>F</td>

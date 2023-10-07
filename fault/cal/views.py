@@ -301,9 +301,9 @@ def fault_con(request):
             else:
                 result_v, result_cur, bus, negativebus, zerobus, pybus, nybus, zybus, sequencev, sequencei = unbalanced_fault(initial_bus_voltage, line_df, bus_df, fault_loc, fault_impedence,
                                                                     fault_con.fault_type,fault_con.is_shunt, fault_con.is_load_effect)
-            result_v, result_cur = after_fault_scaling(line_df, bus_df, result_v, result_cur, fault_loc, fault_con.fault_type)
+            result_v, result_cur = after_fault_scaling(line_df, bus_df, result_v, result_cur, fault_loc, fault_con.fault_type, condition.is_not_symmetry)
             if fault_con.fault_type > 0:
-                sequencev,sequencei = after_fault_scaling(line_df, bus_df, sequencev, sequencei, fault_loc, fault_con.fault_type)
+                sequencev,sequencei = after_fault_scaling(line_df, bus_df, sequencev, sequencei, fault_loc, fault_con.fault_type, condition.is_not_symmetry)
             if condition.is_flow:
                 bus_df = after_flow_scaling(bus_df, fault_con.basemva)
             for i in range(len(bus_df)):
@@ -339,11 +339,15 @@ def fault_con(request):
                     ThreeFaultV.objects.create(Bus_No=result_v[0][i], Voltage_Mag=result_v[1][i], Voltage_Deg=result_v[2][i])
                 for i in range(len(result_cur)):
                     if(result_cur[0][i]==0):
-                        ThreeFaultI.objects.create(From_Bus=result_cur[1][i], To_Bus=result_cur[0][i],
-                                                Current_Mag=result_cur[2][i], Current_Deg=result_cur[3][i])
+                        if result_cur[4][i]==4:
+                            ThreeFaultI.objects.create(From_Bus=result_cur[1][i], To_Bus=result_cur[0][i],
+                                                Current_Mag=result_cur[2][i], Current_Deg=result_cur[3][i], line_type = 3)
+                        else:
+                            ThreeFaultI.objects.create(From_Bus=result_cur[1][i], To_Bus=result_cur[0][i],
+                                                Current_Mag=result_cur[2][i], Current_Deg=result_cur[3][i], line_type = result_cur[4][i])
                     else:
                         ThreeFaultI.objects.create(From_Bus=result_cur[0][i], To_Bus=result_cur[1][i],
-                                                Current_Mag=result_cur[2][i], Current_Deg=result_cur[3][i])
+                                                Current_Mag=result_cur[2][i], Current_Deg=result_cur[3][i], line_type = result_cur[4][i])
                 for i in range(len(result_v)):
                     ThreeZbus.objects.create(check = i)
                     row = ThreeZbus.objects.get(check=i)
@@ -358,15 +362,23 @@ def fault_con(request):
                                                 Phase_B_Mag=sequencev[3][i], Phase_B_Deg=sequencev[4][i],Phase_C_Mag=sequencev[5][i], Phase_C_Deg=sequencev[6][i])
                 for i in range(len(result_cur)):
                     if(result_cur[0][i]==0):
-                        OtherFaultI.objects.create(From_Bus=result_cur[1][i], To_Bus=result_cur[0][i], Phase_A_Mag=result_cur[2][i], Phase_A_Deg=result_cur[3][i],
-                                                    Phase_B_Mag=result_cur[4][i], Phase_B_Deg=result_cur[5][i],Phase_C_Mag=result_cur[6][i], Phase_C_Deg=result_cur[7][i])
-                        OthersequenceI.objects.create(From_Bus=sequencei[1][i], To_Bus=sequencei[0][i], Phase_A_Mag=sequencei[2][i], Phase_A_Deg=sequencei[3][i],
-                                                Phase_B_Mag=sequencei[4][i], Phase_B_Deg=sequencei[5][i],Phase_C_Mag=sequencei[6][i], Phase_C_Deg=sequencei[7][i])
+                        if result_cur[8][i]==4:
+                            OtherFaultI.objects.create(From_Bus=result_cur[1][i], To_Bus=result_cur[0][i], Phase_A_Mag=result_cur[2][i], Phase_A_Deg=result_cur[3][i],
+                                                    Phase_B_Mag=result_cur[4][i], Phase_B_Deg=result_cur[5][i],Phase_C_Mag=result_cur[6][i], Phase_C_Deg=result_cur[7][i], line_type=3)
+                        else:
+                            OtherFaultI.objects.create(From_Bus=result_cur[1][i], To_Bus=result_cur[0][i], Phase_A_Mag=result_cur[2][i], Phase_A_Deg=result_cur[3][i],
+                                                    Phase_B_Mag=result_cur[4][i], Phase_B_Deg=result_cur[5][i],Phase_C_Mag=result_cur[6][i], Phase_C_Deg=result_cur[7][i], line_type=result_cur[8][i])
+                        if sequencei[8][i] == 4:
+                            OthersequenceI.objects.create(From_Bus=sequencei[1][i], To_Bus=sequencei[0][i], Phase_A_Mag=sequencei[2][i], Phase_A_Deg=sequencei[3][i],
+                                                Phase_B_Mag=sequencei[4][i], Phase_B_Deg=sequencei[5][i],Phase_C_Mag=sequencei[6][i], Phase_C_Deg=sequencei[7][i], line_type=3)
+                        else:
+                            OthersequenceI.objects.create(From_Bus=sequencei[1][i], To_Bus=sequencei[0][i], Phase_A_Mag=sequencei[2][i], Phase_A_Deg=sequencei[3][i],
+                                                Phase_B_Mag=sequencei[4][i], Phase_B_Deg=sequencei[5][i],Phase_C_Mag=sequencei[6][i], Phase_C_Deg=sequencei[7][i], line_type=sequencei[8][i])
                     else:
                         OtherFaultI.objects.create(From_Bus=result_cur[0][i], To_Bus=result_cur[1][i], Phase_A_Mag=result_cur[2][i], Phase_A_Deg=result_cur[3][i],
-                                                    Phase_B_Mag=result_cur[4][i], Phase_B_Deg=result_cur[5][i],Phase_C_Mag=result_cur[6][i], Phase_C_Deg=result_cur[7][i])
+                                                    Phase_B_Mag=result_cur[4][i], Phase_B_Deg=result_cur[5][i],Phase_C_Mag=result_cur[6][i], Phase_C_Deg=result_cur[7][i], line_type=result_cur[8][i])
                         OthersequenceI.objects.create(From_Bus=sequencei[0][i], To_Bus=sequencei[1][i], Phase_A_Mag=sequencei[2][i], Phase_A_Deg=sequencei[3][i],
-                                                Phase_B_Mag=sequencei[4][i], Phase_B_Deg=sequencei[5][i],Phase_C_Mag=sequencei[6][i], Phase_C_Deg=sequencei[7][i])
+                                                Phase_B_Mag=sequencei[4][i], Phase_B_Deg=sequencei[5][i],Phase_C_Mag=sequencei[6][i], Phase_C_Deg=sequencei[7][i], line_type=sequencei[8][i])
                 for i in range(len(result_v)):
                     OtherZbus.objects.create(check = i)
                     row = OtherZbus.objects.get(check=i)
@@ -396,11 +408,11 @@ def result(request):
     linedata = LineData.objects.all().order_by('line_type')
     faultcon = FaultCondition.objects.get(to_find=True)
     faultbusdata=FaultBusData.objects.all()
-    faultlinedata=FaultLineData.objects.all()
+    faultlinedata=FaultLineData.objects.all().order_by('line_type')
     threefaultv=ThreeFaultV.objects.all()
-    threefaulti=ThreeFaultI.objects.all()
+    threefaulti=ThreeFaultI.objects.all().order_by('line_type')
     otherfaultv=OtherFaultV.objects.all()
-    otherfaulti=OtherFaultI.objects.all()
+    otherfaulti=OtherFaultI.objects.all().order_by('line_type')
     threezbus=ThreeZbus.objects.all()
     threezbussource = ThreeZbusSource.objects.all()
     otherzbus=OtherZbus.objects.all()
@@ -408,7 +420,7 @@ def result(request):
     negativezbussource = negativeZbusSource.objects.all()
     zerozbussource = zeroZbusSource.objects.all()
     sequencev = OthersequenceV.objects.all()
-    sequencei = OthersequenceI.objects.all()
+    sequencei = OthersequenceI.objects.all().order_by('line_type')
     condition = conditionCheck.objects.get(find_con=True)
     clear = resultfile.objects.all()
     clear.delete()
@@ -542,7 +554,7 @@ def slider(request):
     return render(request,'cal/slider.html',context=context)
 
 def transformer(request):
-    faultlinedata=FaultLineData.objects.all()
+    faultlinedata=FaultLineData.objects.all().order_by('line_type')
     faultcon = FaultCondition.objects.get(to_find=True)
     return render(request,'cal/transformer.html',context={'faultlinedata':faultlinedata,'faultcon':faultcon})
 
@@ -572,15 +584,15 @@ def show_ybus(request):
 
 def sequence(request):
     sequencev = OthersequenceV.objects.all()
-    sequencei = OthersequenceI.objects.all()
+    sequencei = OthersequenceI.objects.all().order_by('line_type')
     return render(request, 'cal/sequence.html',context={'sequencev':sequencev,'sequencei':sequencei})
 
 def phase(request):
     faultcon = FaultCondition.objects.get(to_find=True)
     threefaultv=ThreeFaultV.objects.all()
-    threefaulti=ThreeFaultI.objects.all()
+    threefaulti=ThreeFaultI.objects.all().order_by('line_type')
     otherfaultv=OtherFaultV.objects.all()
-    otherfaulti=OtherFaultI.objects.all()
+    otherfaulti=OtherFaultI.objects.all().order_by('line_type')
     context={'threefaultv':threefaultv,'threefaulti':threefaulti,'otherfaultv':otherfaultv,'otherfaulti':otherfaulti,'faultcon':faultcon}
     return render(request, 'cal/phase.html',context=context)
 
@@ -981,9 +993,13 @@ def after_flow_scaling(bus_df, base_mva):
     bus_df.iloc[:, 3:9] *= base_mva
     return bus_df
 
-def after_fault_scaling(line_df, bus_df, voltage_d, current_d, fault_loc, fault_type):
+def after_fault_scaling(line_df, bus_df, voltage_d, current_d, fault_loc, fault_type, is_not_symmetry):
     fb = line_df.iloc[:, 0]
     tb = line_df.iloc[:, 1]
+    if is_not_symmetry == True:
+        line_type=line_df.iloc[:, 11]
+    else:
+        line_type=line_df.iloc[:, 5]
     con_num = len(fb)
     current_d = np.round(current_d, 5)
     voltage_d = np.round(voltage_d, 5)
@@ -991,12 +1007,13 @@ def after_fault_scaling(line_df, bus_df, voltage_d, current_d, fault_loc, fault_
     if fault_type == 0:
         frame_current_mag = pd.DataFrame(np.abs(current_d))
         frame_current_ang = pd.DataFrame(np.angle(current_d, deg=True))
-        frame_current_d = pd.concat([fb, tb, frame_current_mag, frame_current_ang], axis=1)
+        frame_current_d = pd.concat([fb, tb, frame_current_mag, frame_current_ang, line_type], axis=1)
         frame_voltage_mag = pd.DataFrame(np.abs(voltage_d))
         frame_voltage_ang = pd.DataFrame(np.angle(voltage_d, deg=True))
         frame_voltage_d = pd.concat([bus_num, frame_voltage_mag, frame_voltage_ang], axis=1)
-        frame_current_d.columns = [0, 1, 2, 3]
+        frame_current_d.columns = [0, 1, 2, 3, 4]
         frame_voltage_d.columns = [0, 1, 2]
+        frame_current_d.iloc[con_num, 4] = 8
     else:
         frame_current_mag_a = pd.DataFrame(np.abs(current_d[:, 0]))
         frame_current_ang_a = pd.DataFrame(np.angle(current_d[:, 0], deg=True))
@@ -1005,7 +1022,7 @@ def after_fault_scaling(line_df, bus_df, voltage_d, current_d, fault_loc, fault_
         frame_current_mag_c = pd.DataFrame(np.abs(current_d[:, 2]))
         frame_current_ang_c = pd.DataFrame(np.angle(current_d[:, 2], deg=True))
         frame_current_d = pd.concat([fb, tb, frame_current_mag_a, frame_current_ang_a, frame_current_mag_b,
-                                    frame_current_ang_b, frame_current_mag_c, frame_current_ang_c], axis=1)
+                                    frame_current_ang_b, frame_current_mag_c, frame_current_ang_c, line_type], axis=1)
         frame_voltage_mag_a = pd.DataFrame(np.abs(voltage_d[:, 0]))
         frame_voltage_ang_a = pd.DataFrame(np.angle(voltage_d[:, 0], deg=True))
         frame_voltage_mag_b = pd.DataFrame(np.abs(voltage_d[:, 1]))
@@ -1014,8 +1031,9 @@ def after_fault_scaling(line_df, bus_df, voltage_d, current_d, fault_loc, fault_
         frame_voltage_ang_c = pd.DataFrame(np.angle(voltage_d[:, 2], deg=True))
         frame_voltage_d = pd.concat([bus_num, frame_voltage_mag_a, frame_voltage_ang_a, frame_voltage_mag_b,
                                     frame_voltage_ang_b, frame_voltage_mag_c, frame_voltage_ang_c], axis=1)
-        frame_current_d.columns = [0, 1, 2, 3, 4, 5, 6, 7]
+        frame_current_d.columns = [0, 1, 2, 3, 4, 5, 6, 7, 8]
         frame_voltage_d.columns = [0, 1, 2, 3, 4, 5, 6]
+        frame_current_d.iloc[con_num, 8] = 8
     bus_num = frame_voltage_d.iloc[:, 0]
     b_n = len(bus_num)
     frame_voltage_d.iloc[b_n - 1,0] = b_n

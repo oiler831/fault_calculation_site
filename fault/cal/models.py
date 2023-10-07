@@ -93,6 +93,7 @@ class ThreeFaultI(models.Model):
     To_Bus = models.SmallIntegerField()
     Current_Mag = models.FloatField()
     Current_Deg = models.FloatField()
+    line_type = models.SmallIntegerField(default=0)
 
 
 class OtherFaultV(models.Model):
@@ -114,6 +115,7 @@ class OtherFaultI(models.Model):
     Phase_B_Deg = models.FloatField()
     Phase_C_Mag = models.FloatField()
     Phase_C_Deg = models.FloatField()
+    line_type = models.SmallIntegerField(default=0)
 
 class ThreeZbus(models.Model): 
     check = models.SmallIntegerField(default=0)
@@ -170,6 +172,7 @@ class OthersequenceI(models.Model):
     Phase_B_Deg = models.FloatField()
     Phase_C_Mag = models.FloatField()
     Phase_C_Deg = models.FloatField()
+    line_type = models.SmallIntegerField(default=0)
 
 class Afterflow(models.Model):
     Bus_No =models.SmallIntegerField()
