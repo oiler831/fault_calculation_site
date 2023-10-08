@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '6d#u0h(7-h+jwei^m!$ax&_7j!%nuj^o8t=s!jazzo@_q3&4u$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -122,5 +122,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-MEDIA_ROOT = os.path.join(BASE_DIR,"media")
+STATIC_ROOT = os.path.join(BASE_DIR,'static')
 MEDIA_URL = '/excel/'
+MEDIA_ROOT = os.path.join(BASE_DIR,"media")

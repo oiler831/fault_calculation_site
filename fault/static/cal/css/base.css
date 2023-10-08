@@ -1,0 +1,175 @@
+html {
+  font-family: "Noto Sans KR", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.border,
+.condition{
+  background-color:#ffffff;
+  padding: 50px;
+  padding-bottom:100px;
+  border: 1px solid #000000;
+  border-radius:30px;
+  margin-bottom:30px;
+  box-shadow: 10px 5px 5px #aaaaaa;
+}
+
+label{
+  display:block;
+}
+
+.main input[type=radio] {
+	display: none;
+}
+#tab-1:checked ~ .tab label:nth-child(1),
+#tab-2:checked ~ .tab label:nth-child(2),
+#tab-3:checked ~ .tab label:nth-child(3),
+#tab-4:checked ~ .tab label:nth-child(4),
+#tab-5:checked ~ .tab label:nth-child(5),
+#tab-6:checked ~ .tab label:nth-child(6),
+#tab-7:checked ~ .tab label:nth-child(7),
+#tab-8:checked ~ .tab label:nth-child(8),
+#tab-9:checked ~ .tab label:nth-child(9),
+#tab-10:checked ~ .tab label:nth-child(10),
+#tab-11:checked ~ .tab label:nth-child(11),
+#tab-12:checked ~ .tab label:nth-child(12),
+#tab-13:checked ~ .tab label:nth-child(13),
+#tab-14:checked ~ .tab label:nth-child(14){
+  background-color: rgba(0, 0, 0, 0.2);
+  box-shadow: none;
+}
+.content > div {
+	display: none;
+}
+#tab-1:checked ~ .content div:nth-child(1),
+#tab-2:checked ~ .content div:nth-child(2),
+#tab-3:checked ~ .content div:nth-child(3),
+#tab-4:checked ~ .content div:nth-child(4),
+#tab-5:checked ~ .content div:nth-child(5),
+#tab-6:checked ~ .content div:nth-child(6),
+#tab-7:checked ~ .content div:nth-child(7),
+#tab-8:checked ~ .content div:nth-child(8),
+#tab-9:checked ~ .content div:nth-child(9),
+#tab-10:checked ~ .content div:nth-child(10),
+#tab-11:checked ~ .content div:nth-child(11),
+#tab-12:checked ~ .content div:nth-child(12),
+#tab-13:checked ~ .content div:nth-child(13),
+#tab-14:checked ~ .content div:nth-child(14)  {
+	display:block;
+    position:relative;
+}
+.main {
+  margin: 0 auto;
+  max-width: 100%;
+}
+.tab {
+  overflow: hidden;
+}
+.tab label {
+    font-size: 18px;
+    cursor: pointer;
+    float: left;
+    width: 50%;
+    text-align: center;
+    padding: 15px 0;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 2px;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+
+.content {
+  min-height: 250px;
+}
+.fault{
+    overflow:auto;
+    height:450px;
+    border:#EEEEEE solid 3px;
+}
+
+.table{
+    border: 1px solid black;
+    text-align: center;
+}
+img{
+    width:60%;
+    height:75%;
+    display: block;
+    margin: auto;
+}
+
+thead{
+    font-weight: 700;
+}
+
+.next{
+    position:absolute;
+    right:100px;
+    bottom:50px;
+}
+
+.prev{
+    position:absolute;
+    left:100px;
+    bottom:50px;
+}
+
+.range-form{
+    width:100%;
+}
+
+form{
+    position: relative;
+}
+
+.form-next{
+    position:absolute;
+    right:0;
+    bottom:-50px;
+}
+.form-prev{
+    position:absolute;
+    left:0;
+    bottom:-50px;
+}
+
+.label-big{
+    font-weight: 600;
+}
+input{
+    margin-top:15px;
+    margin-bottom:15px;
+}
+
+select{
+    margin-bottom:10px;
+}
+
+#slider-value{
+    display:block;
+    text-align: center;
+}
+
+.go_total{
+    position:absolute;
+    right:100px;
+    bottom:30px;
+}
+
+.git-icon{
+    width: 20px;
+    display:unset;
+    margin:unset;
+    border:unset;
+    margin-top:-3px;
+}
+.main-name{
+    font-weight: 700;
+}
