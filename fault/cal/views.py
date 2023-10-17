@@ -35,6 +35,7 @@ def upload_excel_to_db(request):
     clear.delete()
     clear = isExample.objects.all()
     clear.delete()
+    BASE_PATH = os.path.dirname(os.path.abspath(__file__))
     if request.method == 'POST':
         if request.POST['isexample'] == "True":
             check = request.POST.get('exampleselect',False)
@@ -43,19 +44,19 @@ def upload_excel_to_db(request):
                 return render(request,'cal/file.html',context={'errornum':e_num})
             else:
                 if request.POST['exampleselect']=='1':
-                    excel_file="/home/jin/fault_calculation_site/fault/media/example/Glover_9.8.xlsx"
+                    excel_file= BASE_PATH+"/../media/example/Glover_9.8.xlsx"
                 elif request.POST['exampleselect']=='2':
-                    excel_file="/home/jin/fault_calculation_site/fault/media/example/Saadat9.8.xlsx"
+                    excel_file=BASE_PATH+"/../media/example/Saadat9.8.xlsx"
                 elif request.POST['exampleselect']=='3':
-                    excel_file="/home/jin/fault_calculation_site/fault/media/example/Saadat10.7.xlsx"
+                    excel_file=BASE_PATH+"/../media/example/Saadat10.7.xlsx"
                 elif request.POST['exampleselect']=='4':
-                    excel_file = "/home/jin/fault_calculation_site/fault/media/example/Saadat9.9-1.xlsx"
+                    excel_file =BASE_PATH+ "/../media/example/Saadat9.9-1.xlsx"
                 elif request.POST['exampleselect']=='5':
-                    excel_file = "/home/jin/fault_calculation_site/fault/media/example/Saadat9.9-2.xlsx"
+                    excel_file =BASE_PATH+ "/../media/example/Saadat9.9-2.xlsx"
                 elif request.POST['exampleselect']=='6':
-                    excel_file = "/home/jin/fault_calculation_site/fault/media/example/Saadat10.8.xlsx"
+                    excel_file = BASE_PATH+"/../media/example/Saadat10.8.xlsx"
                 elif request.POST['exampleselect']=='7':
-                    excel_file = "/home/jin/fault_calculation_site/fault/media/example/contest.xlsx"
+                    excel_file = BASE_PATH+"/../media/example/contest.xlsx"
         else:
             excel_file = request.FILES.get('excelFile',False)
             if excel_file == False:
@@ -170,6 +171,7 @@ def fault_con(request):
     clear.delete()
     clear = SliderLine.objects.all()
     clear.delete()
+    BASE_PATH = os.path.dirname(os.path.abspath(__file__))
     if request.method == 'POST':
         basemva = request.POST['basemva']
         is_flow = request.POST['is_flow']
@@ -217,19 +219,19 @@ def fault_con(request):
         isexample = isExample.objects.get(find_ex=True)
         if isexample.isex:
             if isexample.exampleNumber==1:
-                file = "/home/jin/fault_calculation_site/fault/media/example/Glover_9.8.xlsx"
+                file = BASE_PATH + "/../media/example/Glover_9.8.xlsx"
             elif isexample.exampleNumber==2:
-                file = "/home/jin/fault_calculation_site/fault/media/example/Saadat9.8.xlsx"
+                file = BASE_PATH +"/../media/example/Saadat9.8.xlsx"
             elif isexample.exampleNumber==3:
-                file = "/home/jin/fault_calculation_site/fault/media/example/Saadat10.7.xlsx"
+                file = BASE_PATH +"/../media/example/Saadat10.7.xlsx"
             elif isexample.exampleNumber==4:
-                file = "/home/jin/fault_calculation_site/fault/media/example/Saadat9.9-1.xlsx"
+                file = BASE_PATH +"/../media/example/Saadat9.9-1.xlsx"
             elif isexample.exampleNumber==5:
-                file = "/home/jin/fault_calculation_site/fault/media/example/Saadat9.9-2.xlsx"
+                file = BASE_PATH +"/../media/example/Saadat9.9-2.xlsx"
             elif isexample.exampleNumber==6:
-                file = "/home/jin/fault_calculation_site/fault/media/example/Saadat10.8.xlsx"
+                file = BASE_PATH +"/../media/example/Saadat10.8.xlsx"
             elif isexample.exampleNumber==7:
-                file = "/home/jin/fault_calculation_site/fault/media/example/contest.xlsx"
+                file = BASE_PATH +"/../media/example/contest.xlsx"
             bus_df = pd.read_excel(file,sheet_name=0, header=None) 
             line_df = pd.read_excel(file,sheet_name=1, header=None) 
         else:
@@ -430,6 +432,7 @@ def result(request):
     condition = conditionCheck.objects.get(find_con=True)
     clear = resultfile.objects.all()
     clear.delete()
+    BASE_PATH = os.path.dirname(os.path.abspath(__file__))
     j = complex(0, 1)
     initial_bus = pd.DataFrame(BusData.objects.all().values()).drop('id', axis=1)
     initial_line = pd.DataFrame(LineData.objects.all().values()).drop('id', axis=1)
@@ -459,7 +462,7 @@ def result(request):
         zbus = pd.DataFrame(zbus)
         threev = pd.DataFrame(ThreeFaultV.objects.all().values()).drop('id',axis=1)
         threei = pd.DataFrame(ThreeFaultI.objects.all().values()).drop('id',axis=1)
-        with pd.ExcelWriter('/home/jin/fault_calculation_site/fault/media/result/result.xlsx') as writer:
+        with pd.ExcelWriter(BASE_PATH+'/../media/result/result.xlsx') as writer:
             initial_bus.to_excel(writer, sheet_name='Initial Voltage Data',index=False)
             initial_line.to_excel(writer, sheet_name='Equipment Data',index=False)
             fault_bus.to_excel(writer, sheet_name='Input Voltage Data',index=False)
@@ -509,7 +512,7 @@ def result(request):
         sequence_i = pd.DataFrame(OthersequenceI.objects.all().values()).drop('id',axis=1)
         otherv = pd.DataFrame(OtherFaultV.objects.all().values()).drop('id',axis=1)
         otheri = pd.DataFrame(OtherFaultI.objects.all().values()).drop('id',axis=1)
-        with pd.ExcelWriter('/home/jin/fault_calculation_site/fault/media/result/result.xlsx') as writer:
+        with pd.ExcelWriter(BASE_PATH+'/../media/result/result.xlsx') as writer:
             initial_bus.to_excel(writer, sheet_name='Initial Voltage Data',index=False)
             initial_line.to_excel(writer, sheet_name='Equipment Data',index=False)
             fault_bus.to_excel(writer, sheet_name='Input Voltage Data',index=False)
@@ -526,7 +529,7 @@ def result(request):
             otheri.to_excel(writer, sheet_name='Fault Phase Current',index=False)
     resultfile.objects.create(find_file=True)
     outfile = resultfile.objects.get(find_file=True)
-    path = Path('/home/jin/fault_calculation_site/fault/media/result/result.xlsx')
+    path = Path(BASE_PATH+'/../media/result/result.xlsx')
     with path.open(mode='rb') as f:
         outfile.rfile = File(f, name=path.name)
         outfile.save()
