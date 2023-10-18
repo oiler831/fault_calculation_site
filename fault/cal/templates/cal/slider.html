@@ -225,7 +225,7 @@
             <a class="btn btn-primary next" href="{% url 'transformer' %}">다음</a>
           {% endif %}
           <hr>
-          {% if faultcon.fault_type == 0 %}
+          {% if fault_con.fault_type == 0 %}
             {% if fault_con.is_shunt %}
               {% if fault_con.is_load_effect %}
                 <img src="{% static 'cal/images/ybusbload.png'%}">

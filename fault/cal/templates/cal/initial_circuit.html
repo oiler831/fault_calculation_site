@@ -89,14 +89,14 @@
           {% else %}
             {% if faultcon.is_bus_fault %}
               {% if faultcon.fault_type == 0 %}
-                {% if fault_con.is_shunt %}
-                  {% if fault_con.is_load_effect %}
+                {% if faultcon.is_shunt %}
+                  {% if faultcon.is_load_effect %}
                     <img src="{% static 'cal/images/ybusbload.png'%}">
                   {% else %}
                     <img src="{% static 'cal/images/ybusb.png'%}">
                   {% endif %}
                 {% else %}
-                  {% if fault_con.is_load_effect %}
+                  {% if faultcon.is_load_effect %}
                     <img src="{% static 'cal/images/ybusload.png'%}">
                   {% else %}
                     <img src="{% static 'cal/images/ybus.png'%}">
@@ -252,14 +252,14 @@
           {% else %}
             {% if faultcon.is_bus_fault %}
               {% if faultcon.fault_type == 0 %}
-                {% if fault_con.is_shunt %}
-                  {% if fault_con.is_load_effect %}
+                {% if faultcon.is_shunt %}
+                  {% if faultcon.is_load_effect %}
                     <img src="{% static 'cal/images/ybusbload.png'%}">
                   {% else %}
                     <img src="{% static 'cal/images/ybusb.png'%}">
                   {% endif %}
                 {% else %}
-                  {% if fault_con.is_load_effect %}
+                  {% if faultcon.is_load_effect %}
                     <img src="{% static 'cal/images/ybusload.png'%}">
                   {% else %}
                     <img src="{% static 'cal/images/ybus.png'%}">
